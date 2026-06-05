@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>固定費削減診断｜30代子持ち会社員のための家計改善ツール（無料・登録不要）</title>
+  <meta name="description" content="スマホ代・電気・保険・サブスクなど月々の固定費を入力するだけ。月間・年間の削減可能額と、優先して見直すべきTOP3、今日やるべきアクションを無料で診断します。登録不要・データ送信なし。" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- OGP -->
+  <meta property="og:title" content="固定費削減診断｜30代子持ち会社員のための家計改善ツール" />
+  <meta property="og:description" content="入力するだけで年間いくら削れるかが30秒でわかる無料診断。登録不要・データ送信なし。" />
+  <meta property="og:type" content="website" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- ===== アクセス計測（Google Analytics 4）=====
+       公開時、下の 'G-XXXXXXXXXX' をご自身の測定IDに差し替えてください。
+       ID未設定（プレースホルダのまま）の場合は読み込まれません。 -->
+  <script>
+    window.GA_MEASUREMENT_ID = "G-XXXXXXXXXX"; // ← ここを差し替え
+    (function () {
+      var id = window.GA_MEASUREMENT_ID;
+      if (!id || id === "G-XXXXXXXXXX") return; // 未設定なら計測しない
+      var s = document.createElement("script");
+      s.async = true;
+      s.src = "https://www.googletagmanager.com/gtag/js?id=" + id;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag("js", new Date());
+      window.gtag("config", id);
+    })();
+  </script>
+</head>
+<body>
+  <!-- ===== ヒーロー ===== -->
+  <header class="hero">
+    <div class="container">
+      <p class="hero__eyebrow">30代・子持ち・会社員のための</p>
+      <h1 class="hero__title">固定費削減診断ツール</h1>
+      <p class="hero__lead">
+        毎月の固定費を入力するだけ。<br />
+        <strong>年間でいくら削れるか</strong>と<strong>今日やるべきこと</strong>が30秒でわかります。
+      </p>
+      <ul class="badges">
+        <li class="badge">完全無料</li>
+        <li class="badge">登録不要</li>
+        <li class="badge">データ送信なし</li>
+      </ul>
+      <a href="#form" class="btn btn--ghost">さっそく診断する ↓</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ===== 入力フォーム ===== -->
+    <section id="form" class="card">
+      <h2 class="section-title">① 毎月の固定費を入力</h2>
+      <p class="muted">
+        わかる範囲で月額（円）を入力してください。空欄は0円として計算します。<br />
+        <small>※入力した数字はあなたのブラウザ内だけで計算され、どこにも送信・保存されません。</small>
+      </p>
+
+      <form id="cost-form" novalidate>
+        <div class="grid">
+          <!-- 各項目は JS の CATEGORIES と id を一致させる -->
+          <label class="field">
+            <span class="field__label">📱 スマホ代</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="mobile" placeholder="例: 8000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+
+          <label class="field">
+            <span class="field__label">💡 電気代</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="electricity" placeholder="例: 12000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+
+          <label class="field">
+            <span class="field__label">🔥 ガス代</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="gas" placeholder="例: 6000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+
+          <label class="field">
+            <span class="field__label">🚰 水道代</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="water" placeholder="例: 5000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+
+          <label class="field">
+            <span class="field__label">🛡️ 保険料</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="insurance" placeholder="例: 20000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+
+          <label class="field">
+            <span class="field__label">🎬 サブスク代</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="subscription" placeholder="例: 4000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+
+          <label class="field">
+            <span class="field__label">🚗 車関連費</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="car" placeholder="例: 25000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+
+          <label class="field">
+            <span class="field__label">💧 ウォーターサーバー代</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="waterserver" placeholder="例: 4000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+
+          <label class="field">
+            <span class="field__label">🍔 外食・コンビニ代</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="eatingout" placeholder="例: 30000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+
+          <label class="field">
+            <span class="field__label">📦 その他の固定費</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="other" placeholder="例: 5000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">この内容で診断する</button>
+          <button type="button" id="reset-btn" class="btn btn--text">入力をリセット</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ===== 結果 ===== -->
+    <section id="result" class="result" hidden aria-live="polite">
+      <!-- サマリー -->
+      <div class="card summary">
+        <h2 class="section-title">② あなたの削減可能額の目安</h2>
+        <div class="summary__numbers">
+          <div class="summary__block">
+            <span class="summary__caption">月間の削減可能額</span>
+            <span class="summary__value" id="monthly-saving">0円</span>
+          </div>
+          <div class="summary__block summary__block--accent">
+            <span class="summary__caption">年間の削減可能額</span>
+            <span class="summary__value" id="yearly-saving">0円</span>
+          </div>
+        </div>
+        <p class="summary__total muted" id="total-line"></p>
+
+        <div class="share">
+          <span class="share__label">結果をシェアして家計改善仲間に教える</span>
+          <div class="share__buttons">
+            <a href="#" id="share-x" class="share__btn share__btn--x" target="_blank" rel="noopener">Xでシェア</a>
+            <a href="#" id="share-line" class="share__btn share__btn--line" target="_blank" rel="noopener">LINEで送る</a>
+            <button type="button" id="share-copy" class="share__btn share__btn--copy">URLをコピー</button>
+            <button type="button" id="share-image" class="share__btn share__btn--image">結果を画像で保存</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP3 -->
+      <div class="card">
+        <h2 class="section-title">③ 優先して見直すべき項目 TOP3</h2>
+        <ol class="top3" id="top3-list"></ol>
+      </div>
+
+      <!-- 全項目アドバイス -->
+      <div class="card">
+        <h2 class="section-title">④ 各項目の改善アドバイス</h2>
+        <div class="advice-list" id="advice-list"></div>
+      </div>
+
+      <!-- 今日やる3アクション -->
+      <div class="card">
+        <h2 class="section-title">⑤ 今日やるべき具体的アクション3つ</h2>
+        <ul class="actions" id="action-list"></ul>
+      </div>
+
+      <!-- 収益化CTA -->
+      <div class="card cta">
+        <h2 class="section-title">⑥ 次の一歩：見直しを「完了」させる</h2>
+        <p id="cta-lead" class="cta__lead"></p>
+        <ul class="cta__points">
+          <li>✅ 10項目すべての見直し手順を1冊にまとめた<strong>「固定費見直し完全チェックリスト（PDF）」</strong></li>
+          <li>✅ 「何から・どの順で・どこに連絡するか」がわかるので、迷わず行動できる</li>
+          <li>✅ 我が家用に書き込める削減シミュレーションテンプレ付き</li>
+        </ul>
+        <!-- ↓ 公開時にnote/Tips等の販売URLに差し替えてください -->
+        <a href="#" class="btn btn--primary btn--block" id="cta-btn" rel="noopener">
+          チェックリスト（PDF）を受け取る
+        </a>
+        <p class="muted cta__note">
+          ※ 関連サービス（格安SIM・電力/ガス比較・保険の無料相談など）のリンクは各アドバイス内に掲載予定です。
+        </p>
+      </div>
+
+      <p class="disclaimer">
+        ⚠️ 本ツールの診断結果は一般的な統計・相場をもとにした<strong>あくまで目安</strong>であり、削減額を保証するものではありません。
+        実際の効果はご契約内容・地域・使用状況により異なります。特定の金融商品・保険商品の売買や乗り換えを助言・推奨するものではなく、
+        最終的な判断はご自身の責任で行ってください。
+      </p>
+    </section>
+  </main>
+
+  <!-- ===== フッター ===== -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer__note">
+        本サイトは家計改善・生活防衛を目的とした情報提供ツールです。入力データはサーバーに送信されません。
+      </p>
+      <p class="footer__copy">© <span id="year"></span> 固定費削減診断ツール</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
