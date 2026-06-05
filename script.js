@@ -108,6 +108,19 @@ const CATEGORIES = [
   },
 ];
 
+/** ブラウザ保存用キー */
+const STORAGE_KEY = "fixedCostChecker.inputs.v1";
+
+/** 直近の診断結果（画像生成で参照） */
+let lastResult = null;
+
+/** GA等のイベント送信（未設定なら何もしない） */
+function track(eventName, params) {
+  if (typeof window.gtag === "function") {
+    window.gtag("event", eventName, params || {});
+  }
+}
+
 /** 数値を「12,345円」形式に整形 */
 function yen(n) {
   return Math.round(n).toLocaleString("ja-JP") + "円";
@@ -184,6 +197,149 @@ function buildCtaLead(yearly) {
   return "今回は大きな削減余地は出ませんでしたが、固定費は契約条件の変化で再び膨らみがち。定期点検の習慣化が生活防衛のカギです。";
 }
 
+/** 入力値をブラウザ（localStorage）に保存。※端末内のみ・外部送信なし */
+function saveInputs() {
+  try {
+    const data = {};
+    CATEGORIES.forEach((cat) => (data[cat.id] = readValue(cat.id)));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    /* プライベートモード等で失敗しても無視 */
+  }
+}
+
+/** 保存済みの入力値があれば復元 */
+function restoreInputs() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    CATEGORIES.forEach((cat) => {
+      const el = document.getElementById(cat.id);
+      if (el && data[cat.id] > 0) el.value = data[cat.id];
+    });
+  } catch (e) {
+    /* 壊れたデータは無視 */
+  }
+}
+
+/** 保存をクリア */
+function clearInputs() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {
+    /* 無視 */
+  }
+}
+
+/** 診断結果を画像（PNG）にして保存／シェア（外部ライブラリ不要・Canvasで描画） */
+function generateImage() {
+  if (!lastResult) return;
+  const W = 1080;
+  const H = 1080;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d");
+
+  // 背景
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, "#1f9d72");
+  bg.addColorStop(1, "#15795a");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.textAlign = "center";
+  const cx = W / 2;
+
+  // 見出し
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  ctx.font = "bold 40px sans-serif";
+  ctx.fillText("固定費削減診断の結果", cx, 130);
+
+  // 白カード
+  ctx.fillStyle = "#ffffff";
+  roundRect(ctx, 90, 200, W - 180, 560, 32);
+  ctx.fill();
+
+  // 月間
+  ctx.fillStyle = "#6b7280";
+  ctx.font = "bold 38px sans-serif";
+  ctx.fillText("月間の削減可能額の目安", cx, 300);
+  ctx.fillStyle = "#15795a";
+  ctx.font = "bold 84px sans-serif";
+  ctx.fillText(yen(lastResult.monthlySaving), cx, 390);
+
+  // 年間
+  ctx.fillStyle = "#6b7280";
+  ctx.font = "bold 38px sans-serif";
+  ctx.fillText("年間の削減可能額の目安", cx, 500);
+  ctx.fillStyle = "#ff7a45";
+  ctx.font = "bold 100px sans-serif";
+  ctx.fillText(yen(lastResult.yearlySaving), cx, 600);
+
+  // TOP3
+  const top3 = [...lastResult.items]
+    .sort((a, b) => b.saving - a.saving)
+    .filter((i) => i.saving > 0)
+    .slice(0, 3);
+  ctx.fillStyle = "#1f2937";
+  ctx.font = "bold 34px sans-serif";
+  ctx.fillText("優先して見直すべき項目 TOP3", cx, 680);
+  ctx.font = "30px sans-serif";
+  if (top3.length === 0) {
+    ctx.fillText("大きな見直し項目はありませんでした", cx, 730);
+  } else {
+    top3.forEach((i, idx) => {
+      ctx.fillText(
+        `${idx + 1}. ${i.name}（月 約${yen(i.saving)}）`,
+        cx,
+        730 + idx * 18
+      );
+    });
+  }
+
+  // フッター
+  ctx.fillStyle = "rgba(255,255,255,0.95)";
+  ctx.font = "bold 34px sans-serif";
+  ctx.fillText("無料・登録不要｜固定費削減診断ツール", cx, 880);
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  ctx.font = "26px sans-serif";
+  ctx.fillText("※結果は一般的な相場をもとにした目安です", cx, 930);
+
+  // 保存／シェア
+  canvas.toBlob((blob) => {
+    if (!blob) return;
+    const file = new File([blob], "fixed-cost-result.png", { type: "image/png" });
+    // 対応端末ではネイティブ共有（画像付き）
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator
+        .share({ files: [file], title: "固定費削減診断の結果" })
+        .then(() => track("share_image", { method: "web_share" }))
+        .catch(() => {});
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "fixed-cost-result.png";
+      a.click();
+      URL.revokeObjectURL(url);
+      track("share_image", { method: "download" });
+    }
+  }, "image/png");
+}
+
+/** 角丸矩形パス */
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
 /** シェアボタンのリンク/挙動をセット */
 function setupShare(yearly) {
   const url = location.href.split("#")[0];
@@ -203,6 +359,9 @@ function setupShare(yearly) {
   document.getElementById("share-x").href = xUrl;
   document.getElementById("share-line").href = lineUrl;
 
+  document.getElementById("share-x").onclick = () => track("share", { method: "x" });
+  document.getElementById("share-line").onclick = () => track("share", { method: "line" });
+
   const copyBtn = document.getElementById("share-copy");
   copyBtn.onclick = async () => {
     try {
@@ -210,14 +369,18 @@ function setupShare(yearly) {
       const original = copyBtn.textContent;
       copyBtn.textContent = "コピーしました ✓";
       setTimeout(() => (copyBtn.textContent = original), 1800);
+      track("share", { method: "copy" });
     } catch (e) {
       window.prompt("このURLをコピーしてください:", url);
     }
   };
+
+  document.getElementById("share-image").onclick = generateImage;
 }
 
 /** 結果を画面に描画 */
 function render(result) {
+  lastResult = result;
   // サマリー
   document.getElementById("monthly-saving").textContent = yen(result.monthlySaving);
   document.getElementById("yearly-saving").textContent = yen(result.yearlySaving);
@@ -299,16 +462,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  // 前回の入力があれば復元
+  restoreInputs();
+
   const form = document.getElementById("cost-form");
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    render(diagnose());
+    const result = diagnose();
+    saveInputs();
+    render(result);
+    track("diagnose", {
+      monthly_saving: Math.round(result.monthlySaving),
+      yearly_saving: Math.round(result.yearlySaving),
+    });
   });
 
   const resetBtn = document.getElementById("reset-btn");
   resetBtn.addEventListener("click", () => {
     form.reset();
+    clearInputs();
+    lastResult = null;
     document.getElementById("result").hidden = true;
     document.getElementById("form").scrollIntoView({ behavior: "smooth" });
   });
+
+  const ctaBtn = document.getElementById("cta-btn");
+  if (ctaBtn) ctaBtn.addEventListener("click", () => track("cta_click", {}));
 });

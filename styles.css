@@ -226,6 +226,7 @@ body {
 .share__btn--x { background: #111827; }
 .share__btn--line { background: #06c755; }
 .share__btn--copy { background: var(--green); }
+.share__btn--image { background: var(--accent); }
 .share__btn:active { transform: scale(0.98); }
 
 /* ===== アドバイス内アフィリリンク ===== */
