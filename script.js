@@ -18,6 +18,8 @@ const CATEGORIES = [
     floor: 2000,     // これ以下は現実的に下げにくい
     advice:
       "月3,000円を超えるなら格安SIM・eSIMへの乗り換えが最も効果的です。家族割やセット割で実は割高になっているケースも多く、データ使用量を見直して必要なプランに変えるだけで大きく下がります。",
+    // 公開時に href をアフィリエイトリンクへ差し替えてください
+    affiliate: { label: "格安SIMのプランを比較する", href: "" },
   },
   {
     id: "electricity",
@@ -27,6 +29,7 @@ const CATEGORIES = [
     floor: 4000,
     advice:
       "電力会社・料金プランは自由に選べます。比較サイトで現在の使用量を入力し、より安いプランがないか確認しましょう。待機電力カットやアンペア数の見直しも地味に効きます。",
+    affiliate: { label: "電気・ガス料金を比較する", href: "" },
   },
   {
     id: "gas",
@@ -36,6 +39,7 @@ const CATEGORIES = [
     floor: 3000,
     advice:
       "都市ガスは自由化されており会社の切り替えが可能です。プロパンガスの場合は割高なことが多く、複数業者の見積もり比較で下がる余地があります。電気とのセット割もチェックを。",
+    affiliate: { label: "ガス会社を比較・相見積もりする", href: "" },
   },
   {
     id: "water",
@@ -54,6 +58,7 @@ const CATEGORIES = [
     floor: 3000,
     advice:
       "子育て世帯で保障が手厚すぎて割高になっているケースが非常に多い項目です。公的保障（遺族年金・高額療養費）でカバーできる部分を把握し、掛け捨て中心に組み替えると大きく下がります。無料相談の活用も有効です。",
+    affiliate: { label: "保険の無料相談を予約する", href: "" },
   },
   {
     id: "subscription",
@@ -72,6 +77,7 @@ const CATEGORIES = [
     floor: 5000,
     advice:
       "自動車保険の等級・補償内容の見直し、ガソリンカードの活用、駐車場の相見積もりが効きます。利用頻度が低いならカーシェアやレンタカーへの切り替えも選択肢です。",
+    affiliate: { label: "自動車保険を一括見積もりする", href: "" },
   },
   {
     id: "waterserver",
@@ -178,6 +184,38 @@ function buildCtaLead(yearly) {
   return "今回は大きな削減余地は出ませんでしたが、固定費は契約条件の変化で再び膨らみがち。定期点検の習慣化が生活防衛のカギです。";
 }
 
+/** シェアボタンのリンク/挙動をセット */
+function setupShare(yearly) {
+  const url = location.href.split("#")[0];
+  const text =
+    yearly > 0
+      ? `固定費削減診断をやってみたら、年間 約${yen(yearly)} の削減余地が見つかった！無料・登録不要で30秒👇`
+      : `固定費削減診断ツールで家計をチェック！無料・登録不要で30秒👇`;
+
+  const xUrl =
+    "https://twitter.com/intent/tweet?text=" +
+    encodeURIComponent(text) +
+    "&url=" +
+    encodeURIComponent(url);
+  const lineUrl =
+    "https://social-plugins.line.me/lineit/share?url=" + encodeURIComponent(url);
+
+  document.getElementById("share-x").href = xUrl;
+  document.getElementById("share-line").href = lineUrl;
+
+  const copyBtn = document.getElementById("share-copy");
+  copyBtn.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      const original = copyBtn.textContent;
+      copyBtn.textContent = "コピーしました ✓";
+      setTimeout(() => (copyBtn.textContent = original), 1800);
+    } catch (e) {
+      window.prompt("このURLをコピーしてください:", url);
+    }
+  };
+}
+
 /** 結果を画面に描画 */
 function render(result) {
   // サマリー
@@ -220,9 +258,15 @@ function render(result) {
     div.className = "advice";
     const savingTag =
       i.saving > 0 ? `<span class="advice__saving">削減目安 月${yen(i.saving)}</span>` : "";
+    // アフィリエイトリンクは href が設定されている項目のみ表示
+    const aff =
+      i.affiliate && i.affiliate.href
+        ? `<a class="advice__link" href="${i.affiliate.href}" target="_blank" rel="noopener sponsored">${i.affiliate.label} ›</a>`
+        : "";
     div.innerHTML =
       `<div class="advice__head"><span class="advice__name">${i.icon} ${i.name}</span>${savingTag}</div>` +
-      `<p class="advice__text">${i.advice}</p>`;
+      `<p class="advice__text">${i.advice}</p>` +
+      aff;
     adviceList.appendChild(div);
   });
 
@@ -237,6 +281,9 @@ function render(result) {
       `<label for="${cbId}">${text}</label>`;
     actionList.appendChild(li);
   });
+
+  // シェアボタン
+  setupShare(result.yearlySaving);
 
   // CTA
   document.getElementById("cta-lead").textContent = buildCtaLead(result.yearlySaving);
