@@ -30,13 +30,13 @@ python3 -m http.server 8000
 
 ## GitHub Pages で公開する
 
-### 方法A：GitHub Actions で自動デプロイ（推奨）
+### 方法A：GitHub Actions で自動デプロイ（推奨・設定不要）
 
 `.github/workflows/deploy-pages.yml` を同梱しています。
+ワークフローが Pages を自動で有効化（`enablement: true`）するため、**Settings での手動操作は不要**です。
+`main` への push のたびに自動で公開されます。
 
-1. **Settings → Pages** を開く
-2. **Build and deployment** の **Source** を `GitHub Actions` に設定
-3. 以降、`main` への push のたびに自動で公開されます
+> 組織のポリシー等で自動有効化が拒否される場合のみ、**Settings → Pages → Source** を `GitHub Actions` に設定してください。
 
 ### 方法B：ブランチから直接公開
 
