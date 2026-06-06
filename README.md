@@ -30,10 +30,21 @@ python3 -m http.server 8000
 
 ## GitHub Pages で公開する
 
-1. このリポジトリの **Settings → Pages** を開く
-2. **Build and deployment** の **Source** を `Deploy from a branch` に設定
-3. **Branch** を `main`（公開用ブランチ）／フォルダを `/ (root)` に設定して保存
-4. 数分後に `https://<ユーザー名>.github.io/fixed-cost-checker/` で公開されます
+### 方法A：GitHub Actions で自動デプロイ（推奨）
+
+`.github/workflows/deploy-pages.yml` を同梱しています。
+
+1. **Settings → Pages** を開く
+2. **Build and deployment** の **Source** を `GitHub Actions` に設定
+3. 以降、`main` への push のたびに自動で公開されます
+
+### 方法B：ブランチから直接公開
+
+1. **Settings → Pages** を開く
+2. **Source** を `Deploy from a branch` に設定
+3. **Branch** を `main` ／フォルダを `/ (root)` にして保存
+
+いずれの方法でも、数分後に `https://<ユーザー名>.github.io/fixed-cost-checker/` で公開されます。
 
 > このリポジトリは `index.html` がルート直下にあるため、追加設定なしで公開できます。
 
