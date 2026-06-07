@@ -122,10 +122,16 @@ const CATEGORIES = [
     benchmark: (c) => hh([5000, 9000, 13000, 16000, 18000, 20000], c.n),
     saving: (input, c) => {
       const b = hh([5000, 9000, 13000, 16000, 18000, 20000], c.n);
-      return clampSave(excess(input, b) * 0.4 + Math.min(input, b) * 0.1, input);
+      // 「入り方」で削れる割合を変える（貯蓄型は割高になりがちで余地大）
+      const r =
+        c.insType === "savings" ? 0.55 : c.insType === "kakezute" ? 0.2 : 0.4;
+      const sw = c.insType === "kakezute" ? 0.05 : 0.1;
+      return clampSave(excess(input, b) * r + Math.min(input, b) * sw, input);
     },
     advice:
-      "子育て世帯で保障が手厚すぎて割高になっているケースが非常に多い項目です。公的保障（遺族年金・高額療養費）でカバーできる部分を把握し、掛け捨て中心に組み替えると大きく下がります。無料相談の活用も有効です。",
+      "保険は「生命保険（死亡保障）」「医療保険」「学資保険」などに分けて見ると無駄が見つかります。" +
+      "特に終身・養老・学資などの“貯蓄型”は保障と貯蓄が混ざって割高になりがち。掛け捨て中心に組み替え、" +
+      "公的保障（遺族年金・高額療養費）でカバーできる部分は保険を薄くするのが基本です。無料相談の活用も有効です。",
   },
   {
     id: "subscription",
@@ -233,6 +239,7 @@ function readContext() {
     housing: readSelect("housing-type"), // '' | 'apartment' | 'house'
     gasType: readSelect("gas-type"), // '' | 'city' | 'lpg' | 'none'
     lines: parseInt(readSelect("mobile-lines"), 10) || 0, // 0=おまかせ
+    insType: readSelect("insurance-type"), // '' | 'savings' | 'kakezute' | 'unknown'
   };
 }
 
@@ -330,6 +337,7 @@ function saveInputs() {
       _housing: readSelect("housing-type"),
       _gasType: readSelect("gas-type"),
       _lines: readSelect("mobile-lines"),
+      _insType: readSelect("insurance-type"),
     };
     CATEGORIES.forEach((cat) => (data[cat.id] = readValue(cat.id)));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -356,6 +364,7 @@ function restoreInputs() {
     setSelect("housing-type", data._housing);
     setSelect("gas-type", data._gasType);
     setSelect("mobile-lines", data._lines);
+    setSelect("insurance-type", data._insType);
     if (data._mobileType) {
       const radio = document.querySelector(
         `input[name="mobile-type"][value="${data._mobileType}"]`
