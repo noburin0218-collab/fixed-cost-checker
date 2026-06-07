@@ -15,7 +15,7 @@ window.SITE_CONFIG = {
 
   // 有料PDF / チェックリストの販売ページURL（note・Tips など）
   cta: {
-    label: "チェックリスト（PDF）を受け取る",
+    label: "【家計の保健室】固定費見直し完全チェックリスト（PDF）を受け取る",
     href: "", // 例: "https://note.com/xxxx/n/xxxxxxxx"
   },
 

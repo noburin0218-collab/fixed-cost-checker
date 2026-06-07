@@ -259,6 +259,17 @@ body {
 }
 .summary__block--accent .summary__value { color: var(--accent); }
 .summary__total { margin: 14px 0 0; }
+.summary__total .split { font-size: 0.82rem; color: var(--muted); }
+
+/* 固定費/変動費 グループ見出し */
+.advice-group {
+  font-weight: 800;
+  color: var(--green-dark);
+  margin: 6px 0 2px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--green-light);
+}
+.advice-group__sub { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
 
 /* ===== シェア ===== */
 .share {
