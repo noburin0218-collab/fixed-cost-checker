@@ -166,6 +166,7 @@ const CATEGORIES = [
     id: "eatingout",
     name: "外食・コンビニ代",
     icon: "🍔",
+    variable: true, // 固定費ではなく変動費（使い方で変わる）
     scaled: true,
     benchmark: (c) => hh([12000, 18000, 24000, 30000, 35000, 40000], c.n),
     saving: (input, c) => {
@@ -276,6 +277,8 @@ function diagnose() {
 
   const totalInput = items.reduce((s, i) => s + i.input, 0);
   const monthlySaving = items.reduce((s, i) => s + i.saving, 0);
+  const sum = (arr, key, pred) =>
+    arr.filter(pred).reduce((s, i) => s + i[key], 0);
 
   return {
     items,
@@ -283,6 +286,10 @@ function diagnose() {
     totalInput,
     monthlySaving,
     yearlySaving: monthlySaving * 12,
+    fixedInput: sum(items, "input", (i) => !i.variable),
+    variableInput: sum(items, "input", (i) => i.variable),
+    fixedSaving: sum(items, "saving", (i) => !i.variable),
+    variableSaving: sum(items, "saving", (i) => i.variable),
   };
 }
 
@@ -498,8 +505,8 @@ function setupShare(yearly) {
   const url = location.href.split("#")[0];
   const text =
     yearly > 0
-      ? `固定費削減診断をやってみたら、年間 約${yen(yearly)} の削減余地が見つかった！無料・登録不要で30秒👇`
-      : `固定費削減診断ツールで家計をチェック！無料・登録不要で30秒👇`;
+      ? `「家計の保健室」の無料診断をやってみたら、年間 約${yen(yearly)} の削減余地が見つかった！登録不要で30秒👇`
+      : `「家計の保健室」の無料診断で家計をチェック！登録不要で30秒👇`;
 
   const xUrl =
     "https://twitter.com/intent/tweet?text=" +
@@ -538,8 +545,9 @@ function render(result) {
   document.getElementById("monthly-saving").textContent = yen(result.monthlySaving);
   document.getElementById("yearly-saving").textContent = yen(result.yearlySaving);
   const carrierLabel = result.ctx.carrier === "mvno" ? "格安SIM中心" : "大手キャリア中心";
-  document.getElementById("total-line").textContent =
-    `${result.ctx.n}人世帯・${carrierLabel}で診断／現在の固定費合計：月 ${yen(result.totalInput)}（年 ${yen(result.totalInput * 12)}）`;
+  document.getElementById("total-line").innerHTML =
+    `${result.ctx.n}人世帯・${carrierLabel}で診断／現在の支出合計：月 ${yen(result.totalInput)}（年 ${yen(result.totalInput * 12)}）` +
+    `<br><span class="split">└ 固定費 月${yen(result.fixedInput)}（削減余地 ${yen(result.fixedSaving)}）／変動費 月${yen(result.variableInput)}（同 ${yen(result.variableSaving)}）</span>`;
 
   // 削減余地でソート
   const ranked = [...result.items].sort((a, b) => b.saving - a.saving);
@@ -568,12 +576,22 @@ function render(result) {
     });
   }
 
-  // 全項目アドバイス（入力があるものを削減余地順に表示）
+  // 全項目アドバイス（入力があるものを削減余地順に表示。固定費／変動費で分ける）
   const adviceList = document.getElementById("advice-list");
   adviceList.innerHTML = "";
   const adviceItems = ranked.filter((i) => i.input > 0);
   const toShow = adviceItems.length > 0 ? adviceItems : CATEGORIES;
-  toShow.forEach((i) => {
+
+  const renderGroup = (label, sub, items) => {
+    if (items.length === 0) return;
+    const head = document.createElement("p");
+    head.className = "advice-group";
+    head.innerHTML = `${label} <span class="advice-group__sub">${sub}</span>`;
+    adviceList.appendChild(head);
+    items.forEach(appendAdvice);
+  };
+
+  function appendAdvice(i) {
     const div = document.createElement("div");
     div.className = "advice";
     const savingTag =
@@ -596,7 +614,10 @@ function render(result) {
       `<p class="advice__text">${i.advice}</p>` +
       aff;
     adviceList.appendChild(div);
-  });
+  }
+
+  renderGroup("固定費", "毎月かかる・一度の見直しでずっと効く", toShow.filter((i) => !i.variable));
+  renderGroup("変動費", "使い方で変わる・習慣で効いてくる", toShow.filter((i) => i.variable));
 
   // 今日やる3アクション
   const actionList = document.getElementById("action-list");
