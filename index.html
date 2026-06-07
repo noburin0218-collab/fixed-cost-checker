@@ -62,6 +62,38 @@
       </p>
 
       <form id="cost-form" novalidate>
+        <!-- 前提条件（診断精度を上げるための情報） -->
+        <fieldset class="prefs">
+          <legend class="prefs__legend">まず、あなたの世帯について</legend>
+
+          <label class="prefs__row">
+            <span class="prefs__label">👨‍👩‍👧 世帯人数</span>
+            <select id="household" class="prefs__select">
+              <option value="1">1人</option>
+              <option value="2">2人</option>
+              <option value="3" selected>3人</option>
+              <option value="4">4人</option>
+              <option value="5">5人</option>
+              <option value="6">6人以上</option>
+            </select>
+          </label>
+
+          <div class="prefs__row">
+            <span class="prefs__label">📱 スマホの契約</span>
+            <div class="prefs__radios">
+              <label class="prefs__radio">
+                <input type="radio" name="mobile-type" value="carrier" checked />
+                <span>大手キャリア中心<br /><small>(docomo / au / SoftBank)</small></span>
+              </label>
+              <label class="prefs__radio">
+                <input type="radio" name="mobile-type" value="mvno" />
+                <span>格安SIM中心<br /><small>(楽天 / povo / ahamo 等)</small></span>
+              </label>
+            </div>
+          </div>
+          <p class="prefs__hint">※ 世帯人数で電気・ガス・水道・外食などの「目安額」を補正し、より実態に近い診断にします。</p>
+        </fieldset>
+
         <div class="grid">
           <!-- 各項目は JS の CATEGORIES と id を一致させる -->
           <label class="field">
