@@ -23,6 +23,29 @@ function clampSave(s, input) {
   return Math.max(0, Math.min(s, input * 0.8));
 }
 
+/** 住居タイプによる光熱費の目安補正（戸建ては高め、集合は低め） */
+function housingMult(housing) {
+  if (housing === "house") return 1.15;
+  if (housing === "apartment") return 0.9;
+  return 1.0;
+}
+
+/**
+ * ガス代の目安（見直し後に到達しやすい目標額）。
+ * プロパンは「現状が割高」なだけで目標は都市ガス水準に置く
+ * → 高く払っている人ほど超過分が大きく出て、削減余地が大きく評価される。
+ */
+function gasBenchmark(c) {
+  return Math.round(hh([3500, 4800, 5500, 6000, 6500, 7000], c.n) * housingMult(c.housing));
+}
+
+/** スマホ代の目安（1回線あたり目安 × 回線数）。回線数未指定は1回線扱い */
+function mobileBenchmark(c) {
+  const perLine = c.carrier === "mvno" ? 2200 : 3500;
+  const lines = c.lines > 0 ? c.lines : 1;
+  return perLine * lines;
+}
+
 /**
  * カテゴリ定義（id は index.html の input id と一致させる）
  * - benchmark(ctx): 月額の目安（円）。ctx = { n: 世帯人数, carrier: 'carrier'|'mvno' }
@@ -34,53 +57,58 @@ const CATEGORIES = [
     id: "mobile",
     name: "スマホ代",
     icon: "📱",
-    benchmark: (c) => (c.carrier === "mvno" ? 2200 : 3500),
+    benchmark: (c) => mobileBenchmark(c),
     saving: (input, c) => {
-      const b = c.carrier === "mvno" ? 2200 : 3500;
+      const b = mobileBenchmark(c);
       const r = c.carrier === "mvno" ? 0.25 : 0.6; // 大手は格安SIMで大幅減
       return clampSave(excess(input, b) * r + Math.min(input, b) * 0.05, input);
     },
     advice:
       "月3,000円を超えるなら格安SIM・eSIMへの乗り換えが最も効果的です。家族割やセット割で実は割高になっているケースも多く、データ使用量を見直して必要なプランに変えるだけで大きく下がります。",
-    // 公開時に href をアフィリエイトリンクへ差し替えてください
-    affiliate: { label: "格安SIMのプランを比較する", href: "" },
   },
   {
     id: "electricity",
     name: "電気代",
     icon: "💡",
     scaled: true,
-    benchmark: (c) => hh([6500, 11000, 12000, 13000, 14000, 15500], c.n),
+    benchmark: (c) =>
+      Math.round(hh([6500, 11000, 12000, 13000, 14000, 15500], c.n) * housingMult(c.housing)),
     saving: (input, c) => {
-      const b = hh([6500, 11000, 12000, 13000, 14000, 15500], c.n);
+      const b = Math.round(
+        hh([6500, 11000, 12000, 13000, 14000, 15500], c.n) * housingMult(c.housing)
+      );
       return clampSave(excess(input, b) * 0.4 + Math.min(input, b) * 0.07, input);
     },
     advice:
       "電力会社・料金プランは自由に選べます。比較サイトで現在の使用量を入力し、より安いプランがないか確認しましょう。待機電力カットやアンペア数の見直しも地味に効きます。",
-    affiliate: { label: "電気・ガス料金を比較する", href: "" },
   },
   {
     id: "gas",
     name: "ガス代",
     icon: "🔥",
     scaled: true,
-    benchmark: (c) => hh([3500, 4800, 5500, 6000, 6500, 7000], c.n),
+    benchmark: (c) => gasBenchmark(c),
     saving: (input, c) => {
-      const b = hh([3500, 4800, 5500, 6000, 6500, 7000], c.n);
-      return clampSave(excess(input, b) * 0.4 + Math.min(input, b) * 0.07, input);
+      if (c.gasType === "none") return 0; // ガスを使っていない
+      const b = gasBenchmark(c);
+      const r = c.gasType === "lpg" ? 0.5 : 0.4; // プロパンは下げ余地大
+      const sw = c.gasType === "lpg" ? 0.1 : 0.07;
+      return clampSave(excess(input, b) * r + Math.min(input, b) * sw, input);
     },
     advice:
       "都市ガスは自由化されており会社の切り替えが可能です。プロパンガスの場合は割高なことが多く、複数業者の見積もり比較で下がる余地があります。電気とのセット割もチェックを。",
-    affiliate: { label: "ガス会社を比較・相見積もりする", href: "" },
   },
   {
     id: "water",
     name: "水道代",
     icon: "🚰",
     scaled: true,
-    benchmark: (c) => hh([2500, 4200, 5000, 6000, 6800, 7500], c.n),
+    benchmark: (c) =>
+      Math.round(hh([2500, 4200, 5000, 6000, 6800, 7500], c.n) * housingMult(c.housing)),
     saving: (input, c) => {
-      const b = hh([2500, 4200, 5000, 6000, 6800, 7500], c.n);
+      const b = Math.round(
+        hh([2500, 4200, 5000, 6000, 6800, 7500], c.n) * housingMult(c.housing)
+      );
       return clampSave(excess(input, b) * 0.3, input); // 会社は選べず使い方中心
     },
     advice:
@@ -98,7 +126,6 @@ const CATEGORIES = [
     },
     advice:
       "子育て世帯で保障が手厚すぎて割高になっているケースが非常に多い項目です。公的保障（遺族年金・高額療養費）でカバーできる部分を把握し、掛け捨て中心に組み替えると大きく下がります。無料相談の活用も有効です。",
-    affiliate: { label: "保険の無料相談を予約する", href: "" },
   },
   {
     id: "subscription",
@@ -119,7 +146,6 @@ const CATEGORIES = [
       clampSave(excess(input, 18000) * 0.2 + Math.min(input, 18000) * 0.08, input),
     advice:
       "自動車保険の等級・補償内容の見直し、ガソリンカードの活用、駐車場の相見積もりが効きます。利用頻度が低いならカーシェアやレンタカーへの切り替えも選択肢です。",
-    affiliate: { label: "自動車保険を一括見積もりする", href: "" },
   },
   {
     id: "waterserver",
@@ -193,9 +219,29 @@ function readMobileType() {
   return checked && checked.value === "mvno" ? "mvno" : "carrier";
 }
 
+/** select の値を取得（未選択は ""） */
+function readSelect(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : "";
+}
+
+/** 入力前提（ctx）をまとめて取得 */
+function readContext() {
+  return {
+    n: readHousehold(),
+    carrier: readMobileType(),
+    housing: readSelect("housing-type"), // '' | 'apartment' | 'house'
+    gasType: readSelect("gas-type"), // '' | 'city' | 'lpg' | 'none'
+    lines: parseInt(readSelect("mobile-lines"), 10) || 0, // 0=おまかせ
+  };
+}
+
 /** 入力額と目安から「目安比較メモ」を作る */
 function buildNote(cat, input, b, ctx) {
   if (input <= 0) return "";
+  if (cat.id === "gas" && ctx.gasType === "none") {
+    return "ガスを使用していない設定です（オール電化など）。";
+  }
   if (b <= 0) return "この費目自体が見直し候補です（解約・代替で大きく圧縮可能）。";
   const base = cat.scaled ? `${ctx.n}人世帯の目安 約${yen(b)}` : `目安 約${yen(b)}`;
   const diff = input - b;
@@ -211,7 +257,7 @@ function buildNote(cat, input, b, ctx) {
 
 /** 診断を実行して結果オブジェクトを返す */
 function diagnose() {
-  const ctx = { n: readHousehold(), carrier: readMobileType() };
+  const ctx = readContext();
 
   const items = CATEGORIES.map((cat) => {
     const input = readValue(cat.id);
@@ -278,7 +324,13 @@ function buildCtaLead(yearly) {
 /** 入力値をブラウザ（localStorage）に保存。※端末内のみ・外部送信なし */
 function saveInputs() {
   try {
-    const data = { _household: readHousehold(), _mobileType: readMobileType() };
+    const data = {
+      _household: readHousehold(),
+      _mobileType: readMobileType(),
+      _housing: readSelect("housing-type"),
+      _gasType: readSelect("gas-type"),
+      _lines: readSelect("mobile-lines"),
+    };
     CATEGORIES.forEach((cat) => (data[cat.id] = readValue(cat.id)));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch (e) {
@@ -296,8 +348,14 @@ function restoreInputs() {
       const el = document.getElementById(cat.id);
       if (el && data[cat.id] > 0) el.value = data[cat.id];
     });
-    const hh = document.getElementById("household");
-    if (hh && data._household) hh.value = String(data._household);
+    const setSelect = (id, val) => {
+      const el = document.getElementById(id);
+      if (el && val != null && val !== "") el.value = String(val);
+    };
+    setSelect("household", data._household);
+    setSelect("housing-type", data._housing);
+    setSelect("gas-type", data._gasType);
+    setSelect("mobile-lines", data._lines);
     if (data._mobileType) {
       const radio = document.querySelector(
         `input[name="mobile-type"][value="${data._mobileType}"]`
@@ -513,10 +571,15 @@ function render(result) {
       i.saving > 0 ? `<span class="advice__saving">削減目安 月${yen(i.saving)}</span>` : "";
     // 目安との比較メモ
     const note = i.note ? `<p class="advice__note">${i.note}</p>` : "";
-    // アフィリエイトリンクは href が設定されている項目のみ表示
+    // アフィリエイトリンクは config.js で href が設定されている項目のみ表示
+    const cfg =
+      (window.SITE_CONFIG &&
+        window.SITE_CONFIG.affiliates &&
+        window.SITE_CONFIG.affiliates[i.id]) ||
+      null;
     const aff =
-      i.affiliate && i.affiliate.href
-        ? `<a class="advice__link" href="${i.affiliate.href}" target="_blank" rel="noopener sponsored">${i.affiliate.label} ›</a>`
+      cfg && cfg.href
+        ? `<a class="advice__link" href="${cfg.href}" target="_blank" rel="noopener sponsored">${cfg.label || "くわしく見る"} ›</a>`
         : "";
     div.innerHTML =
       `<div class="advice__head"><span class="advice__name">${i.icon} ${i.name}</span>${savingTag}</div>` +
@@ -582,5 +645,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const ctaBtn = document.getElementById("cta-btn");
-  if (ctaBtn) ctaBtn.addEventListener("click", () => track("cta_click", {}));
+  if (ctaBtn) {
+    const ctaCfg = (window.SITE_CONFIG && window.SITE_CONFIG.cta) || {};
+    if (ctaCfg.label) ctaBtn.textContent = ctaCfg.label;
+    if (ctaCfg.href) ctaBtn.href = ctaCfg.href; // 未設定なら "#" のまま
+    ctaBtn.addEventListener("click", () => track("cta_click", {}));
+  }
 });
