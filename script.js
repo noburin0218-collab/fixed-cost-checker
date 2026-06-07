@@ -3,19 +3,43 @@
 /**
  * 固定費削減診断ツール
  * - 完全クライアントサイド（入力はどこにも送信されません）
- * - 各カテゴリに「削減期待率(rate)」と「現実的な下限額(floor)」を設定し、
- *   削減余地 = min(入力額 * rate, max(入力額 - floor, 0)) で算出。
+ * - 「世帯人数別の目安額(benchmark)」と入力額を比較し、
+ *   目安超過分のうち現実的に削れる割合 + 目安内でも乗り換え等で下がる分、で削減余地を算出。
+ * - スマホは契約形態（大手キャリア / 格安SIM）で目安と削減率を変える。
  * - 削減余地の大きい順に優先度を決定する。
  */
 
-/** カテゴリ定義（id は index.html の input id と一致させる） */
+/** 世帯人数で配列から目安を引く（1〜6人、6人以上は末尾） */
+function hh(arr, n) {
+  const i = Math.min(Math.max((n | 0) - 1, 0), arr.length - 1);
+  return arr[i];
+}
+/** 目安超過分 */
+function excess(input, b) {
+  return Math.max(input - b, 0);
+}
+/** 削減余地は入力額の80%を上限にクランプ（非現実的な数値を防ぐ） */
+function clampSave(s, input) {
+  return Math.max(0, Math.min(s, input * 0.8));
+}
+
+/**
+ * カテゴリ定義（id は index.html の input id と一致させる）
+ * - benchmark(ctx): 月額の目安（円）。ctx = { n: 世帯人数, carrier: 'carrier'|'mvno' }
+ * - scaled: true なら目安が世帯人数に応じて変わる（表示に「N人世帯の目安」を付ける）
+ * - saving(input, ctx): 削減余地（円/月）
+ */
 const CATEGORIES = [
   {
     id: "mobile",
     name: "スマホ代",
     icon: "📱",
-    rate: 0.6,       // 格安SIMで大幅減が見込める
-    floor: 2000,     // これ以下は現実的に下げにくい
+    benchmark: (c) => (c.carrier === "mvno" ? 2200 : 3500),
+    saving: (input, c) => {
+      const b = c.carrier === "mvno" ? 2200 : 3500;
+      const r = c.carrier === "mvno" ? 0.25 : 0.6; // 大手は格安SIMで大幅減
+      return clampSave(excess(input, b) * r + Math.min(input, b) * 0.05, input);
+    },
     advice:
       "月3,000円を超えるなら格安SIM・eSIMへの乗り換えが最も効果的です。家族割やセット割で実は割高になっているケースも多く、データ使用量を見直して必要なプランに変えるだけで大きく下がります。",
     // 公開時に href をアフィリエイトリンクへ差し替えてください
@@ -25,8 +49,12 @@ const CATEGORIES = [
     id: "electricity",
     name: "電気代",
     icon: "💡",
-    rate: 0.1,
-    floor: 4000,
+    scaled: true,
+    benchmark: (c) => hh([6500, 11000, 12000, 13000, 14000, 15500], c.n),
+    saving: (input, c) => {
+      const b = hh([6500, 11000, 12000, 13000, 14000, 15500], c.n);
+      return clampSave(excess(input, b) * 0.4 + Math.min(input, b) * 0.07, input);
+    },
     advice:
       "電力会社・料金プランは自由に選べます。比較サイトで現在の使用量を入力し、より安いプランがないか確認しましょう。待機電力カットやアンペア数の見直しも地味に効きます。",
     affiliate: { label: "電気・ガス料金を比較する", href: "" },
@@ -35,8 +63,12 @@ const CATEGORIES = [
     id: "gas",
     name: "ガス代",
     icon: "🔥",
-    rate: 0.1,
-    floor: 3000,
+    scaled: true,
+    benchmark: (c) => hh([3500, 4800, 5500, 6000, 6500, 7000], c.n),
+    saving: (input, c) => {
+      const b = hh([3500, 4800, 5500, 6000, 6500, 7000], c.n);
+      return clampSave(excess(input, b) * 0.4 + Math.min(input, b) * 0.07, input);
+    },
     advice:
       "都市ガスは自由化されており会社の切り替えが可能です。プロパンガスの場合は割高なことが多く、複数業者の見積もり比較で下がる余地があります。電気とのセット割もチェックを。",
     affiliate: { label: "ガス会社を比較・相見積もりする", href: "" },
@@ -45,17 +77,25 @@ const CATEGORIES = [
     id: "water",
     name: "水道代",
     icon: "🚰",
-    rate: 0.05,
-    floor: 2500,
+    scaled: true,
+    benchmark: (c) => hh([2500, 4200, 5000, 6000, 6800, 7500], c.n),
+    saving: (input, c) => {
+      const b = hh([2500, 4200, 5000, 6000, 6800, 7500], c.n);
+      return clampSave(excess(input, b) * 0.3, input); // 会社は選べず使い方中心
+    },
     advice:
-      "水道は会社を選べないため削減幅は小さめ。節水シャワーヘッドや食洗機の活用、お風呂の残り湯利用など使い方の工夫が中心になります。まずは現状維持でもOKな項目です。",
+      "水道は会社を選べないため削減幅は小さめ。節水シャワーヘッドや食洗機の活用、お風呂の残り湯利用など使い方の工夫が中心になります。目安より高い場合は使い方の見直し余地があります。",
   },
   {
     id: "insurance",
     name: "保険料",
     icon: "🛡️",
-    rate: 0.35,
-    floor: 3000,
+    scaled: true,
+    benchmark: (c) => hh([5000, 9000, 13000, 16000, 18000, 20000], c.n),
+    saving: (input, c) => {
+      const b = hh([5000, 9000, 13000, 16000, 18000, 20000], c.n);
+      return clampSave(excess(input, b) * 0.4 + Math.min(input, b) * 0.1, input);
+    },
     advice:
       "子育て世帯で保障が手厚すぎて割高になっているケースが非常に多い項目です。公的保障（遺族年金・高額療養費）でカバーできる部分を把握し、掛け捨て中心に組み替えると大きく下がります。無料相談の活用も有効です。",
     affiliate: { label: "保険の無料相談を予約する", href: "" },
@@ -64,8 +104,9 @@ const CATEGORIES = [
     id: "subscription",
     name: "サブスク代",
     icon: "🎬",
-    rate: 0.5,
-    floor: 0,
+    benchmark: () => 2000,
+    saving: (input) =>
+      clampSave(excess(input, 2000) * 0.5 + Math.min(input, 2000) * 0.1, input),
     advice:
       "使っていない・重複している動画/音楽/アプリのサブスクが眠っていないか棚卸しを。年払いへの切り替えや無料プランで足りるものへの変更も検討しましょう。",
   },
@@ -73,8 +114,9 @@ const CATEGORIES = [
     id: "car",
     name: "車関連費",
     icon: "🚗",
-    rate: 0.2,
-    floor: 5000,
+    benchmark: () => 18000,
+    saving: (input) =>
+      clampSave(excess(input, 18000) * 0.2 + Math.min(input, 18000) * 0.08, input),
     advice:
       "自動車保険の等級・補償内容の見直し、ガソリンカードの活用、駐車場の相見積もりが効きます。利用頻度が低いならカーシェアやレンタカーへの切り替えも選択肢です。",
     affiliate: { label: "自動車保険を一括見積もりする", href: "" },
@@ -83,8 +125,8 @@ const CATEGORIES = [
     id: "waterserver",
     name: "ウォーターサーバー代",
     icon: "💧",
-    rate: 0.9,
-    floor: 0,
+    benchmark: () => 0, // この費目自体が見直し候補
+    saving: (input) => clampSave(input * 0.9, input),
     advice:
       "費用対効果を感じにくければ解約候補の筆頭です。浄水器やブリタ等のポット型に替えるだけで月数千円が浮きます。レンタル料・水ノルマ・電気代の合計で再評価しましょう。",
   },
@@ -92,8 +134,12 @@ const CATEGORIES = [
     id: "eatingout",
     name: "外食・コンビニ代",
     icon: "🍔",
-    rate: 0.3,
-    floor: 5000,
+    scaled: true,
+    benchmark: (c) => hh([12000, 18000, 24000, 30000, 35000, 40000], c.n),
+    saving: (input, c) => {
+      const b = hh([12000, 18000, 24000, 30000, 35000, 40000], c.n);
+      return clampSave(excess(input, b) * 0.4 + Math.min(input, b) * 0.08, input);
+    },
     advice:
       "コンビニの“ついで買い”と外食回数が膨らみやすいポイント。週の外食回数を1回減らす、まとめ買い＋作り置きに切り替えるだけで月単位の効果が出ます。",
   },
@@ -101,8 +147,8 @@ const CATEGORIES = [
     id: "other",
     name: "その他の固定費",
     icon: "📦",
-    rate: 0.15,
-    floor: 0,
+    benchmark: () => 3000,
+    saving: (input) => clampSave(excess(input, 3000) * 0.3, input),
     advice:
       "ジム・習い事・各種会費・有料アプリなど“なんとなく続いている”支出を棚卸し。利用頻度に見合っているか1つずつ確認すると、不要な定額課金が見つかります。",
   },
@@ -134,14 +180,45 @@ function readValue(id) {
   return v;
 }
 
+/** 世帯人数を取得（1〜6、未選択は3） */
+function readHousehold() {
+  const el = document.getElementById("household");
+  const v = el ? parseInt(el.value, 10) : NaN;
+  return isFinite(v) && v >= 1 ? v : 3;
+}
+
+/** スマホ契約形態を取得（'carrier' | 'mvno'、既定は大手キャリア） */
+function readMobileType() {
+  const checked = document.querySelector('input[name="mobile-type"]:checked');
+  return checked && checked.value === "mvno" ? "mvno" : "carrier";
+}
+
+/** 入力額と目安から「目安比較メモ」を作る */
+function buildNote(cat, input, b, ctx) {
+  if (input <= 0) return "";
+  if (b <= 0) return "この費目自体が見直し候補です（解約・代替で大きく圧縮可能）。";
+  const base = cat.scaled ? `${ctx.n}人世帯の目安 約${yen(b)}` : `目安 約${yen(b)}`;
+  const diff = input - b;
+  const margin = b * 0.12;
+  if (diff > margin) {
+    return `${base}／あなた ${yen(input)} → 約${yen(diff)}高め`;
+  }
+  if (diff < -margin) {
+    return `${base}／あなた ${yen(input)} → 目安より約${yen(-diff)}低め（良好）`;
+  }
+  return `${base}／あなた ${yen(input)} → ほぼ適正`;
+}
+
 /** 診断を実行して結果オブジェクトを返す */
 function diagnose() {
+  const ctx = { n: readHousehold(), carrier: readMobileType() };
+
   const items = CATEGORIES.map((cat) => {
     const input = readValue(cat.id);
-    const byRate = input * cat.rate;
-    const byFloor = Math.max(input - cat.floor, 0);
-    const saving = Math.min(byRate, byFloor);
-    return { ...cat, input, saving };
+    const benchmark = cat.benchmark(ctx);
+    const saving = input > 0 ? cat.saving(input, ctx) : 0;
+    const note = buildNote(cat, input, benchmark, ctx);
+    return { ...cat, input, benchmark, saving, note };
   });
 
   const totalInput = items.reduce((s, i) => s + i.input, 0);
@@ -149,6 +226,7 @@ function diagnose() {
 
   return {
     items,
+    ctx,
     totalInput,
     monthlySaving,
     yearlySaving: monthlySaving * 12,
@@ -200,7 +278,7 @@ function buildCtaLead(yearly) {
 /** 入力値をブラウザ（localStorage）に保存。※端末内のみ・外部送信なし */
 function saveInputs() {
   try {
-    const data = {};
+    const data = { _household: readHousehold(), _mobileType: readMobileType() };
     CATEGORIES.forEach((cat) => (data[cat.id] = readValue(cat.id)));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch (e) {
@@ -218,6 +296,14 @@ function restoreInputs() {
       const el = document.getElementById(cat.id);
       if (el && data[cat.id] > 0) el.value = data[cat.id];
     });
+    const hh = document.getElementById("household");
+    if (hh && data._household) hh.value = String(data._household);
+    if (data._mobileType) {
+      const radio = document.querySelector(
+        `input[name="mobile-type"][value="${data._mobileType}"]`
+      );
+      if (radio) radio.checked = true;
+    }
   } catch (e) {
     /* 壊れたデータは無視 */
   }
@@ -384,8 +470,9 @@ function render(result) {
   // サマリー
   document.getElementById("monthly-saving").textContent = yen(result.monthlySaving);
   document.getElementById("yearly-saving").textContent = yen(result.yearlySaving);
+  const carrierLabel = result.ctx.carrier === "mvno" ? "格安SIM中心" : "大手キャリア中心";
   document.getElementById("total-line").textContent =
-    `現在の固定費合計：月 ${yen(result.totalInput)}（年 ${yen(result.totalInput * 12)}）`;
+    `${result.ctx.n}人世帯・${carrierLabel}で診断／現在の固定費合計：月 ${yen(result.totalInput)}（年 ${yen(result.totalInput * 12)}）`;
 
   // 削減余地でソート
   const ranked = [...result.items].sort((a, b) => b.saving - a.saving);
@@ -403,10 +490,13 @@ function render(result) {
   } else {
     top3.forEach((i) => {
       const li = document.createElement("li");
+      const desc = i.note
+        ? `${i.note}。年間で約${yen(i.saving * 12)}の削減が見込めます。`
+        : `年間で約${yen(i.saving * 12)}の削減が見込めます。`;
       li.innerHTML =
         `<span class="top3__name">${i.icon} ${i.name}</span> ` +
         `<span class="top3__saving">月 約${yen(i.saving)}</span>` +
-        `<p class="top3__desc">年間で約${yen(i.saving * 12)}の削減が見込めます。</p>`;
+        `<p class="top3__desc">${desc}</p>`;
       top3List.appendChild(li);
     });
   }
@@ -421,6 +511,8 @@ function render(result) {
     div.className = "advice";
     const savingTag =
       i.saving > 0 ? `<span class="advice__saving">削減目安 月${yen(i.saving)}</span>` : "";
+    // 目安との比較メモ
+    const note = i.note ? `<p class="advice__note">${i.note}</p>` : "";
     // アフィリエイトリンクは href が設定されている項目のみ表示
     const aff =
       i.affiliate && i.affiliate.href
@@ -428,6 +520,7 @@ function render(result) {
         : "";
     div.innerHTML =
       `<div class="advice__head"><span class="advice__name">${i.icon} ${i.name}</span>${savingTag}</div>` +
+      note +
       `<p class="advice__text">${i.advice}</p>` +
       aff;
     adviceList.appendChild(div);
@@ -472,6 +565,8 @@ document.addEventListener("DOMContentLoaded", () => {
     saveInputs();
     render(result);
     track("diagnose", {
+      household: result.ctx.n,
+      mobile_type: result.ctx.carrier,
       monthly_saving: Math.round(result.monthlySaving),
       yearly_saving: Math.round(result.yearlySaving),
     });

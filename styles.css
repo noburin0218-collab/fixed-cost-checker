@@ -122,6 +122,54 @@ body {
 }
 .muted { color: var(--muted); font-size: 0.9rem; }
 
+/* ===== 前提条件（世帯情報） ===== */
+.prefs {
+  border: 1.5px solid var(--green);
+  background: var(--green-light);
+  border-radius: 12px;
+  padding: 14px 16px 16px;
+  margin: 18px 0 4px;
+}
+.prefs__legend {
+  font-weight: 800;
+  color: var(--green-dark);
+  padding: 0 8px;
+}
+.prefs__row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.prefs__label { font-weight: 700; min-width: 110px; }
+.prefs__select {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 1.05rem;
+  background: #fff;
+}
+.prefs__radios { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
+.prefs__radio {
+  flex: 1;
+  min-width: 130px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.prefs__radio input { accent-color: var(--green); width: 18px; height: 18px; }
+.prefs__radio small { color: var(--muted); }
+.prefs__hint { font-size: 0.8rem; color: var(--muted); margin: 4px 0 0; }
+
 /* ===== フォーム ===== */
 .grid {
   display: grid;
@@ -294,6 +342,15 @@ body {
 .advice__name { font-weight: 800; }
 .advice__saving { font-size: 0.85rem; color: var(--green-dark); font-weight: 700; }
 .advice__text { margin: 8px 0 0; font-size: 0.92rem; }
+.advice__note {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  background: var(--green-light);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
 
 /* ===== アクション ===== */
 .actions { list-style: none; padding: 0; margin: 0; }
