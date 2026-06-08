@@ -18,7 +18,11 @@
 | `styles.css` | デザイン（モバイルファースト） |
 | `script.js` | 診断ロジック・結果描画 |
 | `config.js` | **公開前に編集する設定ファイル**（計測ID・各リンク） |
+| `SETUP.md` | **公開までの完全手順書**（まずこれを上から実行） |
 | `MONETIZATION.md` | 収益化ガイド（ASP・案件の選び方、`config.js` の埋め方） |
+| `MARKETING.md` | 集客・需要検証ガイド（SNS投稿文・アカウント設定・7日検証） |
+| `note_article.md` | note販売記事のコピペ用ドラフト |
+| `favicon.*` / `apple-touch-icon.png` | サイトのアイコン |
 
 ## 診断ロジック（精度のしくみ）
 
