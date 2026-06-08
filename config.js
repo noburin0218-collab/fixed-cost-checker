@@ -22,6 +22,7 @@ window.SITE_CONFIG = {
   // 各カテゴリのアフィリエイトリンク（取得したURLを href に貼るだけ）
   // ラベルは自由に変更可。href が空ならそのボタンは表示されません。
   affiliates: {
+    housing: { label: "住宅ローンの借り換えメリットを試算する", href: "" },
     mobile: { label: "格安SIMのプランを比較する", href: "" },
     electricity: { label: "電気・ガス料金を比較する", href: "" },
     gas: { label: "ガス会社を比較・相見積もりする", href: "" },

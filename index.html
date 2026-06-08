@@ -148,12 +148,30 @@
                 <option value="unknown">よくわからない</option>
               </select>
             </label>
-            <p class="prefs__hint">※ プロパンは都市ガスより割高なことが多く、見直し余地も大きく評価します。戸建て/集合で光熱費の目安を補正します。貯蓄型保険は割高になりがちなため削減余地を大きく見積もります。</p>
+
+            <label class="prefs__row">
+              <span class="prefs__label">🏠 住まいの種類</span>
+              <select id="housing-tenure" class="prefs__select">
+                <option value="">指定しない</option>
+                <option value="own_loan">持ち家（住宅ローン返済中）</option>
+                <option value="own_paid">持ち家（ローン完済）</option>
+                <option value="rent">賃貸</option>
+              </select>
+            </label>
+            <p class="prefs__hint">※ プロパンは都市ガスより割高なことが多く、見直し余地も大きく評価します。戸建て/集合で光熱費の目安を補正します。貯蓄型保険は割高になりがちなため削減余地を大きく見積もります。住宅ローン返済中なら借り換えの試算余地を診断します。</p>
           </div>
         </details>
 
         <div class="grid">
           <!-- 各項目は JS の CATEGORIES と id を一致させる -->
+          <label class="field">
+            <span class="field__label">🏠 住宅費（家賃・ローン）</span>
+            <span class="field__input">
+              <input type="number" inputmode="numeric" min="0" step="100" id="housing" placeholder="例: 90000" />
+              <span class="field__unit">円/月</span>
+            </span>
+          </label>
+
           <label class="field">
             <span class="field__label">📱 スマホ代</span>
             <span class="field__input">
