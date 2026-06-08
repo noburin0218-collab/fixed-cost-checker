@@ -54,6 +54,19 @@ function mobileBenchmark(c) {
  */
 const CATEGORIES = [
   {
+    id: "housing",
+    name: "住宅費（家賃・ローン）",
+    icon: "🏠",
+    benchmark: () => null, // 地域差が大きいため目安比較はしない
+    saving: (input, c) => {
+      if (c.tenure === "own_loan") return clampSave(input * 0.05, input); // 借り換え余地（条件次第）
+      if (c.tenure === "rent") return clampSave(input * 0.02, input); // 家賃は下げにくい
+      return 0; // 完済・未指定は0
+    },
+    advice:
+      "住宅費は固定費の中で最大級です。持ち家でローン返済中なら、残高・金利・残期間しだいで“借り換え”により総返済額が大きく下がることがあります（一般に残高が多く・残期間が長く・金利差があるほど効果大）。賃貸は下げにくい費目ですが、更新時の交渉やより条件の良い物件への住み替え時に見直せます。",
+  },
+  {
     id: "mobile",
     name: "スマホ代",
     icon: "📱",
@@ -241,6 +254,7 @@ function readContext() {
     gasType: readSelect("gas-type"), // '' | 'city' | 'lpg' | 'none'
     lines: parseInt(readSelect("mobile-lines"), 10) || 0, // 0=おまかせ
     insType: readSelect("insurance-type"), // '' | 'savings' | 'kakezute' | 'unknown'
+    tenure: readSelect("housing-tenure"), // '' | 'own_loan' | 'own_paid' | 'rent'
   };
 }
 
@@ -250,7 +264,16 @@ function buildNote(cat, input, b, ctx) {
   if (cat.id === "gas" && ctx.gasType === "none") {
     return "ガスを使用していない設定です（オール電化など）。";
   }
-  if (b <= 0) return "この費目自体が見直し候補です（解約・代替で大きく圧縮可能）。";
+  if (cat.id === "housing") {
+    if (ctx.tenure === "own_loan")
+      return "ローン返済中：借り換えで下がる可能性（残高・金利・残期間しだい）。試算する価値大。";
+    if (ctx.tenure === "rent")
+      return "家賃は下げにくい費目。更新時の交渉や、より条件の良い物件への住み替え時に検討を。";
+    if (ctx.tenure === "own_paid")
+      return "完済済み：固定資産税・修繕積立など維持費の点検が中心です。";
+    return "「住まいの種類」を選ぶと、住宅費の見直し余地（借り換え等）も診断します。";
+  }
+  if (b == null || b <= 0) return "この費目自体が見直し候補です（解約・代替で大きく圧縮可能）。";
   const base = cat.scaled ? `${ctx.n}人世帯の目安 約${yen(b)}` : `目安 約${yen(b)}`;
   const diff = input - b;
   const margin = b * 0.12;
@@ -345,6 +368,7 @@ function saveInputs() {
       _gasType: readSelect("gas-type"),
       _lines: readSelect("mobile-lines"),
       _insType: readSelect("insurance-type"),
+      _tenure: readSelect("housing-tenure"),
     };
     CATEGORIES.forEach((cat) => (data[cat.id] = readValue(cat.id)));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -372,6 +396,7 @@ function restoreInputs() {
     setSelect("gas-type", data._gasType);
     setSelect("mobile-lines", data._lines);
     setSelect("insurance-type", data._insType);
+    setSelect("housing-tenure", data._tenure);
     if (data._mobileType) {
       const radio = document.querySelector(
         `input[name="mobile-type"][value="${data._mobileType}"]`
@@ -604,8 +629,10 @@ function render(result) {
         window.SITE_CONFIG.affiliates &&
         window.SITE_CONFIG.affiliates[i.id]) ||
       null;
+    // 住宅ローン借り換えリンクは「持ち家ローン返済中」の人だけに表示
+    const affOk = i.id === "housing" ? result.ctx.tenure === "own_loan" : true;
     const aff =
-      cfg && cfg.href
+      affOk && cfg && cfg.href
         ? `<a class="advice__link" href="${cfg.href}" target="_blank" rel="noopener sponsored">${cfg.label || "くわしく見る"} ›</a>`
         : "";
     div.innerHTML =
