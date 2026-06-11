@@ -1,0 +1,12 @@
+{
+  "name": "kakei-hokenshitsu",
+  "version": "1.0.0",
+  "private": true,
+  "description": "家計の保健室｜固定費＆家計見直し診断（静的サイト）",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check script.js && node --check config.js",
+    "serve": "python3 -m http.server 8000"
+  },
+  "license": "MIT"
+}

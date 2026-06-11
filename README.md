@@ -60,6 +60,20 @@ python3 -m http.server 8000
 # http://localhost:8000 を開く
 ```
 
+## 開発・テスト
+
+依存ライブラリは不要（Node.js 18+ があればOK）。診断ロジック（`script.js` の純粋関数）を単体テストしています。
+
+```bash
+npm test     # 診断ロジックの単体テスト（node --test）
+npm run check # 構文チェック（node --check）
+npm run serve # ローカルサーバ（python3 -m http.server 8000）
+```
+
+- テスト本体：`tests/diagnose.test.js`（Node標準の `node:test`／追加依存なし）
+- `script.js` はブラウザでは従来どおり動作し、Nodeから `require` した際は DOM 処理をスキップしてロジックのみ公開します（末尾の `module.exports`）。
+- CI：`.github/workflows/test.yml` が push / PR ごとに上記を自動実行します。
+
 ## 公開（ホスティング）
 
 **本番の公開先は Cloudflare Pages（無料・匿名・ブランドURL）を推奨**：`https://kakei-hokenshitsu.pages.dev/`

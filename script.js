@@ -670,7 +670,8 @@ function render(result) {
   resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/** 初期化 */
+/** 初期化（ブラウザでのみ実行。Nodeからのrequire時はDOM処理をスキップ） */
+if (typeof document !== "undefined") {
 document.addEventListener("DOMContentLoaded", () => {
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -709,3 +710,19 @@ document.addEventListener("DOMContentLoaded", () => {
     ctaBtn.addEventListener("click", () => track("cta_click", {}));
   }
 });
+}
+
+/* ===== Nodeからのテスト用エクスポート（ブラウザでは module 未定義のため無視される） ===== */
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    CATEGORIES,
+    hh,
+    excess,
+    clampSave,
+    housingMult,
+    gasBenchmark,
+    mobileBenchmark,
+    buildNote,
+    yen,
+  };
+}
