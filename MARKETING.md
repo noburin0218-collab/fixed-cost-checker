@@ -3,7 +3,7 @@
 無料ツール／無料PDFで集客し、アフィリエイト＋有料PDFで収益化するための「撒き餌」と検証手順をまとめています。
 **作り込みすぎる前に、まず7日間の需要検証**を回すのが目的です。
 
-URL：https://noburin0218-collab.github.io/fixed-cost-checker/
+URL：https://kakei-hokenshitsu.pages.dev/
 
 ---
 
@@ -104,14 +104,14 @@ URL：https://noburin0218-collab.github.io/fixed-cost-checker/
 ### プロフィール文（160字以内・コピペ可）
 > 30代・子育て世帯の「固定費見直し」専門｜スマホ・保険・住宅ローン・光熱費…“一度の見直しでずっと効く”お金の話を発信／無理な節約はしません🌱｜入力30秒の無料診断つくりました（登録不要）👇
 
-固定リンク欄：`https://noburin0218-collab.github.io/fixed-cost-checker/`
+固定リンク欄：`https://kakei-hokenshitsu.pages.dev/`
 
 ### 固定ポスト（プロフィールにピン留め）
 > 「家計が苦しいわけじゃないのに、お金が残らない」——その正体はだいたい固定費です。
 > スマホ・保険・住宅ローン・光熱費を“一度”見直すだけで、毎月ずっと効きます。
 >
 > 我が家がいくら削れるか、30秒でわかる無料診断つくりました（登録不要・データ送信なし）👇
-> https://noburin0218-collab.github.io/fixed-cost-checker/
+> https://kakei-hokenshitsu.pages.dev/
 
 ### 運用メモ
 - 顔出し・実名・現職/業界に触れない。発信は「一般論＋公開情報」に徹する

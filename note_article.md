@@ -46,7 +46,7 @@
 
 ### まずは無料で現状チェック
 金額を入れるだけで「あなたが年間いくら減らせるか」が30秒でわかる無料診断もあります（登録不要・データ送信なし）。
-👉 https://noburin0218-collab.github.io/fixed-cost-checker/
+👉 https://kakei-hokenshitsu.pages.dev/
 
 ---
 

@@ -7,9 +7,14 @@
 ## いま何をやっているか（30秒で思い出す）
 - 屋号：**家計の保健室**（匿名・顔出しなしの副業）
 - プロダクト：**固定費＆家計 見直し診断ツール**（無料）＋ 無料/有料PDF
-- 公開URL：**https://noburin0218-collab.github.io/fixed-cost-checker/**
+- 公開URL：**https://kakei-hokenshitsu.pages.dev/**
 - 収益モデル：無料ツール／無料PDFで集客 → **高単価アフィリエイト**（保険相談・住宅ローン借換・自動車保険一括 など）＋ note有料PDF
 - 進め方：作り込みすぎる前に **7日間の需要検証**（`MARKETING.md`）
+
+## ⚠️ 公開先を Cloudflare Pages に移す（匿名化・未完）
+現状のGitHub PagesのURLには本名系ユーザー名が入るため、公開先を `kakei-hokenshitsu.pages.dev` に移行予定。
+→ 手順：[`HOSTING_CLOUDFLARE.md`](./HOSTING_CLOUDFLARE.md)（Cloudflareでプロジェクト名を `kakei-hokenshitsu` にする）。
+リポジトリ内のURL・QR・PDF・OGPは既に `kakei-hokenshitsu.pages.dev` へ更新済み。**別名にしたら要連絡**。
 
 ## 次に開いたら、まずこの3つ
 1. **収益の蛇口を1本開ける**：A8.net等で「保険の無料相談」か「住宅ローン借り換え」のリンクを取得 → `config.js` の該当 `href` に貼る（手順は `SETUP.md` STEP3）
@@ -39,6 +44,7 @@
 | やりたいこと | 見る/触るファイル |
 |---|---|
 | 公開までの手順（最初に読む） | `SETUP.md` |
+| 公開先をCloudflareに移す手順 | `HOSTING_CLOUDFLARE.md` |
 | アフィリ/CTA/計測IDを設定 | `config.js`（`affiliates` / `cta.href` / `gaMeasurementId`） |
 | どのASP・案件に登録するか | `MONETIZATION.md` |
 | SNS投稿文・プロフィール・7日検証 | `MARKETING.md` |

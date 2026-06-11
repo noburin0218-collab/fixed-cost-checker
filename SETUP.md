@@ -3,13 +3,17 @@
 「あとは貼るだけ／出すだけ」で収益化に進めるよう、作業を一本道にまとめました。
 上から順にやればOK。所要：初回まとめて約2〜3時間（審査待ちを除く）。
 
-サイト：https://noburin0218-collab.github.io/fixed-cost-checker/
+公開先（予定）：https://kakei-hokenshitsu.pages.dev/ （Cloudflare Pages・無料・匿名）
 
 ---
 
-## STEP 0｜サイトはもう公開済み
-GitHub Pages で自動公開・自動デプロイ済み。`main` に変更が入るたび自動で反映されます。
-（このリポジトリを編集 → コミットすればOK。ブラウザ上のGitHubでファイルを直接編集してもOK）
+## STEP 0｜公開先を Cloudflare Pages に移す（匿名・無料）
+匿名性とブランドのため、公開URLを `kakei-hokenshitsu.pages.dev` にします。**手順は [`HOSTING_CLOUDFLARE.md`](./HOSTING_CLOUDFLARE.md) を参照。**
+- 本名と無関係の新メールで Cloudflare に登録 → このリポジトリを接続（または直接アップロード）
+- プロジェクト名を **`kakei-hokenshitsu`** にすると、URLが上記とピッタリ一致します
+- ※ 既存の GitHub Pages（`*.github.io`）はソース/予備として残してOK。本名が出るのが気になれば、後でリポジトリを非公開化できます
+
+> リポジトリを編集 → コミットすれば、Cloudflare（Git接続時）が自動で再公開します。
 
 ---
 
