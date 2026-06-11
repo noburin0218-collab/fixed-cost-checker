@@ -716,6 +716,7 @@ document.addEventListener("DOMContentLoaded", () => {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     CATEGORIES,
+    diagnose,
     hh,
     excess,
     clampSave,
