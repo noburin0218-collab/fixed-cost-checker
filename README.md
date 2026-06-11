@@ -60,7 +60,14 @@ python3 -m http.server 8000
 # http://localhost:8000 を開く
 ```
 
-## GitHub Pages で公開する
+## 公開（ホスティング）
+
+**本番の公開先は Cloudflare Pages（無料・匿名・ブランドURL）を推奨**：`https://kakei-hokenshitsu.pages.dev/`
+→ 手順は [`HOSTING_CLOUDFLARE.md`](./HOSTING_CLOUDFLARE.md)。
+
+以下の GitHub Pages はソース／予備としてそのまま使えます（公開URLに本名系のユーザー名が出る点に注意）。
+
+## GitHub Pages で公開する（予備）
 
 ### 方法A：GitHub Actions で自動デプロイ（推奨・設定不要）
 
