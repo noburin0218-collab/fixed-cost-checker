@@ -49,7 +49,8 @@
 | どのASP・案件に登録するか | `MONETIZATION.md` |
 | SNS投稿文・プロフィール・7日検証 | `MARKETING.md` |
 | note記事の本文（コピペ用） | `note_article.md` |
-| 診断ロジック・項目の調整 | `script.js` |
+| 診断ロジック・項目の調整 | `script.js`（変更後は `npm test` で検証） |
+| 単体テスト | `tests/diagnose.test.js`（`npm test`／CIでも自動実行） |
 | 見た目／文言・画面構成 | `styles.css` / `index.html` |
 | 配布物（無料/有料PDF・note画像） | ※チャットで受領＝リポジトリ外。安全な場所に保管 |
 
