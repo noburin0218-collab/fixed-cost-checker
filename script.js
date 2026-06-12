@@ -51,6 +51,18 @@ function mobileBenchmark(c) {
  * - benchmark(ctx): 月額の目安（円）。ctx = { n: 世帯人数, carrier: 'carrier'|'mvno' }
  * - scaled: true なら目安が世帯人数に応じて変わる（表示に「N人世帯の目安」を付ける）
  * - saving(input, ctx): 削減余地（円/月）
+ *
+ * @typedef {Object} Category
+ * @property {string} id
+ * @property {string} name
+ * @property {string} icon
+ * @property {(c: any) => (number|null)} benchmark
+ * @property {(input: number, c: any) => number} saving
+ * @property {string} advice
+ * @property {boolean} [scaled]
+ * @property {boolean} [variable]
+ *
+ * @type {Category[]}
  */
 const CATEGORIES = [
   {
@@ -220,7 +232,7 @@ function yen(n) {
 
 /** 入力値を取得（空欄やマイナス・非数は0） */
 function readValue(id) {
-  const el = document.getElementById(id);
+  const el = /** @type {HTMLInputElement | null} */ (document.getElementById(id));
   const v = Number(el && el.value);
   if (!isFinite(v) || v < 0) return 0;
   return v;
@@ -228,20 +240,22 @@ function readValue(id) {
 
 /** 世帯人数を取得（1〜6、未選択は3） */
 function readHousehold() {
-  const el = document.getElementById("household");
+  const el = /** @type {HTMLSelectElement | null} */ (document.getElementById("household"));
   const v = el ? parseInt(el.value, 10) : NaN;
   return isFinite(v) && v >= 1 ? v : 3;
 }
 
 /** スマホ契約形態を取得（'carrier' | 'mvno'、既定は大手キャリア） */
 function readMobileType() {
-  const checked = document.querySelector('input[name="mobile-type"]:checked');
+  const checked = /** @type {HTMLInputElement | null} */ (
+    document.querySelector('input[name="mobile-type"]:checked')
+  );
   return checked && checked.value === "mvno" ? "mvno" : "carrier";
 }
 
 /** select の値を取得（未選択は ""） */
 function readSelect(id) {
-  const el = document.getElementById(id);
+  const el = /** @type {HTMLSelectElement | null} */ (document.getElementById(id));
   return el ? el.value : "";
 }
 
@@ -384,11 +398,11 @@ function restoreInputs() {
     if (!raw) return;
     const data = JSON.parse(raw);
     CATEGORIES.forEach((cat) => {
-      const el = document.getElementById(cat.id);
-      if (el && data[cat.id] > 0) el.value = data[cat.id];
+      const el = /** @type {HTMLInputElement | null} */ (document.getElementById(cat.id));
+      if (el && data[cat.id] > 0) el.value = String(data[cat.id]);
     });
     const setSelect = (id, val) => {
-      const el = document.getElementById(id);
+      const el = /** @type {HTMLSelectElement | null} */ (document.getElementById(id));
       if (el && val != null && val !== "") el.value = String(val);
     };
     setSelect("household", data._household);
@@ -398,8 +412,8 @@ function restoreInputs() {
     setSelect("insurance-type", data._insType);
     setSelect("housing-tenure", data._tenure);
     if (data._mobileType) {
-      const radio = document.querySelector(
-        `input[name="mobile-type"][value="${data._mobileType}"]`
+      const radio = /** @type {HTMLInputElement | null} */ (
+        document.querySelector(`input[name="mobile-type"][value="${data._mobileType}"]`)
       );
       if (radio) radio.checked = true;
     }
@@ -541,11 +555,13 @@ function setupShare(yearly) {
   const lineUrl =
     "https://social-plugins.line.me/lineit/share?url=" + encodeURIComponent(url);
 
-  document.getElementById("share-x").href = xUrl;
-  document.getElementById("share-line").href = lineUrl;
+  const shareX = /** @type {HTMLAnchorElement} */ (document.getElementById("share-x"));
+  const shareLine = /** @type {HTMLAnchorElement} */ (document.getElementById("share-line"));
+  shareX.href = xUrl;
+  shareLine.href = lineUrl;
 
-  document.getElementById("share-x").onclick = () => track("share", { method: "x" });
-  document.getElementById("share-line").onclick = () => track("share", { method: "line" });
+  shareX.onclick = () => track("share", { method: "x" });
+  shareLine.onclick = () => track("share", { method: "line" });
 
   const copyBtn = document.getElementById("share-copy");
   copyBtn.onclick = async () => {
@@ -674,12 +690,12 @@ function render(result) {
 if (typeof document !== "undefined") {
 document.addEventListener("DOMContentLoaded", () => {
   const yearEl = document.getElementById("year");
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   // 前回の入力があれば復元
   restoreInputs();
 
-  const form = document.getElementById("cost-form");
+  const form = /** @type {HTMLFormElement} */ (document.getElementById("cost-form"));
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const result = diagnose();
@@ -702,7 +718,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("form").scrollIntoView({ behavior: "smooth" });
   });
 
-  const ctaBtn = document.getElementById("cta-btn");
+  const ctaBtn = /** @type {HTMLAnchorElement | null} */ (document.getElementById("cta-btn"));
   if (ctaBtn) {
     const ctaCfg = (window.SITE_CONFIG && window.SITE_CONFIG.cta) || {};
     if (ctaCfg.label) ctaBtn.textContent = ctaCfg.label;
