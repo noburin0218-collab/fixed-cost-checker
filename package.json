@@ -6,7 +6,12 @@
   "scripts": {
     "test": "node --test",
     "check": "node --check script.js && node --check config.js",
+    "typecheck": "tsc --noEmit",
     "serve": "python3 -m http.server 8000"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jsdom": "^29.1.1",
+    "typescript": "^6.0.3"
+  }
 }
