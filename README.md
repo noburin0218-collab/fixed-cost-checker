@@ -62,17 +62,23 @@ python3 -m http.server 8000
 
 ## 開発・テスト
 
-依存ライブラリは不要（Node.js 18+ があればOK）。診断ロジック（`script.js` の純粋関数）を単体テストしています。
+Node.js 18+ で動きます。開発ツール（型チェック・DOMテスト）を使う場合のみ `npm ci` で devDependencies を入れてください。
 
 ```bash
-npm test     # 診断ロジックの単体テスト（node --test）
-npm run check # 構文チェック（node --check）
-npm run serve # ローカルサーバ（python3 -m http.server 8000）
+npm ci          # 開発依存（typescript / jsdom）を入れる（テスト・型チェック用）
+npm test        # テスト（node --test）：ロジック単体＋diagnose統合＋render DOM
+npm run check   # 構文チェック（node --check）
+npm run typecheck # 型チェック（tsc --noEmit／checkJs）
+npm run serve   # ローカルサーバ（python3 -m http.server 8000）
 ```
 
-- テスト本体：`tests/diagnose.test.js`（Node標準の `node:test`／追加依存なし）
+- テスト本体：
+  - `tests/diagnose.test.js`（純粋関数の単体テスト・依存なし）
+  - `tests/diagnose.integration.test.js`（`diagnose()` の集計をフェイクDOMで検証）
+  - `tests/render.dom.test.js`（jsdom で `index.html`＋`script.js` を実行し、送信→結果生成を検証）
+- 型チェックは `// @ts-check` 相当（`tsconfig.json` の `checkJs`）。カスタムグローバルは `types/globals.d.ts`。
 - `script.js` はブラウザでは従来どおり動作し、Nodeから `require` した際は DOM 処理をスキップしてロジックのみ公開します（末尾の `module.exports`）。
-- CI：`.github/workflows/test.yml` が push / PR ごとに上記を自動実行します。
+- CI：`.github/workflows/test.yml` が push / PR ごとに `check`／`typecheck`／`test` を自動実行します。
 
 ## 公開（ホスティング）
 
