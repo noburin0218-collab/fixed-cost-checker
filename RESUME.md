@@ -18,7 +18,7 @@
 
 ## 次に開いたら、まずこの3つ
 1. **収益の蛇口を1本開ける**：A8.net等で「保険の無料相談」か「住宅ローン借り換え」のリンクを取得 → `config.js` の該当 `href` に貼る（手順は `SETUP.md` STEP3）
-2. **無料PDFを配布可能に**：受領済みPDFを Google Drive にアップ → 共有リンクを `MARKETING.md` 投稿文⑩へ
+2. **無料PDFを配布可能に**：受領済みPDFを Dropbox 等にアップ → 共有リンクを `MARKETING.md` 投稿文⑩へ
 3. **SNSで7日検証スタート**：`MARKETING.md` のプロフィール/固定ポスト/投稿文を使って投稿
 
 ## 進捗スナップショット
@@ -31,12 +31,18 @@
 | 運用 | `SETUP.md`（手順）・`MONETIZATION.md`（案件選び）・`MARKETING.md`（集客/検証） |
 | 公開 | GitHub Pages 自動デプロイ（mainへpushで自動反映） |
 
+### ⚠️ 2026/06/13 トラブル：専用Gmailが無効化された
+`kakei.hokenshitsu@gmail.com` が Google の bot検知で無効化。**サイト/リポジトリは無事**（Cloudflare・GitHubは別系統）。
+- 対応：ハブを**非Googleの安定メール**（Proton/Outlook/iCloud）に切り替える方針（`SETUP.md` STEP1-0）。
+- **CloudflareをこのGmailで作っていたら、ログインできるうちにメール＆パスワードを変更**（管理権の死守）。
+- 解析は GA4 → **Cloudflare Web Analytics**（Googleアカウント不要）に変更（STEP4）。
+
 ### ⏳ あなたの残タスク（私には代行不可）
-- [x] 専用Gmail を作る
-- [ ] note / X / Threads(要Instagram) を同Gmailで開設（`SETUP.md` STEP1）
-- [ ] 無料PDFを Google Drive にアップして共有リンク取得（STEP2）
+- [ ] **非Googleの専用メール**を用意（Proton/Outlook 等。`SETUP.md` STEP1-0）
+- [ ] note / X / Threads(要Instagram) をその専用メールで開設（STEP1）
+- [ ] 無料PDFを Dropbox 等にアップして共有リンク取得（STEP2）
 - [ ] ASP登録 → 高単価リンクを `config.js` に貼る（STEP3）← **最優先・最も収益化に効く**
-- [ ] GA4 測定IDを `config.js` に設定（STEP4）
+- [ ] Cloudflare Web Analytics をオン（STEP4・コード変更不要）
 - [ ] 有料PDFを note で販売（`note_article.md`＋画像、STEP5）
 - [ ] 7日間の需要検証（STEP6 / `MARKETING.md`）
 
