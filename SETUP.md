@@ -19,19 +19,21 @@
 
 ## STEP 1｜匿名アカウントを作る（30〜60分）
 
-### 1-0. 土台＝専用Gmail（✅ 作成済み）
-すべての起点。本名・現職・既存メールに紐づかない新しいGmailを使う。
-→ **このGmailが note / X / GA4 / Google Drive すべての受け皿**になります。
-> ※ 電話番号認証を求められたら自分の番号でOK（Googleには伝わるが外部公開はされない）。
+### 1-0. 土台＝専用メール（⚠️ Gmailは避ける／非Googleを推奨）
+すべての起点。本名・現職・既存メールに紐づかない**専用メール**を1つ用意する。
+- ⚠️ **新規Gmailは Google の bot検知で無効化されやすい**（実際に一度 `kakei.hokenshitsu@gmail.com` が「bot/大量作成の疑い」で無効化された）。
+- → **Proton Mail / Outlook / iCloud（Hide My Email）など非Googleの安定メール**を推奨。これを note・X・Cloudflare・ASP の受け皿にする。
+- どうしてもGoogleを使う場合は、**自宅/モバイル回線・通常ブラウザ・短時間に複数作らない・電話番号認証・作成後しばらく普通に使う**と無効化されにくい。
+> Google Drive / GA4 は Google アカウント必須だが、**配布は後述のとおり代替可、解析は Cloudflare Web Analytics で代替**するため必須ではない。
 
-### 1-1. 各サービスを作る（同じGmailで）
+### 1-1. 各サービスを作る（同じ専用メールで）
 | サービス | 作り方の要点 |
 |---|---|
-| **note** | 上のGmailで登録。クリエイター名＝「家計の保健室」。本名・顔写真は不要 |
-| **X（旧Twitter）** | 同Gmailで登録。表示名・@は `MARKETING.md` の案。SMS認証を求められることあり（番号は公開されない） |
+| **note** | 専用メールで登録。クリエイター名＝「家計の保健室」。本名・顔写真は不要 |
+| **X（旧Twitter）** | 同メールで登録。表示名・@は `MARKETING.md` の案。SMS認証を求められることあり（番号は公開されない） |
 | **Threads** | Instagramアカウントが必須。先にIGを匿名で作る→Threadsを開設 |
-| **Google Drive** | 同Googleアカウントで無料PDFを置き「リンクを知る全員が閲覧可」で共有 |
-| **GA4** | 同Googleアカウントで作成 → 測定IDを `config.js` へ（STEP4） |
+| **Cloudflare** | 同メールで登録（公開ホスト。`HOSTING_CLOUDFLARE.md`）。**※既にこのGmailで作成済みなら、ログインできるうちにメール＆パスワードを変更しておく** |
+| **無料PDFの配布先** | Google Drive でなくてもOK（後述。Cloudflare R2 / Dropbox / GitHub の raw 等でも可） |
 | **ASP（A8.net等）** | サイトURLで登録（STEP3）。報酬の受取口座は本人名義が必要（非公開） |
 
 プロフィール文・固定ポスト・ハンドル案は `MARKETING.md` の「3.5 アカウント初期設定」からコピペ。
@@ -51,8 +53,8 @@
 ---
 
 ## STEP 2｜無料PDFを配布できる状態にする（15分）
-1. 受け取った「固定費見直し かんたんチェック（無料版）.pdf」を Google Drive にアップ
-2. 「リンクを知っている全員が閲覧可」に設定し、共有リンクを取得
+1. 受け取った「固定費見直し かんたんチェック（無料版）.pdf」を**どこかにアップ**（Dropbox / Cloudflare R2 / Google Drive 等。Googleに依存したくなければDropbox等が手軽）
+2. 「リンクを知っている全員が閲覧可」で共有リンクを取得
 3. そのリンクを `MARKETING.md` 投稿文⑩の「（配布リンク）」に差し込む
 
 ---
@@ -100,10 +102,13 @@ affiliates: {
 
 ---
 
-## STEP 4｜アクセス計測を有効化（10分）
-1. Google Analytics 4 でプロパティを作成し、測定ID（`G-XXXXXXXXXX`）を取得
-2. `config.js` の先頭 `gaMeasurementId: "G-XXXXXXXXXX"` を自分のIDに置き換える
-3. これで `diagnose`（診断完了）/ `share` / `cta_click` が自動計測されます
+## STEP 4｜アクセス計測を有効化（5分・Googleアカウント不要）
+**推奨：Cloudflare Web Analytics**（無料・Cookieなし・Googleアカウント不要・プライバシー配慮）
+1. Cloudflare ダッシュボード → **Analytics & Logs → Web Analytics**
+2. 対象に Pages プロジェクト `kakei-hokenshitsu` を選ぶ（Pagesなら**コード変更不要**でビーコンが自動挿入される）
+3. 数時間後から、訪問数・流入元・人気ページが見られる
+
+> 補足：GA4を使いたい場合のみ、`config.js` の `gaMeasurementId` に測定IDを入れると `diagnose`/`share`/`cta_click` のイベントも取れる（任意）。ただしGA4はGoogleアカウントが必要なので、当面はCloudflare Web Analyticsで十分。
 
 ---
 
@@ -111,7 +116,7 @@ affiliates: {
 1. note で新規記事を作成
 2. 見出し画像に `note_eyecatch.png`
 3. 本文は `note_article.md` をコピペ（無料エリアに `note_preview.png` を挿入）
-4. 価格を 500〜980円に設定し、有料エリアに「有料PDFのダウンロードリンク（Drive）」を貼る
+4. 価格を 500〜980円に設定し、有料エリアに「有料PDFのダウンロードリンク（Dropbox/Drive等）」を貼る
 5. `config.js` の `cta.href` に、この note 記事のURLを貼る（ツール結果からの導線がつながる）
 
 ---
