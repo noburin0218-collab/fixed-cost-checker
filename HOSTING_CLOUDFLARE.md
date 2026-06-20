@@ -1,9 +1,14 @@
 # Cloudflare Pages へ公開する手順（匿名・無料）
 
-公開URLを `https://kakei-hokenshitsu.pages.dev/` にして、**ブランド名で・本名と無関係に**運営するための手順です。
+> ⚠️ **【2026/06/16 追記】このCloudflare手順は現在は使用していません。**
+> 専用GmailがGoogleに無効化され、Cloudflareもそのログインに依存していたためアクセス不可になりました。
+> **現在の公開先は GitHub Pages**（`https://noburin0218-collab.github.io/fixed-cost-checker/`、mainへpushで自動デプロイ）です。
+> このファイルは将来Google/Cloudflareが復活したとき用の参考として残しています。以下の本文中URLは新URLに置換済みですが、手順自体はCloudflare前提なので現在は実行しないでください。
+
+公開URLを `https://noburin0218-collab.github.io/fixed-cost-checker/` にして、**ブランド名で・本名と無関係に**運営するための手順です。
 Cloudflare Pages は静的サイトを無料でホストでき、独自のサブドメイン（`*.pages.dev`）が使えます。
 
-> 目標URL：**https://kakei-hokenshitsu.pages.dev/**
+> 目標URL：**https://noburin0218-collab.github.io/fixed-cost-checker/**
 > そのためには、Cloudflareの**プロジェクト名を `kakei-hokenshitsu`** にします（空いていれば一致）。
 > もし取れなければ別名（例：`kakei-hokenshitsu-app`）にして、私に伝えてください。リポジトリ内のURLを一括で直します。
 
@@ -25,7 +30,7 @@ Cloudflare Pages は静的サイトを無料でホストでき、独自のサブ
    - **Framework preset**：None
    - **Build command**：空欄
    - **Build output directory**：`/`（ルート）
-4. **Save and Deploy** → 数十秒で `https://kakei-hokenshitsu.pages.dev/` が公開
+4. **Save and Deploy** → 数十秒で `https://noburin0218-collab.github.io/fixed-cost-checker/` が公開
 5. 以後、`main` に push すると自動で再デプロイ
 
 > 補足：この方法だと「ソースのGitHubリポジトリ」は今のアカウント（noburin…）のままです。
@@ -41,13 +46,13 @@ Cloudflare Pages は静的サイトを無料でホストでき、独自のサブ
 ---
 
 ## 公開後にやること
-- 動作確認：`https://kakei-hokenshitsu.pages.dev/` を開いて診断が動くか
+- 動作確認：`https://noburin0218-collab.github.io/fixed-cost-checker/` を開いて診断が動くか
 - 既存の GitHub Pages（`*.github.io`）は**予備として残してOK**。本名露出が気になれば、リポジトリを **Settings → 一番下 → Change visibility で Private** にする
 - （任意・将来）独自ドメインを買えば、Cloudflare Pages の **Custom domains** から無料で `家計の保健室.com` 等に差し替え可能
 
 ---
 
 ## 注意
-- すでにリポジトリ内のURL表記・PDF・QRコード・OGPは `kakei-hokenshitsu.pages.dev` に更新済みです。
+- すでにリポジトリ内のURL表記・PDF・QRコード・OGPは `noburin0218-collab.github.io/fixed-cost-checker` に更新済みです。
   **プロジェクト名を `kakei-hokenshitsu` 以外にした場合は必ず教えてください**（不一致だとQRやリンクが切れます）。
 - Cloudflare のアカウント情報・メールは、このリポジトリには書かないこと（公開のため）。
