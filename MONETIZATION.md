@@ -81,6 +81,8 @@ window.SITE_CONFIG = {
 
 ## 5. 効果測定（任意）
 
+> ⚠️ **2026/06 現在、Googleアカウント無効化のため GA4 は使えません。** 当面は **ASP管理画面のクリック数 ＋ SNSの反応**で効果を見るか、非Googleの無料解析（例：**GoatCounter**／Protonメールで登録可）の導入を検討してください。Google が復活したら下記の GA4 設定も使えます。
+
 `config.js` の `gaMeasurementId` に Google Analytics 4 の測定ID を設定すると、
 次のイベントが自動で計測されます。どの導線が効いているかを見ながら改善できます。
 

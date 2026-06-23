@@ -11,7 +11,9 @@
  */
 window.SITE_CONFIG = {
   // Google Analytics 4 の測定ID（例: "G-ABCDE12345"）。未設定なら計測しません。
-  gaMeasurementId: "G-XXXXXXXXXX",
+  // ※2026/06現在、Googleアカウント無効化のためGA4は利用不可。当面は空のままでOK
+  //   （効果測定はASP管理画面のクリック数＋SNSの反応で代用。詳細は MONETIZATION.md 5節）。
+  gaMeasurementId: "",
 
   // 有料PDF / チェックリストの販売ページURL（note・Tips など）
   cta: {
