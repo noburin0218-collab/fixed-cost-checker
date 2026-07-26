@@ -7,16 +7,17 @@
 ## いま何をやっているか（30秒で思い出す）
 - 屋号：**家計の保健室**（匿名・顔出しなしの副業）
 - プロダクト：**固定費＆家計 見直し診断ツール**（無料）＋ 無料/有料PDF
-- 公開URL：**https://noburin0218-collab.github.io/fixed-cost-checker/**
+- 公開URL：**https://kakei-hokenshitsu.com/**
 - 収益モデル：無料ツール／無料PDFで集客 → **高単価アフィリエイト**（保険相談・住宅ローン借換・自動車保険一括 など）＋ note有料PDF
 - 進め方：作り込みすぎる前に **7日間の需要検証**（`MARKETING.md`）
 
-## ✅ 公開先：GitHub Pages（Cloudflareから移行済み・2026/06/16）
-GmailもCloudflareも無効化アカウントに紐づいてロックされたため、**公開先を GitHub Pages に切り替え**ました。
-GitHub（`noburin.0218@gmail.com` 管理＝生存）は無事なので、**mainへpushすれば自動デプロイ**で本番反映されます。
-- 公開URL：**https://noburin0218-collab.github.io/fixed-cost-checker/**
-- リポジトリ内のURL・QR・OGPはこの新URLへ更新済み。
-- ⚠️ **匿名性の注意**：このURLにはGitHubのユーザー名（`noburin0218-collab`）が入ります。完全匿名にしたい場合は、別途**匿名GitHubアカウント/組織**を作ってリポジトリを移すか、Google復活後にCloudflareへ戻す（その時はURL/QR/OGPを再度差し替え）。
+## ✅ 公開先：独自ドメイン × GitHub Pages（2026/07/26 移行完了）
+GmailもCloudflareも無効化アカウントに紐づいてロックされたため、**公開先を GitHub Pages に切り替え**、
+さらに**独自ドメインを取得**してユーザー名がURLに出ない構成にしました。
+- 公開URL：**https://kakei-hokenshitsu.com/**（Porkbunで取得・WHOIS代理公開ON・自動更新ON）
+- ホスティング：GitHub Pages（`CNAME`ファイルでカスタムドメイン指定）。**mainへpushで自動デプロイ**。
+- ✅ **URLにユーザー名は出ません**。今後ホスティングを変えてもURLは不変（QR・PDFの刷り直し不要）。
+- ドメイン切り替えが必要になったら `./tools/switch-domain.sh <新ドメイン>` で一括変更できます。
 
 ## 次に開いたら、まずこの3つ
 1. **収益の蛇口を1本開ける**：A8.net等で「保険の無料相談」か「住宅ローン借り換え」のリンクを取得 → `config.js` の該当 `href` に貼る（手順は `SETUP.md` STEP3）

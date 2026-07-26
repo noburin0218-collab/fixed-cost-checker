@@ -82,7 +82,7 @@ npm run serve   # ローカルサーバ（python3 -m http.server 8000）
 
 ## 公開（ホスティング）
 
-**本番の公開先は Cloudflare Pages（無料・匿名・ブランドURL）を推奨**：`https://noburin0218-collab.github.io/fixed-cost-checker/`
+**本番の公開先は Cloudflare Pages（無料・匿名・ブランドURL）を推奨**：`https://kakei-hokenshitsu.com/`
 → 手順は [`HOSTING_CLOUDFLARE.md`](./HOSTING_CLOUDFLARE.md)。
 
 以下の GitHub Pages はソース／予備としてそのまま使えます（公開URLに本名系のユーザー名が出る点に注意）。
