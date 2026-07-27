@@ -55,7 +55,6 @@ function mobileBenchmark(c) {
  * @typedef {Object} Category
  * @property {string} id
  * @property {string} name
- * @property {string} icon
  * @property {(c: any) => (number|null)} benchmark
  * @property {(input: number, c: any) => number} saving
  * @property {string} advice
@@ -68,7 +67,6 @@ const CATEGORIES = [
   {
     id: "housing",
     name: "住宅費（家賃・ローン）",
-    icon: "🏠",
     benchmark: () => null, // 地域差が大きいため目安比較はしない
     saving: (input, c) => {
       if (c.tenure === "own_loan") return clampSave(input * 0.05, input); // 借り換え余地（条件次第）
@@ -81,7 +79,6 @@ const CATEGORIES = [
   {
     id: "mobile",
     name: "スマホ代",
-    icon: "📱",
     benchmark: (c) => mobileBenchmark(c),
     saving: (input, c) => {
       const b = mobileBenchmark(c);
@@ -94,7 +91,6 @@ const CATEGORIES = [
   {
     id: "electricity",
     name: "電気代",
-    icon: "💡",
     scaled: true,
     benchmark: (c) =>
       Math.round(hh([6500, 11000, 12000, 13000, 14000, 15500], c.n) * housingMult(c.housing)),
@@ -110,7 +106,6 @@ const CATEGORIES = [
   {
     id: "gas",
     name: "ガス代",
-    icon: "🔥",
     scaled: true,
     benchmark: (c) => gasBenchmark(c),
     saving: (input, c) => {
@@ -126,7 +121,6 @@ const CATEGORIES = [
   {
     id: "water",
     name: "水道代",
-    icon: "🚰",
     scaled: true,
     benchmark: (c) =>
       Math.round(hh([2500, 4200, 5000, 6000, 6800, 7500], c.n) * housingMult(c.housing)),
@@ -142,7 +136,6 @@ const CATEGORIES = [
   {
     id: "insurance",
     name: "保険料",
-    icon: "🛡️",
     scaled: true,
     benchmark: (c) => hh([5000, 9000, 13000, 16000, 18000, 20000], c.n),
     saving: (input, c) => {
@@ -161,7 +154,6 @@ const CATEGORIES = [
   {
     id: "subscription",
     name: "サブスク代",
-    icon: "🎬",
     benchmark: () => 2000,
     saving: (input) =>
       clampSave(excess(input, 2000) * 0.5 + Math.min(input, 2000) * 0.1, input),
@@ -171,7 +163,6 @@ const CATEGORIES = [
   {
     id: "car",
     name: "車関連費",
-    icon: "🚗",
     benchmark: () => 18000,
     saving: (input) =>
       clampSave(excess(input, 18000) * 0.2 + Math.min(input, 18000) * 0.08, input),
@@ -181,7 +172,6 @@ const CATEGORIES = [
   {
     id: "waterserver",
     name: "ウォーターサーバー代",
-    icon: "💧",
     benchmark: () => 0, // この費目自体が見直し候補
     saving: (input) => clampSave(input * 0.9, input),
     advice:
@@ -190,7 +180,6 @@ const CATEGORIES = [
   {
     id: "eatingout",
     name: "外食・コンビニ代",
-    icon: "🍔",
     variable: true, // 固定費ではなく変動費（使い方で変わる）
     scaled: true,
     benchmark: (c) => hh([12000, 18000, 24000, 30000, 35000, 40000], c.n),
@@ -204,7 +193,6 @@ const CATEGORIES = [
   {
     id: "other",
     name: "その他の固定費",
-    icon: "📦",
     benchmark: () => 3000,
     saving: (input) => clampSave(excess(input, 3000) * 0.3, input),
     advice:
@@ -226,6 +214,24 @@ function track(eventName, params) {
 }
 
 /** 数値を「12,345円」形式に整形 */
+/**
+ * 金額を「数値」と「円」に分けて要素に描画する。
+ * textContent は従来どおり「1,234円」となる（末尾は必ず「円」）。
+ * @param {HTMLElement | null} el
+ * @param {number} value
+ */
+function setAmount(el, value) {
+  if (!el) return;
+  el.textContent = "";
+  const num = document.createElement("span");
+  num.className = "amount__num";
+  num.textContent = yen(value).replace(/円$/, "");
+  const unit = document.createElement("span");
+  unit.className = "amount__unit";
+  unit.textContent = "円";
+  el.append(num, unit);
+}
+
 function yen(n) {
   return Math.round(n).toLocaleString("ja-JP") + "円";
 }
@@ -583,8 +589,9 @@ function setupShare(yearly) {
 function render(result) {
   lastResult = result;
   // サマリー
-  document.getElementById("monthly-saving").textContent = yen(result.monthlySaving);
-  document.getElementById("yearly-saving").textContent = yen(result.yearlySaving);
+  // 金額は「数値＋単位」に分けて表示する（単位を小さく組み、帳票らしい見え方にする）
+  setAmount(document.getElementById("monthly-saving"), result.monthlySaving);
+  setAmount(document.getElementById("yearly-saving"), result.yearlySaving);
   const carrierLabel = result.ctx.carrier === "mvno" ? "格安SIM中心" : "大手キャリア中心";
   document.getElementById("total-line").innerHTML =
     `${result.ctx.n}人世帯・${carrierLabel}で診断／現在の支出合計：月 ${yen(result.totalInput)}（年 ${yen(result.totalInput * 12)}）` +
@@ -610,7 +617,7 @@ function render(result) {
         ? `${i.note}。年間で約${yen(i.saving * 12)}の削減が見込めます。`
         : `年間で約${yen(i.saving * 12)}の削減が見込めます。`;
       li.innerHTML =
-        `<span class="top3__name">${i.icon} ${i.name}</span> ` +
+        `<span class="top3__name">${i.name}</span> ` +
         `<span class="top3__saving">月 約${yen(i.saving)}</span>` +
         `<p class="top3__desc">${desc}</p>`;
       top3List.appendChild(li);
@@ -652,7 +659,7 @@ function render(result) {
         ? `<a class="advice__link" href="${cfg.href}" target="_blank" rel="noopener sponsored">${cfg.label || "くわしく見る"} ›</a>`
         : "";
     div.innerHTML =
-      `<div class="advice__head"><span class="advice__name">${i.icon} ${i.name}</span>${savingTag}</div>` +
+      `<div class="advice__head"><span class="advice__name">${i.name}</span>${savingTag}</div>` +
       note +
       `<p class="advice__text">${i.advice}</p>` +
       aff;

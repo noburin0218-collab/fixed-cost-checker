@@ -68,7 +68,7 @@
   <main class="container">
     <!-- ===== 入力フォーム ===== -->
     <section id="form" class="card">
-      <h2 class="section-title">① 毎月の支出を入力（固定費＋変動費）</h2>
+      <h2 class="section-title"><span class="section-title__no">01</span><span>毎月の支出を入力（固定費＋変動費）</span></h2>
       <p class="muted">
         わかる範囲で月額（円）を入力してください。空欄は0円として計算します。<br />
         <small>※入力した数字はあなたのブラウザ内だけで計算され、どこにも送信・保存されません。</small>
@@ -80,7 +80,7 @@
           <legend class="prefs__legend">まず、あなたの世帯について</legend>
 
           <label class="prefs__row">
-            <span class="prefs__label">👨‍👩‍👧 世帯人数</span>
+            <span class="prefs__label">世帯人数</span>
             <select id="household" class="prefs__select">
               <option value="1">1人</option>
               <option value="2">2人</option>
@@ -92,7 +92,7 @@
           </label>
 
           <div class="prefs__row">
-            <span class="prefs__label">📱 スマホの契約</span>
+            <span class="prefs__label">スマホの契約</span>
             <div class="prefs__radios">
               <label class="prefs__radio">
                 <input type="radio" name="mobile-type" value="carrier" checked />
@@ -109,10 +109,10 @@
 
         <!-- 任意：開くと“選ぶだけ”で診断精度が上がる -->
         <details class="more">
-          <summary class="more__summary">⚙️ もっと詳しく診断する（任意・選ぶだけ）</summary>
+          <summary class="more__summary">もっと詳しく診断する（任意・選ぶだけ）</summary>
           <div class="more__body">
             <label class="prefs__row">
-              <span class="prefs__label">🏠 住居タイプ</span>
+              <span class="prefs__label">住居タイプ</span>
               <select id="housing-type" class="prefs__select">
                 <option value="">指定しない</option>
                 <option value="apartment">集合住宅（マンション・アパート）</option>
@@ -121,7 +121,7 @@
             </label>
 
             <label class="prefs__row">
-              <span class="prefs__label">🔥 ガスの種類</span>
+              <span class="prefs__label">ガスの種類</span>
               <select id="gas-type" class="prefs__select">
                 <option value="">指定しない</option>
                 <option value="city">都市ガス</option>
@@ -131,7 +131,7 @@
             </label>
 
             <label class="prefs__row">
-              <span class="prefs__label">📱 スマホ回線数</span>
+              <span class="prefs__label">スマホ回線数</span>
               <select id="mobile-lines" class="prefs__select">
                 <option value="">おまかせ（世帯人数から推定）</option>
                 <option value="1">1回線</option>
@@ -143,7 +143,7 @@
             </label>
 
             <label class="prefs__row">
-              <span class="prefs__label">🛡️ 保険の入り方</span>
+              <span class="prefs__label">保険の入り方</span>
               <select id="insurance-type" class="prefs__select">
                 <option value="">指定しない</option>
                 <option value="savings">貯蓄型を含む（終身・養老・学資など）</option>
@@ -153,7 +153,7 @@
             </label>
 
             <label class="prefs__row">
-              <span class="prefs__label">🏠 住まいの種類</span>
+              <span class="prefs__label">住まいの種類</span>
               <select id="housing-tenure" class="prefs__select">
                 <option value="">指定しない</option>
                 <option value="own_loan">持ち家（住宅ローン返済中）</option>
@@ -168,7 +168,7 @@
         <div class="grid">
           <!-- 各項目は JS の CATEGORIES と id を一致させる -->
           <label class="field">
-            <span class="field__label">🏠 住宅費（家賃・ローン）</span>
+            <span class="field__label">住宅費（家賃・ローン）</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="housing" placeholder="例: 90000" />
               <span class="field__unit">円/月</span>
@@ -176,7 +176,7 @@
           </label>
 
           <label class="field">
-            <span class="field__label">📱 スマホ代</span>
+            <span class="field__label">スマホ代</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="mobile" placeholder="例: 8000" />
               <span class="field__unit">円/月</span>
@@ -184,7 +184,7 @@
           </label>
 
           <label class="field">
-            <span class="field__label">💡 電気代</span>
+            <span class="field__label">電気代</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="electricity" placeholder="例: 12000" />
               <span class="field__unit">円/月</span>
@@ -192,7 +192,7 @@
           </label>
 
           <label class="field">
-            <span class="field__label">🔥 ガス代</span>
+            <span class="field__label">ガス代</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="gas" placeholder="例: 6000" />
               <span class="field__unit">円/月</span>
@@ -200,7 +200,7 @@
           </label>
 
           <label class="field">
-            <span class="field__label">🚰 水道代</span>
+            <span class="field__label">水道代</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="water" placeholder="例: 5000" />
               <span class="field__unit">円/月</span>
@@ -208,7 +208,7 @@
           </label>
 
           <label class="field">
-            <span class="field__label">🛡️ 保険料</span>
+            <span class="field__label">保険料</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="insurance" placeholder="例: 20000" />
               <span class="field__unit">円/月</span>
@@ -216,7 +216,7 @@
           </label>
 
           <label class="field">
-            <span class="field__label">🎬 サブスク代</span>
+            <span class="field__label">サブスク代</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="subscription" placeholder="例: 4000" />
               <span class="field__unit">円/月</span>
@@ -224,7 +224,7 @@
           </label>
 
           <label class="field">
-            <span class="field__label">🚗 車関連費</span>
+            <span class="field__label">車関連費</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="car" placeholder="例: 25000" />
               <span class="field__unit">円/月</span>
@@ -232,7 +232,7 @@
           </label>
 
           <label class="field">
-            <span class="field__label">💧 ウォーターサーバー代</span>
+            <span class="field__label">ウォーターサーバー代</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="waterserver" placeholder="例: 4000" />
               <span class="field__unit">円/月</span>
@@ -240,7 +240,7 @@
           </label>
 
           <label class="field">
-            <span class="field__label">🍔 外食・コンビニ代</span>
+            <span class="field__label">外食・コンビニ代</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="eatingout" placeholder="例: 30000" />
               <span class="field__unit">円/月</span>
@@ -248,7 +248,7 @@
           </label>
 
           <label class="field">
-            <span class="field__label">📦 その他の固定費</span>
+            <span class="field__label">その他の固定費</span>
             <span class="field__input">
               <input type="number" inputmode="numeric" min="0" step="100" id="other" placeholder="例: 5000" />
               <span class="field__unit">円/月</span>
@@ -267,7 +267,7 @@
     <section id="result" class="result" hidden aria-live="polite">
       <!-- サマリー -->
       <div class="card summary">
-        <h2 class="section-title">② あなたの削減可能額の目安</h2>
+        <h2 class="section-title"><span class="section-title__no">02</span><span>あなたの削減可能額の目安</span></h2>
         <div class="summary__numbers">
           <div class="summary__block">
             <span class="summary__caption">月間の削減可能額</span>
@@ -293,30 +293,30 @@
 
       <!-- TOP3 -->
       <div class="card">
-        <h2 class="section-title">③ 優先して見直すべき項目 TOP3</h2>
+        <h2 class="section-title"><span class="section-title__no">03</span><span>優先して見直すべき項目 TOP3</span></h2>
         <ol class="top3" id="top3-list"></ol>
       </div>
 
       <!-- 全項目アドバイス -->
       <div class="card">
-        <h2 class="section-title">④ 各項目の改善アドバイス</h2>
+        <h2 class="section-title"><span class="section-title__no">04</span><span>各項目の改善アドバイス</span></h2>
         <div class="advice-list" id="advice-list"></div>
       </div>
 
       <!-- 今日やる3アクション -->
       <div class="card">
-        <h2 class="section-title">⑤ 今日やるべき具体的アクション3つ</h2>
+        <h2 class="section-title"><span class="section-title__no">05</span><span>今日やるべき具体的アクション3つ</span></h2>
         <ul class="actions" id="action-list"></ul>
       </div>
 
       <!-- 収益化CTA -->
       <div class="card cta">
-        <h2 class="section-title">⑥ 次の一歩：見直しを「完了」させる</h2>
+        <h2 class="section-title"><span class="section-title__no">06</span><span>次の一歩：見直しを「完了」させる</span></h2>
         <p id="cta-lead" class="cta__lead"></p>
         <ul class="cta__points">
-          <li>✅ 10項目すべての見直し手順を1冊にまとめた<strong>「固定費見直し完全チェックリスト（PDF）」</strong></li>
-          <li>✅ 「何から・どの順で・どこに連絡するか」がわかるので、迷わず行動できる</li>
-          <li>✅ 我が家用に書き込める削減シミュレーションテンプレ付き</li>
+          <li>10項目すべての見直し手順を1冊にまとめた<strong>「固定費見直し完全チェックリスト（PDF）」</strong></li>
+          <li>「何から・どの順で・どこに連絡するか」がわかるので、迷わず行動できる</li>
+          <li>我が家用に書き込める削減シミュレーションテンプレ付き</li>
         </ul>
         <!-- ↓ 公開時にnote/Tips等の販売URLに差し替えてください -->
         <a href="#" class="btn btn--primary btn--block" id="cta-btn" rel="noopener">
@@ -328,7 +328,7 @@
       </div>
 
       <p class="disclaimer">
-        ⚠️ 本ツールの診断結果は一般的な統計・相場をもとにした<strong>あくまで目安</strong>であり、削減額を保証するものではありません。
+        <span class="disclaimer__label">注記</span>本ツールの診断結果は一般的な統計・相場をもとにした<strong>あくまで目安</strong>であり、削減額を保証するものではありません。
         実際の効果はご契約内容・地域・使用状況により異なります。特定の金融商品・保険商品の売買や乗り換えを助言・推奨するものではなく、
         最終的な判断はご自身の責任で行ってください。
       </p>
