@@ -215,6 +215,72 @@ function track(eventName, params) {
 
 /** 数値を「12,345円」形式に整形 */
 /**
+ * 各入力欄に「わからない」ボタンを付ける。
+ * 押すと、世帯人数などから算出した目安額を入れる（＝入力を諦めて離脱するのを防ぐ）。
+ * 目安を出せない項目（住宅費など）には付けない。
+ */
+function setupGuessButtons() {
+  CATEGORIES.forEach((cat) => {
+    const input = /** @type {HTMLInputElement | null} */ (document.getElementById(cat.id));
+    if (!input) return;
+    const field = input.closest(".field");
+    const labelEl = field ? field.querySelector(".field__label") : null;
+    if (!labelEl) return;
+    if (cat.benchmark(readContext()) == null) return; // 目安が出せない項目
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "field__guess";
+    btn.textContent = "わからない";
+    btn.setAttribute("aria-label", `${cat.name}に目安の金額を入れる`);
+
+    btn.addEventListener("click", (e) => {
+      e.preventDefault(); // label内にあるため、入力欄へのフォーカス移動を抑える
+      const b = cat.benchmark(readContext());
+      if (b == null) return;
+      input.value = String(Math.round(b));
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      btn.textContent = "目安を入れました";
+      setTimeout(() => {
+        btn.textContent = "わからない";
+      }, 1600);
+    });
+
+    labelEl.appendChild(btn);
+  });
+}
+
+/**
+ * 「あなた」と「目安」を並べた横棒グラフを組み立てる。
+ * 目安が無い項目（住宅費など地域差が大きいもの）や未入力の項目では何も描かない。
+ * @param {{ input: number, benchmark: number | null }} item
+ * @returns {string} HTML文字列（描かない場合は空文字）
+ */
+function buildGauge(item) {
+  const b = item.benchmark;
+  if (!b || b <= 0 || !item.input || item.input <= 0) return "";
+
+  const max = Math.max(item.input, b);
+  const pct = (v) => Math.max(2, Math.round((v / max) * 100)); // 0幅だと線が消えるので下限を持たせる
+  const over = item.input > b;
+
+  return (
+    `<div class="gauge" role="img" aria-label="あなた ${yen(item.input)}、目安 ${yen(b)}">` +
+    `<div class="gauge__row gauge__row--you">` +
+    `<span class="gauge__key">あなた</span>` +
+    `<span class="gauge__track"><span class="gauge__bar ${over ? "gauge__bar--over" : "gauge__bar--you"}" style="width:${pct(item.input)}%"></span></span>` +
+    `<span class="gauge__val">${yen(item.input)}</span>` +
+    `</div>` +
+    `<div class="gauge__row">` +
+    `<span class="gauge__key">目安</span>` +
+    `<span class="gauge__track"><span class="gauge__bar" style="width:${pct(b)}%"></span></span>` +
+    `<span class="gauge__val">${yen(b)}</span>` +
+    `</div>` +
+    `</div>`
+  );
+}
+
+/**
  * 金額を「数値」と「円」に分けて要素に描画する。
  * textContent は従来どおり「1,234円」となる（末尾は必ず「円」）。
  * @param {HTMLElement | null} el
@@ -660,6 +726,7 @@ function render(result) {
         : "";
     div.innerHTML =
       `<div class="advice__head"><span class="advice__name">${i.name}</span>${savingTag}</div>` +
+      buildGauge(i) +
       note +
       `<p class="advice__text">${i.advice}</p>` +
       aff;
@@ -743,6 +810,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
+
+  setupGuessButtons();
 });
 }
 
