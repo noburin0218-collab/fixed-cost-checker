@@ -728,9 +728,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const ctaBtn = /** @type {HTMLAnchorElement | null} */ (document.getElementById("cta-btn"));
   if (ctaBtn) {
     const ctaCfg = (window.SITE_CONFIG && window.SITE_CONFIG.cta) || {};
-    if (ctaCfg.label) ctaBtn.textContent = ctaCfg.label;
-    if (ctaCfg.href) ctaBtn.href = ctaCfg.href; // 未設定なら "#" のまま
-    ctaBtn.addEventListener("click", () => track("cta_click", {}));
+    if (ctaCfg.href) {
+      if (ctaCfg.label) ctaBtn.textContent = ctaCfg.label;
+      ctaBtn.href = ctaCfg.href;
+      ctaBtn.addEventListener("click", () => track("cta_click", {}));
+    } else {
+      // 配布先URLが未設定のうちは、押しても何も起きないボタンを見せない
+      // （config.js の cta.href を設定すると自動的に表示される）
+      const ctaCard = ctaBtn.closest(".cta");
+      if (ctaCard) {
+        /** @type {HTMLElement} */ (ctaCard).hidden = true;
+      } else {
+        ctaBtn.hidden = true;
+      }
+    }
   }
 });
 }

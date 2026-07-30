@@ -23,6 +23,9 @@
 
 * { box-sizing: border-box; }
 
+/* hidden属性を常に効かせる（display指定に打ち消されないように） */
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
 body {
