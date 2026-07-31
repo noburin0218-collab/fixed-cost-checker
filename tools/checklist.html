@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>固定費 かんたんチェック10｜家計の保健室</title>
+<!--
+  無料配布PDF「固定費 かんたんチェック10」の元データ（A4縦・2ページ）。
+  サイト本体と同じ「診断書」の様式で組んでいます。
+
+  PDFの作り直し方: tools/render-checklist.mjs を参照してください。
+-->
+<style>
+  @page { size: A4 portrait; margin: 14mm 15mm; }
+
+  :root {
+    --ink: #141a17;
+    --ink-2: #59635d;
+    --ink-3: #8a938d;
+    --rule: #d8dcd8;
+    --rule-dark: #1d2a24;
+    --seal: #0f5c43;
+    --vermilion: #a33b23;
+    --serif: "IPAexMincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans: "IPAGothic", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    font-size: 10pt;
+    line-height: 1.75;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page { page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+
+  /* ---- 表題部 ---- */
+  .masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    color: var(--ink-2);
+    padding-bottom: 8pt;
+    border-bottom: 1px solid var(--rule);
+  }
+  .seal-mark {
+    width: 26pt; height: 26pt;
+    border: 1.2pt solid var(--vermilion);
+    border-radius: 50%;
+    color: var(--vermilion);
+    font-family: var(--serif);
+    font-size: 11pt;
+    line-height: 1;
+    letter-spacing: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: 24pt;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    margin-top: 14pt;
+  }
+  .lead {
+    color: var(--ink-2);
+    font-size: 10pt;
+    margin-top: 8pt;
+    padding-bottom: 12pt;
+    border-bottom: 2px solid var(--rule-dark);
+  }
+  .lead b { color: var(--vermilion); font-weight: 500; }
+
+  /* ---- チェック項目 ---- */
+  .items { margin-top: 4pt; }
+  .item {
+    display: flex;
+    gap: 9pt;
+    padding: 8.5pt 0;
+    border-bottom: 1px solid var(--rule);
+    page-break-inside: avoid;
+  }
+  .box {
+    flex-shrink: 0;
+    width: 12pt; height: 12pt;
+    border: 1pt solid var(--ink-2);
+    margin-top: 3pt;
+  }
+  .no {
+    flex-shrink: 0;
+    width: 16pt;
+    font-size: 8.5pt;
+    color: var(--seal);
+    letter-spacing: 0.06em;
+    margin-top: 2.5pt;
+  }
+  .body-txt { flex: 1; }
+  .q { font-size: 10.5pt; font-weight: 500; line-height: 1.6; }
+  .a { font-size: 8.8pt; color: var(--ink-2); margin-top: 2pt; line-height: 1.7; }
+  .a em { color: var(--vermilion); font-style: normal; }
+
+  /* ---- 判定 ---- */
+  .verdict {
+    margin-top: 14pt;
+    border: 1px solid var(--rule);
+    padding: 11pt 13pt;
+    page-break-inside: avoid;
+  }
+  .verdict h2 {
+    font-family: var(--serif);
+    font-size: 12pt;
+    font-weight: 600;
+    padding-bottom: 6pt;
+    border-bottom: 1px solid var(--rule);
+    letter-spacing: 0.04em;
+  }
+  .verdict-row { display: flex; gap: 10pt; padding: 5.5pt 0; font-size: 9.5pt; }
+  .verdict-row + .verdict-row { border-top: 1px solid var(--rule); }
+  .verdict-row .n {
+    flex-shrink: 0; width: 62pt;
+    font-weight: 500; color: var(--seal);
+  }
+
+  /* ---- 2ページ目 ---- */
+  h2.sec {
+    font-family: var(--serif);
+    font-size: 13pt;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-top: 16pt;
+    padding-bottom: 6pt;
+    border-bottom: 1px solid var(--rule);
+    display: flex; align-items: baseline; gap: 9pt;
+  }
+  h2.sec .n {
+    font-family: var(--sans);
+    font-size: 8pt; color: var(--seal); letter-spacing: 0.1em;
+  }
+  table { width: 100%; border-collapse: collapse; margin-top: 8pt; font-size: 9.2pt; }
+  th, td { border: 1px solid var(--rule); padding: 6pt 8pt; text-align: left; vertical-align: top; }
+  th { background: #f3f5f3; font-weight: 500; color: var(--ink-2); font-size: 8.6pt; letter-spacing: 0.04em; }
+  td b { color: var(--vermilion); font-weight: 500; }
+
+  .steps { margin-top: 8pt; }
+  .step {
+    display: flex; gap: 9pt;
+    padding: 7pt 0;
+    border-bottom: 1px solid var(--rule);
+    page-break-inside: avoid;
+  }
+  .step .n {
+    flex-shrink: 0; width: 15pt;
+    font-size: 8.5pt; color: var(--seal); letter-spacing: 0.06em; margin-top: 2pt;
+  }
+  .step .t { font-size: 10pt; font-weight: 500; }
+  .step .d { font-size: 8.8pt; color: var(--ink-2); margin-top: 1pt; }
+
+  /* ---- 誘導 ---- */
+  .cta {
+    margin-top: 16pt;
+    border: 1px solid var(--seal);
+    padding: 12pt 14pt;
+    display: flex; gap: 14pt; align-items: center;
+    page-break-inside: avoid;
+  }
+  .cta img { width: 74pt; height: 74pt; flex-shrink: 0; }
+  .cta h3 { font-family: var(--serif); font-size: 12pt; font-weight: 600; letter-spacing: 0.03em; }
+  .cta p { font-size: 9pt; color: var(--ink-2); margin-top: 4pt; }
+  .cta .url { color: var(--seal); font-size: 10pt; letter-spacing: 0.04em; margin-top: 5pt; }
+
+  .note {
+    margin-top: 14pt;
+    padding-top: 8pt;
+    border-top: 1px solid var(--rule);
+    font-size: 7.8pt;
+    color: var(--ink-3);
+    line-height: 1.7;
+  }
+  .note .label { letter-spacing: 0.14em; color: var(--ink-2); }
+  .foot {
+    margin-top: 8pt;
+    display: flex; justify-content: space-between;
+    font-size: 8pt; color: var(--ink-3); letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ 1ページ目 ============ -->
+<section class="page">
+  <div class="masthead">
+    <span>家 計 の 保 健 室　│　無料配布資料</span>
+    <span class="seal-mark">保</span>
+  </div>
+
+  <h1>固定費 かんたんチェック10</h1>
+  <p class="lead">
+    がんばる節約の前に、まず「一度見直せばずっと効く」固定費から。<br />
+    当てはまる項目にチェックを入れてください。<b>3つ以上なら、見直しでお金が残る可能性が高い</b>です。
+  </p>
+
+  <div class="items">
+    <div class="item"><span class="box"></span><span class="no">01</span><span class="body-txt">
+      <div class="q">スマホ代が1人あたり月3,000円を超えている</div>
+      <div class="a">格安SIM・eSIMへの乗り換えが最も効果の大きい費目。<em>年3〜7万円</em>下がる家庭も。</div>
+    </span></div>
+
+    <div class="item"><span class="box"></span><span class="no">02</span><span class="body-txt">
+      <div class="q">家族割・セット割に入っているが、内訳を説明できない</div>
+      <div class="a">割引の条件を満たせず「実は割高」なケースが多い。明細でデータ使用量を確認。</div>
+    </span></div>
+
+    <div class="item"><span class="box"></span><span class="no">03</span><span class="body-txt">
+      <div class="q">電気の契約プラン・電力会社を一度も見直していない</div>
+      <div class="a">電力は自由に選べる。比較サイトに検針票の使用量を入れるだけで差額が出る。</div>
+    </span></div>
+
+    <div class="item"><span class="box"></span><span class="no">04</span><span class="body-txt">
+      <div class="q">プロパンガスだが、料金を他社と比べたことがない</div>
+      <div class="a">プロパンは自由料金で会社ごとの差が大きい。相見積もりで下がる余地が大きい。</div>
+    </span></div>
+
+    <div class="item"><span class="box"></span><span class="no">05</span><span class="body-txt">
+      <div class="q">生命保険を「なんとなく」で続けている（保障内容を説明できない）</div>
+      <div class="a">説明できない保障は、たいてい必要以上。まず何にいくら払っているかを書き出す。</div>
+    </span></div>
+
+    <div class="item"><span class="box"></span><span class="no">06</span><span class="body-txt">
+      <div class="q">貯蓄型（終身・養老・学資）の保険に入っている</div>
+      <div class="a">保障と貯蓄が混ざって割高になりがち。掛け捨て中心への組み替えが基本。</div>
+    </span></div>
+
+    <div class="item"><span class="box"></span><span class="no">07</span><span class="body-txt">
+      <div class="q">公的保障（遺族年金・高額療養費）でいくら出るか知らない</div>
+      <div class="a">公的保障を知ると「必要な保険」は減る。上乗せ分だけ民間で備えるのが原則。</div>
+    </span></div>
+
+    <div class="item"><span class="box"></span><span class="no">08</span><span class="body-txt">
+      <div class="q">3か月以上使っていないサブスクがある</div>
+      <div class="a">棚卸しすると平均2〜3個出てくる。年払いに変えると安くなるものも。</div>
+    </span></div>
+
+    <div class="item"><span class="box"></span><span class="no">09</span><span class="body-txt">
+      <div class="q">住宅ローン返済中だが、借り換えの試算をしたことがない</div>
+      <div class="a">残高が多い・残期間が長い・金利差があるほど効果大。<em>試算は無料</em>。</div>
+    </span></div>
+
+    <div class="item"><span class="box"></span><span class="no">10</span><span class="body-txt">
+      <div class="q">自動車保険を、更新時に他社と相見積もりしていない</div>
+      <div class="a">同じ補償でも会社で保険料が違う。一括見積もりは年1回の習慣にする。</div>
+    </span></div>
+  </div>
+
+  <div class="verdict">
+    <h2>チェックの数で見る、いまの状態</h2>
+    <div class="verdict-row"><span class="n">0〜2個</span><span>よく管理できています。年1回の点検で維持しましょう。</span></div>
+    <div class="verdict-row"><span class="n">3〜5個</span><span>見直し余地あり。効果の大きい1つから着手すれば十分効きます。</span></div>
+    <div class="verdict-row"><span class="n">6個以上</span><span>まとまった金額が残せる可能性。次ページの優先順位どおりに進めてください。</span></div>
+  </div>
+
+  <div class="foot"><span>家計の保健室</span><span>1 / 2</span></div>
+</section>
+
+<!-- ============ 2ページ目 ============ -->
+<section class="page">
+  <div class="masthead">
+    <span>家 計 の 保 健 室　│　無料配布資料</span>
+    <span class="seal-mark">保</span>
+  </div>
+
+  <h2 class="sec"><span class="n">01</span><span>どれから手をつけるか（優先順位）</span></h2>
+  <p style="font-size:9.2pt;color:var(--ink-2);margin-top:7pt;">
+    全部やろうとすると挫折します。<b style="color:var(--vermilion);font-weight:500;">「効果が大きく、手間が小さい」ものから1つだけ</b>着手してください。
+  </p>
+  <table>
+    <tr><th style="width:23%">優先度</th><th style="width:32%">費目</th><th>理由</th></tr>
+    <tr><td><b>まず1つ目</b></td><td>スマホ代／サブスク</td><td>手続きが軽く、効果がすぐ出る。成功体験をつくる。</td></tr>
+    <tr><td>次に</td><td>電気・ガス</td><td>比較サイトで完結。切り替えても品質は変わらない。</td></tr>
+    <tr><td>効果は最大</td><td>保険／住宅ローン</td><td>手間はかかるが金額が大きい。無料相談・無料試算から。</td></tr>
+    <tr><td>年1回でよい</td><td>自動車保険</td><td>更新月に一括見積もりを取る、と決めておく。</td></tr>
+  </table>
+
+  <h2 class="sec"><span class="n">02</span><span>今日できる3つ</span></h2>
+  <div class="steps">
+    <div class="step"><span class="n">01</span><span><div class="t">スマホの明細を開き、データ使用量を確認する</div><div class="d">使っていないギガに払っていないか。5分で終わります。</div></span></div>
+    <div class="step"><span class="n">02</span><span><div class="t">スマホの支払い履歴から、サブスクを書き出す</div><div class="d">3か月使っていないものは、その場で解約。</div></span></div>
+    <div class="step"><span class="n">03</span><span><div class="t">保険証券を1か所に集める</div><div class="d">見直しは「何に入っているか」を把握するところから。</div></span></div>
+  </div>
+
+  <div class="cta">
+    <img src="../qr.png" alt="" />
+    <div>
+      <h3>我が家はいくら削れる？　30秒で診断</h3>
+      <p>毎月の金額を入れるだけで、削減可能額の目安・優先順位・今日やることが出ます。登録不要・データ送信なし。</p>
+      <div class="url">kakei-hokenshitsu.com</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="label">注記</span><br />
+    本資料は一般的な統計・相場をもとにした情報提供であり、削減額を保証するものではありません。実際の効果はご契約内容・地域・使用状況により異なります。特定の金融商品・保険商品の売買や乗り換えを助言・推奨するものではなく、最終的な判断はご自身の責任で行ってください。
+  </div>
+
+  <div class="foot"><span>家計の保健室　kakei-hokenshitsu.com</span><span>2 / 2</span></div>
+</section>
+
+</body>
+</html>
