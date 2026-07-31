@@ -722,7 +722,8 @@ function render(result) {
     const affOk = i.id === "housing" ? result.ctx.tenure === "own_loan" : true;
     const aff =
       affOk && cfg && cfg.href
-        ? `<a class="advice__link" href="${cfg.href}" target="_blank" rel="noopener sponsored">${cfg.label || "くわしく見る"} ›</a>`
+        ? `<p class="advice__ad"><span class="ad-tag">広告</span>` +
+          `<a class="advice__link" href="${cfg.href}" target="_blank" rel="noopener sponsored">${cfg.label || "くわしく見る"} ›</a></p>`
         : "";
     div.innerHTML =
       `<div class="advice__head"><span class="advice__name">${i.name}</span>${savingTag}</div>` +
