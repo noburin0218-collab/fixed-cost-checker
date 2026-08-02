@@ -28,7 +28,20 @@ window.SITE_CONFIG = {
     mobile: { label: "格安SIMのプランを比較する", href: "" },
     electricity: { label: "電気・ガス料金を比較する", href: "" },
     gas: { label: "ガス会社を比較・相見積もりする", href: "" },
-    insurance: { label: "保険の無料相談を予約する", href: "" },
+    // 保険だけは世帯人数で出し分ける（family＝3人以上／default＝2人以下）。
+    // impression はA8の表示計測用の1×1画像。素材のコードに含まれているものをそのまま指定。
+    insurance: {
+      family: {
+        label: "妊娠〜出産〜子育て中の「ママ」のための保険無料相談サービス【ベビープラネット】",
+        href: "https://px.a8.net/svt/ejp?a8mat=4B8B4S+EVU5ZU+503M+5YRHE",
+        impression: "https://www18.a8.net/0.gif?a8mat=4B8B4S+EVU5ZU+503M+5YRHE",
+      },
+      default: {
+        label: "保険の無料相談【保険ランドリー】",
+        href: "https://px.a8.net/svt/ejp?a8mat=4B8DGR+3TJ6AI+3S2C+5ZEMQ",
+        impression: "https://www11.a8.net/0.gif?a8mat=4B8DGR+3TJ6AI+3S2C+5ZEMQ",
+      },
+    },
     car: { label: "自動車保険を一括見積もりする", href: "" },
   },
 };

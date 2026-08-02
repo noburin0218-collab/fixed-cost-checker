@@ -215,6 +215,35 @@ function track(eventName, params) {
 
 /** 数値を「12,345円」形式に整形 */
 /**
+ * 表示するアフィリエイトリンクを1つ選ぶ。
+ *
+ * config.js の書き方は2通り:
+ *   1) { label, href }                    … 常に同じリンクを出す
+ *   2) { family: {...}, default: {...} }  … 世帯人数で出し分ける
+ *      family  … 3人以上（子育て世帯の可能性が高い）
+ *      default … 2人以下
+ *
+ * @param {string} id カテゴリID
+ * @param {{ n: number }} ctx 診断の前提条件
+ * @returns {{ label?: string, href: string, impression?: string } | null}
+ */
+function resolveAffiliate(id, ctx) {
+  const cfg =
+    (window.SITE_CONFIG &&
+      window.SITE_CONFIG.affiliates &&
+      window.SITE_CONFIG.affiliates[id]) ||
+    null;
+  if (!cfg) return null;
+  // 単一リンクの指定
+  if (cfg.href) return { label: cfg.label, href: cfg.href, impression: cfg.impression };
+
+  const family = cfg.family && cfg.family.href ? cfg.family : null;
+  const fallback = cfg.default && cfg.default.href ? cfg.default : null;
+  const picked = ctx && ctx.n >= 3 ? family || fallback : fallback || family;
+  return picked || null;
+}
+
+/**
  * 各入力欄に「わからない」ボタンを付ける。
  * 押すと、世帯人数などから算出した目安額を入れる（＝入力を諦めて離脱するのを防ぐ）。
  * 目安を出せない項目（住宅費など）には付けない。
@@ -713,17 +742,14 @@ function render(result) {
     // 目安との比較メモ
     const note = i.note ? `<p class="advice__note">${i.note}</p>` : "";
     // アフィリエイトリンクは config.js で href が設定されている項目のみ表示
-    const cfg =
-      (window.SITE_CONFIG &&
-        window.SITE_CONFIG.affiliates &&
-        window.SITE_CONFIG.affiliates[i.id]) ||
-      null;
+    const cfg = resolveAffiliate(i.id, result.ctx);
     // 住宅ローン借り換えリンクは「持ち家ローン返済中」の人だけに表示
     const affOk = i.id === "housing" ? result.ctx.tenure === "own_loan" : true;
+    const beacon = cfg && cfg.impression ? `<img src="${cfg.impression}" width="1" height="1" alt="" />` : "";
     const aff =
       affOk && cfg && cfg.href
         ? `<p class="advice__ad"><span class="ad-tag">広告</span>` +
-          `<a class="advice__link" href="${cfg.href}" target="_blank" rel="noopener sponsored">${cfg.label || "くわしく見る"} ›</a></p>`
+          `<a class="advice__link" href="${cfg.href}" target="_blank" rel="nofollow sponsored noopener">${cfg.label || "くわしく見る"} ›</a>${beacon}</p>`
         : "";
     div.innerHTML =
       `<div class="advice__head"><span class="advice__name">${i.name}</span>${savingTag}</div>` +
