@@ -47,6 +47,18 @@ function mobileBenchmark(c) {
 }
 
 /**
+ * 光回線の目安。世帯人数ではなく住居タイプで決まる（1住戸あたりの契約のため）。
+ * 戸建て向けプランは集合住宅向けより高いのが一般的。
+ * @param {{ housing?: string }} c
+ * @returns {number}
+ */
+function internetBenchmark(c) {
+  if (c.housing === "house") return 5800;
+  if (c.housing === "apartment") return 4500;
+  return 5000;
+}
+
+/**
  * カテゴリ定義（id は index.html の input id と一致させる）
  * - benchmark(ctx): 月額の目安（円）。ctx = { n: 世帯人数, carrier: 'carrier'|'mvno' }
  * - scaled: true なら目安が世帯人数に応じて変わる（表示に「N人世帯の目安」を付ける）
@@ -87,6 +99,17 @@ const CATEGORIES = [
     },
     advice:
       "月3,000円を超えるなら格安SIM・eSIMへの乗り換えが最も効果的です。家族割やセット割で実は割高になっているケースも多く、データ使用量を見直して必要なプランに変えるだけで大きく下がります。",
+  },
+  {
+    id: "internet",
+    name: "ネット回線（光回線など）",
+    benchmark: (c) => internetBenchmark(c),
+    saving: (input, c) => {
+      const b = internetBenchmark(c);
+      return clampSave(excess(input, b) * 0.35 + Math.min(input, b) * 0.05, input);
+    },
+    advice:
+      "光回線は乗り換え時のキャッシュバックや割引で、実質の負担が下がることがあります。まず明細を開き、ひかり電話・セキュリティ・サポートなど使っていないオプションが付いていないか確認してください。スマホと同じ系列にまとめるセット割が使える場合もあります。集合住宅では建物側の配線方式によって料金と速度が変わるため、住んでいる建物で選べるプランを確認するのが先です。",
   },
   {
     id: "electricity",
@@ -435,6 +458,7 @@ function diagnose() {
 function buildTodayActions(rankedWithSaving) {
   const actionMap = {
     mobile: "格安SIM比較サイトで、自分のデータ使用量に合うプランの月額を1社調べる",
+    internet: "光回線の明細を開き、使っていないオプション（ひかり電話・セキュリティ等）を1つ解約する",
     electricity: "電力比較サイトに検針票の使用量を入力し、今より安いプランを1つ見つける",
     gas: "ガス会社の切り替え/相見積もりサイトで現在の料金と比較する",
     water: "節水シャワーヘッドの価格と、お風呂の使い方を1つ見直す",

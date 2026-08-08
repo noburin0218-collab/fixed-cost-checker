@@ -26,6 +26,7 @@ window.SITE_CONFIG = {
   affiliates: {
     housing: { label: "住宅ローンの借り換えメリットを試算する", href: "" },
     mobile: { label: "格安SIMのプランを比較する", href: "" },
+    internet: { label: "光回線を比較・乗り換える", href: "" },
     electricity: { label: "電気・ガス料金を比較する", href: "" },
     gas: { label: "ガス会社を比較・相見積もりする", href: "" },
     // 保険だけは世帯人数で出し分ける（family＝3人以上／default＝2人以下）。
