@@ -25,10 +25,22 @@ window.SITE_CONFIG = {
   // ラベルは自由に変更可。href が空ならそのボタンは表示されません。
   affiliates: {
     housing: { label: "住宅ローンの借り換えメリットを試算する", href: "" },
-    mobile: { label: "格安SIMのプランを比較する", href: "" },
+    mobile: {
+      label: "格安SIMなら【ＬＩＢＭＯ】",
+      href: "https://px.a8.net/svt/ejp?a8mat=4BA0X8+462SA+3UM0+5YRHE",
+      impression: "https://www11.a8.net/0.gif?a8mat=4BA0X8+462SA+3UM0+5YRHE",
+    },
     internet: { label: "光回線を比較・乗り換える", href: "" },
-    electricity: { label: "電気・ガス料金を比較する", href: "" },
-    gas: { label: "ガス会社を比較・相見積もりする", href: "" },
+    electricity: {
+      label: "電気料金プランを比較して電気代を今よりお安く！【電気チョイス】",
+      href: "https://px.a8.net/svt/ejp?a8mat=4BA0X8+SKUL6+3SPO+TS3OI",
+      impression: "https://www16.a8.net/0.gif?a8mat=4BA0X8+SKUL6+3SPO+TS3OI",
+    },
+    gas: {
+      label: "プロパンガス料金を比較し、最適なガス会社を選ぼう！【エネピ】",
+      href: "https://px.a8.net/svt/ejp?a8mat=4BA0X8+UYL0A+2W92+NVHCY",
+      impression: "https://www17.a8.net/0.gif?a8mat=4BA0X8+UYL0A+2W92+NVHCY",
+    },
     // 保険だけは世帯人数で出し分ける（family＝3人以上／default＝2人以下）。
     // impression はA8の表示計測用の1×1画像。素材のコードに含まれているものをそのまま指定。
     insurance: {
