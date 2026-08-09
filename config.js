@@ -30,7 +30,11 @@ window.SITE_CONFIG = {
       href: "https://px.a8.net/svt/ejp?a8mat=4BA0X8+462SA+3UM0+5YRHE",
       impression: "https://www11.a8.net/0.gif?a8mat=4BA0X8+462SA+3UM0+5YRHE",
     },
-    internet: { label: "光回線を比較・乗り換える", href: "" },
+    internet: {
+      label: "次世代接続方式v6プラス利用可能光回線【イツキ光】",
+      href: "https://px.a8.net/svt/ejp?a8mat=4BA0X8+LFNBU+4VXM+60OXE",
+      impression: "https://www14.a8.net/0.gif?a8mat=4BA0X8+LFNBU+4VXM+60OXE",
+    },
     electricity: {
       label: "電気料金プランを比較して電気代を今よりお安く！【電気チョイス】",
       href: "https://px.a8.net/svt/ejp?a8mat=4BA0X8+SKUL6+3SPO+TS3OI",
