@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>ブランド素材（SNSアイコン・ヘッダー）</title>
+<!--
+  SNS用のアイコンとヘッダーの元データ。サイト本体と同じ「診断書」の様式で組んでいます。
+  画像の書き出し方: tools/render-brand.mjs を参照してください。
+-->
+<style>
+  :root {
+    --paper: #faf9f6;
+    --surface: #ffffff;
+    --ink: #141a17;
+    --ink-2: #59635d;
+    --ink-3: #8a938d;
+    --rule: #d8dcd8;
+    --rule-dark: #1d2a24;
+    --seal: #0f5c43;
+    --vermilion: #a33b23;
+    --serif: "IPAexMincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --sans: "IPAGothic", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #ddd; font-family: var(--sans); }
+
+  /* ===== アイコン 400×400 ===== */
+  #icon {
+    width: 400px; height: 400px;
+    background: var(--paper);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 22px;
+  }
+  #icon .seal {
+    width: 208px; height: 208px;
+    border: 7px solid var(--vermilion);
+    border-radius: 50%;
+    color: var(--vermilion);
+    font-family: var(--serif);
+    font-size: 116px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    padding-bottom: 6px;
+  }
+  #icon .seal::before {
+    content: ""; position: absolute; inset: 12px;
+    border: 2.5px solid var(--vermilion); border-radius: 50%; opacity: .5;
+  }
+  #icon .name {
+    font-family: var(--serif);
+    font-size: 34px; letter-spacing: .16em;
+    color: var(--ink); padding-left: .16em;
+  }
+
+  /* ===== ヘッダー 1500×500 ===== */
+  #header {
+    width: 1500px; height: 500px;
+    background: var(--paper);
+    padding: 58px 76px;
+    display: flex; flex-direction: column;
+  }
+  #header .sheet {
+    flex: 1; background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 44px 60px;
+    display: flex; flex-direction: column;
+  }
+  #header .brand {
+    font-size: 25px; letter-spacing: .22em; color: var(--ink-2);
+    padding-bottom: 18px; border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  #header .brand .seal {
+    width: 46px; height: 46px; border: 2px solid var(--vermilion); border-radius: 50%;
+    color: var(--vermilion); font-family: var(--serif); font-size: 22px; letter-spacing: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #header h1 {
+    font-family: var(--serif); font-weight: 600;
+    font-size: 62px; letter-spacing: .05em; margin-top: 30px; color: var(--ink);
+  }
+  #header .lead { font-size: 25px; color: var(--ink-2); margin-top: 16px; }
+  #header .foot {
+    margin-top: auto; padding-top: 18px; border-top: 2px solid var(--rule-dark);
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 22px; color: var(--ink-3);
+  }
+  #header .foot .url { color: var(--seal); letter-spacing: .05em; }
+</style>
+</head>
+<body>
+
+<div id="icon">
+  <div class="seal">保</div>
+  <div class="name">家計の保健室</div>
+</div>
+
+<div id="header">
+  <div class="sheet">
+    <div class="brand">
+      <span>家 計 の 保 健 室　│　固定費見直し 診断書</span>
+      <span class="seal">保</span>
+    </div>
+    <h1>がんばる節約より、まず固定費。</h1>
+    <p class="lead">30代・子育て世帯のための、入力30秒の無料診断。登録不要・データ送信なし。</p>
+    <div class="foot">
+      <span>スマホ／保険／光熱費／住宅ローン／サブスク</span>
+      <span class="url">kakei-hokenshitsu.com</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
