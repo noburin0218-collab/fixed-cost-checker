@@ -1,0 +1,23 @@
+name: AI implementation task
+description: Work item for Codex or Claude Code with independent review.
+title: "[AI] "
+labels: []
+body:
+  - type: textarea
+    id: goal
+    attributes: {label: Goal, description: What outcome should exist after this task?}
+    validations: {required: true}
+  - type: textarea
+    id: acceptance
+    attributes: {label: Acceptance criteria, description: Write observable pass/fail conditions.}
+    validations: {required: true}
+  - type: textarea
+    id: out_of_scope
+    attributes: {label: Out of scope, description: What should the AI explicitly avoid changing?}
+  - type: textarea
+    id: checks
+    attributes: {label: Required checks, description: Tests, lint, typecheck, build, validators, runtime checks, etc.}
+  - type: dropdown
+    id: builder
+    attributes: {label: Preferred builder, options: [Codex, Claude Code, Either, Parallel bake-off]}
+    validations: {required: true}
