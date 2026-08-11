@@ -1,0 +1,86 @@
+name: AI Baseline Gates
+
+on:
+  pull_request:
+  push:
+
+concurrency:
+  group: ai-baseline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Python syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -d '' files < <(find . -type f -name '*.py' -not -path './.git/*' -not -path '*/node_modules/*' -print0)
+          if ((${#files[@]} == 0)); then
+            echo 'No Python files.'
+            exit 0
+          fi
+          for f in "${files[@]}"; do python -m py_compile "$f"; done
+
+      - name: PHP syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v php >/dev/null 2>&1; then
+            echo 'PHP CLI unavailable; skipped.'
+            exit 0
+          fi
+          mapfile -d '' files < <(find . -type f -name '*.php' -not -path './.git/*' -not -path '*/vendor/*' -print0)
+          for f in "${files[@]}"; do php -l "$f"; done
+
+      - name: Package manifest syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f package.json ]]; then
+            node -e "JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('package.json OK')"
+          fi
+          if [[ -f pyproject.toml ]]; then
+            python - <<'PY'
+          import tomllib
+          with open('pyproject.toml','rb') as f:
+              tomllib.load(f)
+          print('pyproject.toml OK')
+          PY
+          fi
+
+      - name: Tracked env-file gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          bad=$(git ls-files | grep -E '(^|/)\.env($|\.)' | grep -Ev '\.env\.(example|sample|template)$' || true)
+          if [[ -n "$bad" ]]; then
+            echo '::error::Potential environment/secret file is tracked:'
+            echo "$bad"
+            exit 1
+          fi
+
+      - name: Obvious secret gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git grep -nE '(sk-(ant-)?[A-Za-z0-9_-]{20,}|github_pat_[A-Za-z0-9_]{20,}|ghp_[A-Za-z0-9]{20,}|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----)' -- ':!*.md' ':!docs/**' ':!**/*.lock'; then
+            echo '::error::Possible committed credential detected.'
+            exit 1
+          fi
+          echo 'No obvious committed credentials detected.'
