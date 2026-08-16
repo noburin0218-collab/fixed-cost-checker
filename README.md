@@ -105,6 +105,9 @@ npm run serve   # ローカルサーバ（python3 -m http.server 8000）
 
 いずれの方法でも、数分後に `https://<ユーザー名>.github.io/fixed-cost-checker/` で公開されます。
 
+> ⚠️ 本番はこの既定URLではなく、**独自ドメイン `https://kakei-hokenshitsu.com/`** で公開しています（リポジトリの `CNAME` で指定）。
+> `*.github.io` のURLにはGitHubのユーザー名が入るため、SNS・PDF・QRなど外部に出す場所では使わないでください。
+
 > このリポジトリは `index.html` がルート直下にあるため、追加設定なしで公開できます。
 
 ## 収益化導線のカスタマイズ（`config.js` だけ編集すればOK）

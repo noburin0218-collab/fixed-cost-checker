@@ -3,17 +3,21 @@
 「あとは貼るだけ／出すだけ」で収益化に進めるよう、作業を一本道にまとめました。
 上から順にやればOK。所要：初回まとめて約2〜3時間（審査待ちを除く）。
 
-公開先（予定）：https://kakei-hokenshitsu.com/ （Cloudflare Pages・無料・匿名）
+公開先：**https://kakei-hokenshitsu.com/** （独自ドメイン × GitHub Pages・公開済み）
 
 ---
 
-## STEP 0｜公開先を Cloudflare Pages に移す（匿名・無料）
-匿名性とブランドのため、公開URLを `kakei-hokenshitsu.com` にします。**手順は [`HOSTING_CLOUDFLARE.md`](./HOSTING_CLOUDFLARE.md) を参照。**
-- 本名と無関係の新メールで Cloudflare に登録 → このリポジトリを接続（または直接アップロード）
-- プロジェクト名を **`kakei-hokenshitsu`** にすると、URLが上記とピッタリ一致します
-- ※ 既存の GitHub Pages（`*.github.io`）はソース/予備として残してOK。本名が出るのが気になれば、後でリポジトリを非公開化できます
+## STEP 0｜公開先の準備 ✅ 完了済み
+独自ドメイン `kakei-hokenshitsu.com` を取得し、GitHub Pages で公開済みです。**この手順はもう不要です。**
 
-> リポジトリを編集 → コミットすれば、Cloudflare（Git接続時）が自動で再公開します。
+- ドメイン：Porkbunで取得（WHOIS代理公開ON・自動更新ON）
+- 配信：GitHub Pages（リポジトリの `CNAME` でカスタムドメインを指定）
+- **URLにGitHubのユーザー名は出ません。**SNSやPDFには必ず `https://kakei-hokenshitsu.com/` を使ってください
+  （`*.github.io` の旧URLは本名系のIDが入るため使わない）
+- ドメインを変えたくなったら `./tools/switch-domain.sh <新ドメイン>` で一括変更できます
+
+> **更新方法**：`main` にコミットすれば、数分で自動的に本番へ反映されます（`.github/workflows/deploy-pages.yml`）。
+> ※ 旧Cloudflare手順（`HOSTING_CLOUDFLARE.md`）は現在使用していません。
 
 ---
 
