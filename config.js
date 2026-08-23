@@ -10,6 +10,12 @@
  * どのASP・どの案件に登録すればよいかは MONETIZATION.md を参照してください。
  */
 window.SITE_CONFIG = {
+  // アクセス解析（GoatCounter）の集計先URL。空にすると計測しません。
+  // Googleアカウント不要・クッキー不要の解析です。
+  // ※ 送るのは「ページの閲覧」と「診断した・共有した」等のイベント名だけで、
+  //   入力された金額や削減額は送りません。
+  goatCounterEndpoint: "https://kakei-hokenshitsu.goatcounter.com/count",
+
   // Google Analytics 4 の測定ID（例: "G-ABCDE12345"）。未設定なら計測しません。
   // ※2026/06現在、Googleアカウント無効化のためGA4は利用不可。当面は空のままでOK
   //   （効果測定はASP管理画面のクリック数＋SNSの反応で代用。詳細は MONETIZATION.md 5節）。

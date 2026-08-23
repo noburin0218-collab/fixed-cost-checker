@@ -234,6 +234,13 @@ function track(eventName, params) {
   if (typeof window.gtag === "function") {
     window.gtag("event", eventName, params || {});
   }
+  // GoatCounter へはイベント名だけを送る。
+  // 入力された金額や、そこから計算した削減額は送らない
+  // （「入力した数字はどこにも送信されない」という説明を守るため）。
+  const gc = window.goatcounter;
+  if (gc && typeof gc.count === "function") {
+    gc.count({ path: `event/${eventName}`, title: eventName, event: true });
+  }
 }
 
 /** 数値を「12,345円」形式に整形 */

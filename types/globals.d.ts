@@ -22,6 +22,8 @@ declare global {
     default?: SiteAffiliateLink;
   }
   interface SiteConfig {
+    /** GoatCounter の集計先URL。空なら計測しない */
+    goatCounterEndpoint?: string;
     gaMeasurementId?: string;
     cta?: { label?: string; href?: string };
     affiliates?: Record<string, SiteAffiliate>;
@@ -29,6 +31,8 @@ declare global {
   interface Window {
     SITE_CONFIG?: SiteConfig;
     gtag?: (...args: any[]) => void;
+    /** GoatCounter の計測スクリプトが読み込まれると生える */
+    goatcounter?: { count?: (opts: { path: string; title?: string; event?: boolean }) => void };
     dataLayer?: any[];
   }
   // CommonJS（テスト用 module.exports）をブラウザJSからも参照するため

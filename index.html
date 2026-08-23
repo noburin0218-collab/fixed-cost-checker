@@ -28,6 +28,22 @@
   <!-- 設定（リンク・計測ID）はすべて config.js に集約 -->
   <script src="config.js"></script>
 
+  <!-- ===== アクセス計測（GoatCounter）=====
+       config.js の goatCounterEndpoint を設定すると有効化されます（空なら読み込まれません）。
+       クッキーを使わず、送るのは閲覧ページとイベント名のみ。入力された金額は送りません。 -->
+  <script>
+    (function () {
+      var cfg = window.SITE_CONFIG || {};
+      var endpoint = cfg.goatCounterEndpoint;
+      if (!endpoint) return;
+      var s = document.createElement("script");
+      s.async = true;
+      s.src = "//gc.zgo.at/count.js";
+      s.setAttribute("data-goatcounter", endpoint);
+      document.head.appendChild(s);
+    })();
+  </script>
+
   <!-- ===== アクセス計測（Google Analytics 4）=====
        config.js の gaMeasurementId を設定すると有効化されます（未設定なら読み込まれません）。 -->
   <script>
