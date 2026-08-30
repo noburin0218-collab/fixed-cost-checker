@@ -180,6 +180,18 @@
                 <option value="rent">賃貸</option>
               </select>
             </label>
+            <label class="prefs__row">
+              <span class="prefs__label">毎月の貯蓄</span>
+              <select id="savings-status" class="prefs__select">
+                <option value="">指定しない</option>
+                <option value="monthly">毎月できている</option>
+                <option value="sometimes">月によってできない</option>
+                <option value="rarely">ほとんどできていない</option>
+              </select>
+            </label>
+
+            <p class="prefs__hint">※ 貯蓄の状況は「先取り貯蓄を含めて、毎月お金を残せているか」を選んでください。診断結果とあわせて、見直しの順番を判断する材料にします。</p>
+
             <p class="prefs__hint">※ プロパンは都市ガスより割高なことが多く、見直し余地も大きく評価します。戸建て/集合で光熱費の目安を補正します。貯蓄型保険は割高になりがちなため削減余地を大きく見積もります。住宅ローン返済中なら借り換えの試算余地を診断します。</p>
           </div>
         </details>
@@ -335,6 +347,17 @@
       <div class="card">
         <h2 class="section-title"><span class="section-title__no">05</span><span>今日やるべき具体的アクション3つ</span></h2>
         <ul class="actions" id="action-list"></ul>
+      </div>
+
+      <!-- 貯蓄の相談（保険とは別導線）。条件を満たしたときだけ表示する -->
+      <div class="card" id="savings-advisor" hidden>
+        <h2 class="section-title"><span class="section-title__no">06</span><span>浮いたお金を、どう残すか</span></h2>
+        <p class="muted">
+          固定費に見直し余地があり、かつ毎月の貯蓄が安定していない状態です。
+          削った分をそのまま生活費に吸収させてしまうと、家計は変わりません。<br />
+          <small>※ 先に固定費を見直し、そのうえで「残し方」を整えるのが順番です。</small>
+        </p>
+        <div id="savings-advisor-ad"></div>
       </div>
 
       <!-- 無料配布：持ち帰り用チェックリスト -->

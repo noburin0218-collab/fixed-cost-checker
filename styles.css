@@ -496,7 +496,48 @@ input[type="number"],
 }
 .share__btn:hover { background: var(--seal-tint); border-color: var(--seal); color: var(--seal); }
 
-/* ===== アドバイス内リンク（アフィリエイト枠） ===== */
+/* ===== 広告カード =====
+   見出し・説明文はサイト側で組み、その下にASP発行コードをそのまま置く。
+   コードには手を入れず、見た目はここ（CSS）だけで整える。 */
+.ad-card {
+  margin: 14px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.ad-card .ad-tag { margin-top: 0; display: inline-block; }
+.ad-card__heading {
+  margin: 8px 0 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.ad-card__body {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-2);
+  line-height: 1.8;
+}
+.ad-card__link { margin: 12px 0 0; }
+/* ASP発行の <a> を、こちらのボタン意匠に合わせる（HTMLは変更しない） */
+.ad-card__link a {
+  display: inline-block;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--seal);
+  text-decoration: none;
+  border: 1px solid var(--seal);
+  border-radius: var(--radius);
+  padding: 9px 16px;
+  line-height: 1.5;
+  transition: background 0.15s ease;
+}
+.ad-card__link a:hover { background: var(--seal-tint); }
+/* 計測用の1×1画像がレイアウトに影響しないように */
+.ad-card__link img { width: 1px; height: 1px; border: 0; vertical-align: bottom; }
+
+/* ===== アドバイス内リンク（旧形式・残置） ===== */
 /* ステマ規制（景品表示法）対応：広告であることをリンクのすぐ横に明示する */
 .advice__ad {
   display: flex;

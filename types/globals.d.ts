@@ -2,24 +2,14 @@
 export {};
 
 declare global {
-  /** 1本のアフィリエイトリンク */
-  interface SiteAffiliateLink {
-    label?: string;
-    href: string;
-    /** A8の表示計測用1×1画像（素材コードに含まれるもの） */
-    impression?: string;
-  }
-  /**
-   * カテゴリごとの設定。次のいずれかの形をとる。
-   *  - 単一リンク: { label, href }
-   *  - 世帯人数での出し分け: { family（3人以上）, default（2人以下） }
-   */
+  /** 広告カード1件分の設定 */
   interface SiteAffiliate {
-    label?: string;
-    href?: string;
-    impression?: string;
-    family?: SiteAffiliateLink;
-    default?: SiteAffiliateLink;
+    /** サイト側で書く見出し（広告コードの外側） */
+    heading?: string;
+    /** サイト側で書く説明文（広告コードの外側） */
+    body?: string;
+    /** ASPが発行した広告コード。改変せずそのまま貼る。空なら非表示 */
+    code?: string;
   }
   interface SiteConfig {
     /** GoatCounter の集計先URL。空なら計測しない */
@@ -27,6 +17,8 @@ declare global {
     gaMeasurementId?: string;
     cta?: { label?: string; href?: string };
     affiliates?: Record<string, SiteAffiliate>;
+    /** 貯蓄相談の導線（保険とは別枠） */
+    savingsAdvisor?: SiteAffiliate;
   }
   interface Window {
     SITE_CONFIG?: SiteConfig;

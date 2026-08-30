@@ -245,32 +245,75 @@ function track(eventName, params) {
 
 /** 数値を「12,345円」形式に整形 */
 /**
- * 表示するアフィリエイトリンクを1つ選ぶ。
+ * その項目の広告設定を返す。ASP発行コード（code）が無ければ出さない。
  *
- * config.js の書き方は2通り:
- *   1) { label, href }                    … 常に同じリンクを出す
- *   2) { family: {...}, default: {...} }  … 世帯人数で出し分ける
- *      family  … 3人以上（子育て世帯の可能性が高い）
- *      default … 2人以下
+ * 属性による出し分けは行わない。CVR・承認率の実績が無い段階で振り分けても
+ * 根拠にならないため、まず1本に集約してデータを貯める方針。
  *
  * @param {string} id カテゴリID
- * @param {{ n: number }} ctx 診断の前提条件
- * @returns {{ label?: string, href: string, impression?: string } | null}
+ * @returns {SiteAffiliate | null}
  */
-function resolveAffiliate(id, ctx) {
+function resolveAffiliate(id) {
   const cfg =
     (window.SITE_CONFIG &&
       window.SITE_CONFIG.affiliates &&
       window.SITE_CONFIG.affiliates[id]) ||
     null;
-  if (!cfg) return null;
-  // 単一リンクの指定
-  if (cfg.href) return { label: cfg.label, href: cfg.href, impression: cfg.impression };
+  if (!cfg || !cfg.code) return null;
+  return cfg;
+}
 
-  const family = cfg.family && cfg.family.href ? cfg.family : null;
-  const fallback = cfg.default && cfg.default.href ? cfg.default : null;
-  const picked = ctx && ctx.n >= 3 ? family || fallback : fallback || family;
-  return picked || null;
+/**
+ * その項目の広告を出してよいか判定する。
+ *
+ * 方針：**当てはまらない人には出さない**。無関係な広告は信頼を損ね、
+ * クリックもされないため、掲載しない方が結果的に成果につながる。
+ *
+ * @param {{ id: string, input: number }} item 診断項目
+ * @param {{ tenure?: string, gasType?: string, carrier?: string }} ctx 前提条件
+ * @returns {boolean}
+ */
+function shouldShowAd(item, ctx) {
+  if (!item || item.input <= 0) return false; // 支出が無い費目に広告は出さない
+  const c = ctx || {};
+  switch (item.id) {
+    case "housing":
+      // 借り換えの話ができるのは「持ち家・ローン返済中」の人だけ
+      return c.tenure === "own_loan";
+    case "gas":
+      // オール電化には出さない。都市ガスの人にプロパン比較は当てはまらない
+      return c.gasType !== "none" && c.gasType !== "city";
+    case "mobile":
+      // すでに格安SIM中心の人に乗り換えを勧めても響かない
+      return c.carrier !== "mvno";
+    default:
+      return true;
+  }
+}
+
+/**
+ * 広告カードのHTMLを組み立てる。
+ *
+ * 見出し・説明文はサイト側で書き、ASPが発行したコード（cfg.code）は
+ * **一切改変せずそのまま**その下に配置する。
+ * URLの抜き出しやアンカーテキストの書き換えはASP規約違反になるため行わない。
+ *
+ * @param {SiteAffiliate | null} cfg
+ * @returns {string}
+ */
+function buildAdCard(cfg) {
+  if (!cfg || !cfg.code) return "";
+  const heading = cfg.heading ? `<p class="ad-card__heading">${cfg.heading}</p>` : "";
+  const body = cfg.body ? `<p class="ad-card__body">${cfg.body}</p>` : "";
+  return (
+    `<div class="ad-card">` +
+    `<span class="ad-tag">広告</span>` +
+    heading +
+    body +
+    // ↓ ここから下はASP発行コード。改変しないこと
+    `<p class="ad-card__link">${cfg.code}</p>` +
+    `</div>`
+  );
 }
 
 /**
@@ -400,7 +443,29 @@ function readContext() {
     lines: parseInt(readSelect("mobile-lines"), 10) || 0, // 0=おまかせ
     insType: readSelect("insurance-type"), // '' | 'savings' | 'kakezute' | 'unknown'
     tenure: readSelect("housing-tenure"), // '' | 'own_loan' | 'own_paid' | 'rent'
+    savings: readSelect("savings-status"), // '' | 'monthly' | 'sometimes' | 'rarely'
   };
+}
+
+/**
+ * 貯蓄の相談導線を出すかどうかを判定する。
+ *
+ * 回答だけで直行させない。「貯蓄できていない」ことと、
+ * **固定費に実際の見直し余地があること**の両方が揃ったときだけ出す。
+ * 見直す余地が無いのに相談へ送っても、その人の役には立たないため。
+ *
+ * @param {{ ctx: { savings?: string }, yearlySaving: number, totalInput: number }} result
+ * @returns {boolean}
+ */
+function shouldShowSavingsAdvisor(result) {
+  const status = (result.ctx && result.ctx.savings) || "";
+  if (status !== "rarely" && status !== "sometimes") return false; // 未回答・わからない・できている人には出さない
+  if (result.totalInput <= 0) return false; // 支出の入力が無ければ判断材料がない
+
+  // ほとんど貯蓄できていない人：年3万円以上の見直し余地があるとき
+  if (status === "rarely") return result.yearlySaving >= 30000;
+  // 月によってできない人：年6万円以上（＝月5,000円相当）の余地があるとき
+  return result.yearlySaving >= 60000;
 }
 
 /** 入力額と目安から「目安比較メモ」を作る */
@@ -772,16 +837,10 @@ function render(result) {
       i.saving > 0 ? `<span class="advice__saving">削減目安 月${yen(i.saving)}</span>` : "";
     // 目安との比較メモ
     const note = i.note ? `<p class="advice__note">${i.note}</p>` : "";
-    // アフィリエイトリンクは config.js で href が設定されている項目のみ表示
-    const cfg = resolveAffiliate(i.id, result.ctx);
-    // 住宅ローン借り換えリンクは「持ち家ローン返済中」の人だけに表示
-    const affOk = i.id === "housing" ? result.ctx.tenure === "own_loan" : true;
-    const beacon = cfg && cfg.impression ? `<img src="${cfg.impression}" width="1" height="1" alt="" />` : "";
-    const aff =
-      affOk && cfg && cfg.href
-        ? `<p class="advice__ad"><span class="ad-tag">広告</span>` +
-          `<a class="advice__link" href="${cfg.href}" target="_blank" rel="nofollow sponsored noopener">${cfg.label || "くわしく見る"} ›</a>${beacon}</p>`
-        : "";
+    // 広告は config.js に ASP発行コード（code）がある項目だけ表示する
+    const cfg = resolveAffiliate(i.id);
+    // 該当しない人には出さない（信頼を損ねるうえ、クリックもされないため）
+    const aff = shouldShowAd(i, result.ctx) ? buildAdCard(cfg) : "";
     div.innerHTML =
       `<div class="advice__head"><span class="advice__name">${i.name}</span>${savingTag}</div>` +
       buildGauge(i) +
@@ -812,10 +871,39 @@ function render(result) {
   // CTA
   document.getElementById("cta-lead").textContent = buildCtaLead(result.yearlySaving);
 
+  // 貯蓄の相談（条件を満たしたときだけ）
+  const savingsCard = document.getElementById("savings-advisor");
+  if (savingsCard) {
+    const savingsCfg = (window.SITE_CONFIG && window.SITE_CONFIG.savingsAdvisor) || null;
+    const showSavings = !!(savingsCfg && savingsCfg.code && shouldShowSavingsAdvisor(result));
+    savingsCard.hidden = !showSavings;
+    const slot = document.getElementById("savings-advisor-ad");
+    if (slot) slot.innerHTML = showSavings ? buildAdCard(savingsCfg) : "";
+  }
+
   // 表示＆スクロール
   const resultSection = document.getElementById("result");
   resultSection.hidden = false;
+  renumberSections();
   resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/**
+ * 見出しの通し番号を、表示されているセクションだけで振り直す。
+ * 条件によって出し入れするカードがあるため、番号を固定で書くと欠番になる。
+ */
+function renumberSections() {
+  let n = 0;
+  document.querySelectorAll(".section-title__no").forEach((el) => {
+    const card = /** @type {HTMLElement | null} */ (el.closest(".card"));
+    const isHidden = !card || card.hidden || card.closest("[hidden]") !== null;
+    if (isHidden) {
+      el.textContent = "";
+      return;
+    }
+    n += 1;
+    el.textContent = String(n).padStart(2, "0");
+  });
 }
 
 /** 初期化（ブラウザでのみ実行。Nodeからのrequire時はDOM処理をスキップ） */
@@ -847,6 +935,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearInputs();
     lastResult = null;
     document.getElementById("result").hidden = true;
+    renumberSections();
     document.getElementById("form").scrollIntoView({ behavior: "smooth" });
   });
 
@@ -870,6 +959,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   setupGuessButtons();
+  renumberSections();
 });
 }
 
