@@ -1,0 +1,210 @@
+/* ===========================================================
+   記事ページ用のスタイル（styles.css の続き）
+   診断ツールと同じ「診断書」の様式を保つ。
+   =========================================================== */
+
+/* ===== パンくず ===== */
+.crumbs {
+  font-size: 0.76rem;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  padding: 14px 0 0;
+  margin: 0;
+}
+.crumbs ol {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+}
+.crumbs li::after { content: "›"; margin-left: 6px; color: var(--rule); }
+.crumbs li:last-child::after { content: none; }
+.crumbs a { color: var(--ink-2); text-decoration: none; }
+.crumbs a:hover { color: var(--seal); text-decoration: underline; }
+
+/* ===== 記事ヘッダー ===== */
+.article-head {
+  background: var(--surface);
+  border-bottom: 2px solid var(--rule-dark);
+  padding-bottom: 26px;
+}
+.article-cat {
+  display: inline-block;
+  margin: 16px 0 10px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  text-decoration: none;
+}
+.article-cat:hover { border-color: var(--seal); color: var(--seal); }
+.article-title {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  margin: 0 0 14px;
+}
+.article-meta {
+  font-size: 0.76rem;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  line-height: 1.9;
+}
+.article-meta a { color: var(--ink-2); }
+.article-lead {
+  margin: 18px 0 0;
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  line-height: 1.9;
+}
+
+/* ===== 本文 ===== */
+.article-body { padding: 4px 0 0; }
+.article-body h2 {
+  font-family: var(--serif);
+  font-size: 1.22rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  margin: 34px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+}
+.article-body h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  line-height: 1.6;
+}
+.article-body p { margin: 0 0 14px; line-height: 1.95; }
+.article-body ul,
+.article-body ol { margin: 0 0 16px; padding-left: 1.4em; }
+.article-body li { margin-bottom: 8px; line-height: 1.9; }
+.article-body strong { font-weight: 700; }
+.article-body a { color: var(--seal); }
+
+/* 補足の囲み */
+.note-box {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin: 0 0 18px;
+  background: var(--surface);
+}
+.note-box__label {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--seal);
+  margin-bottom: 6px;
+}
+.note-box p { margin: 0; font-size: 0.88rem; color: var(--ink-2); line-height: 1.85; }
+
+/* 表 */
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 18px;
+  font-size: 0.88rem;
+}
+.article-body th,
+.article-body td {
+  border: 1px solid var(--rule);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.75;
+}
+.article-body th { background: var(--seal-tint); font-weight: 500; color: var(--ink-2); }
+.table-scroll { overflow-x: auto; }
+
+/* ===== 診断への導線 ===== */
+.to-diagnosis {
+  border: 1px solid var(--seal);
+  border-radius: var(--radius);
+  padding: 20px 20px 22px;
+  margin: 26px 0;
+  background: var(--surface);
+}
+.to-diagnosis h2 {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+  padding: 0;
+  border: none;
+}
+.to-diagnosis p { font-size: 0.9rem; color: var(--ink-2); margin: 0 0 14px; line-height: 1.85; }
+.to-diagnosis .btn { width: 100%; }
+
+/* ===== 出典 ===== */
+.sources { margin: 30px 0 0; padding-top: 16px; border-top: 1px solid var(--rule); }
+.sources h2 {
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0 0 10px;
+  padding: 0;
+  border: none;
+  font-family: var(--sans);
+}
+.sources ol { margin: 0; padding-left: 1.3em; }
+.sources li { font-size: 0.8rem; color: var(--ink-2); line-height: 1.8; margin-bottom: 6px; }
+
+/* ===== 署名 ===== */
+.byline {
+  margin: 26px 0 0;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  background: var(--surface);
+}
+.byline__name {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.byline p { font-size: 0.82rem; color: var(--ink-2); margin: 0 0 8px; line-height: 1.85; }
+.byline ul { margin: 0; padding-left: 1.2em; }
+.byline li { font-size: 0.8rem; color: var(--ink-2); line-height: 1.8; }
+
+/* ===== 関連記事・一覧 ===== */
+.article-list { list-style: none; padding: 0; margin: 0; }
+.article-list li { border-bottom: 1px solid var(--rule); padding: 16px 0; }
+.article-list li:last-child { border-bottom: none; }
+.article-list a {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+.article-list a:hover { color: var(--seal); text-decoration: underline; }
+.article-list__meta {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.article-list__desc { font-size: 0.85rem; color: var(--ink-2); margin: 6px 0 0; line-height: 1.8; }
+
+/* 診断ページ側に置く「関連する解説」 */
+.related-articles { margin-top: 4px; }
+
+@media (min-width: 600px) {
+  .article-title { font-size: 1.95rem; }
+  .article-body h2 { font-size: 1.35rem; }
+  .to-diagnosis .btn { width: auto; min-width: 280px; }
+}
+
+@media print {
+  .to-diagnosis, .crumbs { display: none; }
+}

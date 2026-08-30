@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>記事一覧｜家計の保健室</title>
+  <meta name="description" content="家計の保健室の解説記事。固定費の見直し、光熱費、通信費、保険、家計の考え方について、公的機関の情報をもとに解説しています。" />
+  <link rel="canonical" href="https://kakei-hokenshitsu.com/articles/" />
+  <meta name="robots" content="index, follow" />
+
+  <meta property="og:title" content="記事一覧｜家計の保健室" />
+  <meta property="og:description" content="固定費の見直し、光熱費、通信費、保険、家計の考え方についての解説記事。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kakei-hokenshitsu.com/articles/" />
+  <meta property="og:image" content="https://kakei-hokenshitsu.com/ogp.png" />
+
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/articles.css" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <script src="/config.js"></script>
+</head>
+<body data-article="articles-index">
+
+  <header class="hero">
+    <div class="container">
+      <p class="hero__eyebrow">
+        <span><a href="/" style="color:inherit;text-decoration:none">家計の保健室</a>｜解説記事</span>
+        <span class="seal-mark" aria-hidden="true">保</span>
+      </p>
+      <h1 class="hero__title">記事一覧</h1>
+      <p class="hero__lead">
+        <a href="/">固定費の診断</a>を補う解説です。制度や数値は、公的機関の公開情報をもとにしています。
+        記事数を増やすことは目的にしていません。
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="crumbs" aria-label="パンくず">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li>記事一覧</li>
+      </ol>
+    </nav>
+
+    <section class="card" id="category-utilities">
+      <h2 class="section-title"><span class="section-title__no">01</span><span>光熱費</span></h2>
+      <ul class="article-list">
+        <li>
+          <span class="article-list__meta">2026年8月30日</span>
+          <a href="/articles/propane-gas-takai/">プロパンガスが高いのはなぜ？賃貸でもできる見直しの手順</a>
+          <p class="article-list__desc">
+            プロパンガスは自由料金のため、同じ使用量でも会社によって請求額が変わります。
+            持ち家と賃貸それぞれで取れる手順を、確認する順番に沿って解説します。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card" id="category-basics">
+      <h2 class="section-title"><span class="section-title__no">02</span><span>家計の考え方</span></h2>
+      <ul class="article-list">
+        <li>
+          <span class="article-list__meta">2026年8月30日</span>
+          <a href="/articles/kotei-hi-sagetemo-tamaranai/">固定費を削っても貯まらないときに、見直すこと</a>
+          <p class="article-list__desc">
+            支出は減ったのにお金が残らない。その原因を、収支・特別費・変動費・先取り貯蓄・負債・
+            ライフイベントの6つに切り分けて確認します。
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title"><span class="section-title__no">03</span><span>準備中のカテゴリ</span></h2>
+      <p class="muted">
+        通信費（スマホ・ネット回線）、保険、住宅費についても順次公開します。
+        公開の条件は「広告がなくても読む価値があること」です。
+      </p>
+    </section>
+
+    <div class="to-diagnosis">
+      <h2>先に、我が家の数字を見る</h2>
+      <p>
+        記事を読む前に診断してしまうのが早道です。毎月の金額を入れると、
+        どの費目にどれだけ余地があるかと、見直す順番が出ます。登録不要・入力した数字は送信されません。
+      </p>
+      <a class="btn btn--primary" href="/" data-track="to-diagnosis">固定費の診断をはじめる（無料・30秒）</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="footer__note">
+        本サイトは家計改善・生活防衛を目的とした情報提供サイトです。診断ツールに入力したデータはサーバーに送信されません。
+      </p>
+      <p class="footer__note">
+        <a href="/articles/">記事一覧</a>　/　<a href="/about/">運営者情報</a>　/　<a href="/editorial-policy/">編集方針</a>
+      </p>
+      <p class="footer__copy">© <span id="year"></span> 家計の保健室</p>
+    </div>
+  </footer>
+
+  <script src="/articles.js"></script>
+  <script>document.getElementById("year").textContent = String(new Date().getFullYear());</script>
+</body>
+</html>

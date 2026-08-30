@@ -264,6 +264,28 @@ function resolveAffiliate(id) {
 }
 
 /**
+ * 案件ごとのクリック数を計測する。
+ *
+ * ASP発行コードの <a> には手を入れられないため、
+ * 親要素でクリックを拾う（イベント委譲）。コードは無改変のまま。
+ */
+function setupAdClickTracking() {
+  document.addEventListener(
+    "click",
+    (e) => {
+      const target = /** @type {HTMLElement} */ (e.target);
+      if (!target || typeof target.closest !== "function") return;
+      const link = target.closest(".ad-card__link a");
+      if (!link) return;
+      const card = link.closest(".ad-card");
+      const slot = (card && card.getAttribute("data-ad-slot")) || "unknown";
+      track(`ad_click/${slot}`, {});
+    },
+    true // 遷移前に確実に拾うためキャプチャ段階で
+  );
+}
+
+/**
  * その項目の広告を出してよいか判定する。
  *
  * 方針：**当てはまらない人には出さない**。無関係な広告は信頼を損ね、
@@ -301,12 +323,13 @@ function shouldShowAd(item, ctx) {
  * @param {SiteAffiliate | null} cfg
  * @returns {string}
  */
-function buildAdCard(cfg) {
+function buildAdCard(cfg, slot) {
   if (!cfg || !cfg.code) return "";
   const heading = cfg.heading ? `<p class="ad-card__heading">${cfg.heading}</p>` : "";
   const body = cfg.body ? `<p class="ad-card__body">${cfg.body}</p>` : "";
+  if (slot) track(`ad_view/${slot}`, {}); // 案件ごとの表示回数
   return (
-    `<div class="ad-card">` +
+    `<div class="ad-card" data-ad-slot="${slot || ""}">` +
     `<span class="ad-tag">広告</span>` +
     heading +
     body +
@@ -462,10 +485,12 @@ function shouldShowSavingsAdvisor(result) {
   if (status !== "rarely" && status !== "sometimes") return false; // 未回答・わからない・できている人には出さない
   if (result.totalInput <= 0) return false; // 支出の入力が無ければ判断材料がない
 
-  // ほとんど貯蓄できていない人：年3万円以上の見直し余地があるとき
-  if (status === "rarely") return result.yearlySaving >= 30000;
-  // 月によってできない人：年6万円以上（＝月5,000円相当）の余地があるとき
-  return result.yearlySaving >= 60000;
+  // 閾値は config.js で変更できる（実績が貯まったら見直す前提の仮の値）
+  const cfg = (window.SITE_CONFIG && window.SITE_CONFIG.savingsAdvisor) || {};
+  const th = cfg.thresholds || {};
+  const limit = status === "rarely" ? th.rarely : th.sometimes;
+  const fallback = status === "rarely" ? 30000 : 60000;
+  return result.yearlySaving >= (typeof limit === "number" ? limit : fallback);
 }
 
 /** 入力額と目安から「目安比較メモ」を作る */
@@ -840,7 +865,7 @@ function render(result) {
     // 広告は config.js に ASP発行コード（code）がある項目だけ表示する
     const cfg = resolveAffiliate(i.id);
     // 該当しない人には出さない（信頼を損ねるうえ、クリックもされないため）
-    const aff = shouldShowAd(i, result.ctx) ? buildAdCard(cfg) : "";
+    const aff = shouldShowAd(i, result.ctx) ? buildAdCard(cfg, i.id) : "";
     div.innerHTML =
       `<div class="advice__head"><span class="advice__name">${i.name}</span>${savingTag}</div>` +
       buildGauge(i) +
@@ -878,12 +903,13 @@ function render(result) {
     const showSavings = !!(savingsCfg && savingsCfg.code && shouldShowSavingsAdvisor(result));
     savingsCard.hidden = !showSavings;
     const slot = document.getElementById("savings-advisor-ad");
-    if (slot) slot.innerHTML = showSavings ? buildAdCard(savingsCfg) : "";
+    if (slot) slot.innerHTML = showSavings ? buildAdCard(savingsCfg, "savings") : "";
   }
 
   // 表示＆スクロール
   const resultSection = document.getElementById("result");
   resultSection.hidden = false;
+  track("result_view", {}); // 診断結果の表示回数
   renumberSections();
   resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -960,6 +986,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setupGuessButtons();
   renumberSections();
+  setupAdClickTracking();
 });
 }
 

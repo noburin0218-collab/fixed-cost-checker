@@ -92,7 +92,15 @@ window.SITE_CONFIG = {
 
   // 貯蓄の相談（保険とは別導線）。
   // 「貯蓄できていない」という回答だけでは出さず、診断結果とあわせて判定します。
+  //
+  // thresholds は「年間でこれだけ削減余地があるなら、相談する価値がある」という
+  // 目安の下限（円／年）。**現時点では実績のない仮の値**です。
+  // 計測（案件表示数・クリック数）が貯まったら、ここの数字を変えて調整してください。
   savingsAdvisor: {
+    thresholds: {
+      rarely: 30000, // 「ほとんどできていない」人に出す下限
+      sometimes: 60000, // 「月によってできない」人に出す下限
+    },
     heading: "固定費を削ったあと、その分をどう残すか",
     body: "貯蓄は「余ったら貯める」では貯まりません。先取りの仕組みづくりや、教育費・老後資金の見通しは無料で相談できます。",
     code: `<a href="https://h.accesstrade.net/sp/cc?rk=0100pedo00owy6" rel="nofollow" referrerpolicy="no-referrer-when-downgrade">貯蓄の無料相談サイト「ガーデン」<img src="https://h.accesstrade.net/sp/rr?rk=0100pedo00owy6" width="1" height="1" border="0" alt=""></a>`,

@@ -10,6 +10,8 @@ declare global {
     body?: string;
     /** ASPが発行した広告コード。改変せずそのまま貼る。空なら非表示 */
     code?: string;
+    /** 表示条件のしきい値（円／年）。実績を見て調整する前提の設定値 */
+    thresholds?: { rarely?: number; sometimes?: number };
   }
   interface SiteConfig {
     /** GoatCounter の集計先URL。空なら計測しない */
