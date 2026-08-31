@@ -69,6 +69,40 @@ if "外出し表示" not in a1 or "計上禁止" not in a1:
 for ng in ["すべて禁止された","全面的に禁止","一律に禁止","請求はすべてなくなりました"]:
     if ng in a1: fails.append(f"[LPガス制度] 断定表現 '{ng}' が含まれる")
 
+NEG = r"(ありません|ではない|ではありません|とまでは言えません|言えません|誤りです|ものではない|扱わず|扱いません|示していません|一択、ではありません)"
+
+def assert_not_asserted(text, phrases, label, fails):
+    """禁止語が『断定』として使われている場合だけ違反にする（否定・注意喚起の文脈は可）。"""
+    flat = re.sub(r"\s+", " ", text)
+    for ng in phrases:
+        for m in re.finditer(re.escape(ng), flat):
+            ctx = flat[max(0, m.start()-40): m.start()+120]
+            if not re.search(NEG, ctx):
+                fails.append(f"[{label}] '{ng}' が断定的に使われている: ...{ctx[:60]}...")
+
+# ---- 2c) 第2バッチの一次情報と断定禁止 ----
+# #4 通信費（家計調査2025年 第3-1表の「通信」）
+a4=open('articles/4nin-kazoku-tsushinhi/index.html',encoding='utf-8').read()
+for must in ["12,438","13,328","第3-1表","2025年","交通・通信","自動車等関係費"]:
+    if must not in a4: fails.append(f"[#4 一次情報] '{must}' の記載が無い")
+assert_not_asserted(a4, ["スマホ代の平均は13,328","13,328円が適正","移動電話通信料の平均","適正額"], "#4 断定", fails)
+
+# #5 ネット回線（SoftBank公式で確認済みの事実／料金は載せない）
+a5=open('articles/chintai-net-kaisen/index.html',encoding='utf-8').read()
+for must in ["工事不要","ホームルーター","ベストエフォート","5G","速度が低下する場合","確認時点"]:
+    if must not in a5: fails.append(f"[#5 一次情報] '{must}' の記載が無い")
+assert_not_asserted(a5, ["ホームルーター一択","必ず速い","速度を保証"], "#5 断定", fails)
+if "一択にはならない" not in a5 and "一択、ではありません" not in a5:
+    fails.append("[#5] 「工事できない＝ホームルーター一択ではない」旨の記載が無い")
+
+# #6 電力切り替え（資源エネルギー庁の確認済み事実）
+a6=open('articles/denryoku-kirikae-demerit/index.html',encoding='utf-8').read()
+for must in ["送配電網","約15分","スマートメーター","原則無料","約2週間","約4日","無契約"]:
+    if must not in a6: fails.append(f"[#6 一次情報] '{must}' の記載が無い")
+assert_not_asserted(a6, ["絶対に停電しない","倒産しても絶対に電気は止まりません","解約金はかかりません",
+                          "違約金は一切かかりません","最終保障供給があるから大丈夫"], "#6 断定", fails)
+if "最終保障供給" in a6: fails.append("[#6] 最終保障供給を家庭向け説明に使用している")
+
 # ---- 3) 全HTMLの構造チェック ----
 pages=['index.html','articles/index.html','about/index.html','editorial-policy/index.html']+ \
       sorted(glob.glob('articles/*/index.html'))
