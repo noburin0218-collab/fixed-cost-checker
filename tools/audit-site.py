@@ -56,6 +56,19 @@ for ng in ["適正生活費","理想額","適正額","固定費の平均","固�
         if not re.search(r"(ありません|ではない|できません|していません|存在しません|扱わず|扱いません|使えません|限りません|算出していません)", ctx):
             fails.append(f"[禁止表現] '{ng}' が断定的に使われている: ...{ctx[:50]}...")
 
+# ---- 2b) #1 LPガス制度の記述（一次情報どおりか／断定していないか）----
+art1='articles/propane-gas-takai/index.html'
+a1=open(art1,encoding='utf-8').read()
+for must in ["2024年4月","2024年","2025年4月2日","三部料金制","基本料金","従量料金","設備料金",
+             "LPガスの取引適正化について","三部料金制の徹底に関するQ&amp;A"]:
+    if must not in a1: fails.append(f"[LPガス制度] '{must}' の記載が無い")
+# 既存契約の例外に触れているか
+if "外出し表示" not in a1 or "計上禁止" not in a1:
+    fails.append("[LPガス制度] 既存契約の例外（外出し表示／計上禁止）の説明が無い")
+# 断定的な言い切りの禁止
+for ng in ["すべて禁止された","全面的に禁止","一律に禁止","請求はすべてなくなりました"]:
+    if ng in a1: fails.append(f"[LPガス制度] 断定表現 '{ng}' が含まれる")
+
 # ---- 3) 全HTMLの構造チェック ----
 pages=['index.html','articles/index.html','about/index.html','editorial-policy/index.html']+ \
       sorted(glob.glob('articles/*/index.html'))
