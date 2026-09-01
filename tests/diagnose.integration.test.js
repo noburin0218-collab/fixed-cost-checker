@@ -94,3 +94,31 @@ test("diagnose: 各 item に input/saving/benchmark/note が付与される", ()
     assert.equal(typeof it.note, "string");
   }
 });
+
+test("diagnose: guessed を付けても計算結果は変わらない", () => {
+  const before = diagnose();
+
+  // 「わからない」で入れた費目を再現する（dataset.guessed = "1"）
+  const original = global.document.getElementById;
+  global.document.getElementById = (id) => {
+    const el = original.call(global.document, id);
+    if (el && id === "mobile") return { ...el, dataset: { guessed: "1" } };
+    return el;
+  };
+  const after = diagnose();
+  global.document.getElementById = original;
+
+  const mobileBefore = before.items.find((i) => i.id === "mobile");
+  const mobileAfter = after.items.find((i) => i.id === "mobile");
+
+  assert.equal(mobileBefore.guessed, false, "通常は目安値ではない");
+  assert.equal(mobileAfter.guessed, true, "目安値として印が付く");
+
+  // 印が付いても、金額・目安・削減余地はまったく同じ
+  assert.equal(after.totalInput, before.totalInput, "支出合計は変わらない");
+  assert.equal(after.monthlySaving, before.monthlySaving, "月間削減は変わらない");
+  assert.equal(after.yearlySaving, before.yearlySaving, "年間削減は変わらない");
+  assert.equal(mobileAfter.input, mobileBefore.input, "入力額は変わらない");
+  assert.equal(mobileAfter.saving, mobileBefore.saving, "削減余地は変わらない");
+  assert.equal(mobileAfter.benchmark, mobileBefore.benchmark, "目安は変わらない");
+});

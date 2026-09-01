@@ -14,6 +14,10 @@ const {
   mobileBenchmark,
   buildNote,
   yen,
+  roundedYen,
+  shouldShowAd,
+  chartStage,
+  pickPriority,
 } = require("../script.js");
 
 /** id からカテゴリ定義を取得 */
@@ -147,4 +151,60 @@ test("buildNote: 住まい・ガス種別・目安比較の文言", () => {
 
   const ws = cat("waterserver");
   assert.match(buildNote(ws, 4000, 0, ctx()), /見直し候補/);
+});
+
+test("roundedYen: 推定値は有効数字2桁に丸めて表示する", () => {
+  assert.equal(roundedYen(368820), "約37万円");
+  assert.equal(roundedYen(123456), "約12万円");
+  assert.equal(roundedYen(30735), "約3.1万円");
+  assert.equal(roundedYen(7675), "約7,700円");
+  assert.equal(roundedYen(4400), "約4,400円");
+  assert.equal(roundedYen(440), "約440円");
+  assert.equal(roundedYen(0), "0円");
+  // 表示は必ず「円」で終わる（読み上げ・共有文のため）
+  [0, 440, 7675, 30735, 368820].forEach((n) => assert.match(roundedYen(n), /円$/));
+});
+
+test("chartStage: 4段階のみを返し、guessed は情報不足になる", () => {
+  const priority = new Set(["mobile"]);
+  const base = { id: "x", input: 10000, benchmark: 10000, saving: 0, guessed: false };
+
+  assert.equal(chartStage({ ...base, input: 0 }, priority).label, "情報不足");
+  assert.equal(chartStage({ ...base, guessed: true }, priority).label, "情報不足");
+  assert.equal(chartStage({ ...base, id: "mobile" }, priority).label, "優先して確認");
+  assert.equal(chartStage({ ...base, input: 20000 }, priority).label, "確認する価値あり");
+  assert.equal(chartStage(base, priority).label, "今は見直さなくてよい");
+
+  // 目安が無い費目は、見直し余地の有無で判断する
+  assert.equal(chartStage({ ...base, benchmark: null, saving: 5000 }, priority).label, "確認する価値あり");
+  assert.equal(chartStage({ ...base, benchmark: null, saving: 0 }, priority).label, "今は見直さなくてよい");
+
+  // guessed は優先判定より先に効く（目安値だけで「優先」と断定しない）
+  assert.equal(chartStage({ ...base, id: "mobile", guessed: true }, priority).label, "情報不足");
+});
+
+test("pickPriority: guessed の費目は優先に選ばない", () => {
+  const ranked = [
+    { id: "a", input: 1, saving: 100, guessed: true },
+    { id: "b", input: 1, saving: 90, guessed: false },
+    { id: "c", input: 1, saving: 80, guessed: false },
+    { id: "d", input: 1, saving: 70, guessed: false },
+    { id: "e", input: 1, saving: 60, guessed: false },
+  ];
+  const p = pickPriority(ranked);
+  assert.equal(p.has("a"), false, "目安値だけの費目は優先にしない");
+  assert.deepEqual([...p], ["b", "c", "d"]);
+  assert.ok(p.size <= 3);
+});
+
+test("shouldShowAd: 未入力・目安値・該当しない条件では出さない", () => {
+  assert.equal(shouldShowAd({ id: "mobile", input: 0 }, {}), false, "未入力");
+  assert.equal(shouldShowAd({ id: "mobile" }, {}), false, "input が無い項目");
+  assert.equal(shouldShowAd({ id: "mobile", input: 8000, guessed: true }, {}), false, "目安値");
+  assert.equal(shouldShowAd({ id: "mobile", input: 8000 }, { carrier: "mvno" }), false, "すでに格安SIM");
+  assert.equal(shouldShowAd({ id: "gas", input: 8000 }, { gasType: "none" }), false, "オール電化");
+  assert.equal(shouldShowAd({ id: "gas", input: 8000 }, { gasType: "city" }), false, "都市ガス");
+  assert.equal(shouldShowAd({ id: "housing", input: 90000 }, { tenure: "rent" }), false, "賃貸");
+  assert.equal(shouldShowAd({ id: "housing", input: 90000 }, { tenure: "own_loan" }), true, "ローン返済中");
+  assert.equal(shouldShowAd({ id: "mobile", input: 8000 }, { carrier: "carrier" }), true, "大手キャリア");
 });

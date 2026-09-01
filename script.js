@@ -384,9 +384,12 @@ function setupGuessButtons() {
     });
 
     // 本人が手で入力し直したら、目安値の扱いを解除する。
-    // isTrusted で、上の dispatchEvent（プログラムからの発火）と区別する。
-    input.addEventListener("input", (e) => {
-      if (e.isTrusted && isGuessed(cat.id)) setGuessed(input, false);
+    // 「わからない」で入れた値から変わったかどうかで判断する
+    // （上の dispatchEvent はまだ値が同じなので解除されない）。
+    input.addEventListener("input", () => {
+      if (isGuessed(cat.id) && input.value !== input.dataset.guessedValue) {
+        setGuessed(input, false);
+      }
     });
 
     labelEl.appendChild(btn);
@@ -405,13 +408,12 @@ function buildGauge(item) {
 
   const max = Math.max(item.input, b);
   const pct = (v) => Math.max(2, Math.round((v / max) * 100)); // 0幅だと線が消えるので下限を持たせる
-  const over = item.input > b;
 
   return (
     `<div class="gauge" role="img" aria-label="あなた ${yen(item.input)}、目安 ${yen(b)}">` +
     `<div class="gauge__row gauge__row--you">` +
     `<span class="gauge__key">あなた</span>` +
-    `<span class="gauge__track"><span class="gauge__bar ${over ? "gauge__bar--over" : "gauge__bar--you"}" style="width:${pct(item.input)}%"></span></span>` +
+    `<span class="gauge__track"><span class="gauge__bar gauge__bar--you" style="width:${pct(item.input)}%"></span></span>` +
     `<span class="gauge__val">${yen(item.input)}</span>` +
     `</div>` +
     `<div class="gauge__row">` +
@@ -495,8 +497,11 @@ function setGuessed(input, on) {
   const field = input.closest(".field");
   if (on) {
     input.dataset.guessed = "1";
+    // 入れた値を控えておく。ここから変われば「本人が入力し直した」と判断できる。
+    input.dataset.guessedValue = input.value;
   } else {
     delete input.dataset.guessed;
+    delete input.dataset.guessedValue;
   }
   if (!field) return;
 
@@ -811,7 +816,7 @@ function generateImage() {
   // 月間
   ctx.fillStyle = "#6b7280";
   ctx.font = "bold 38px sans-serif";
-  ctx.fillText("月間の削減可能額の目安", cx, 300);
+  ctx.fillText("見直し余地の目安（月）", cx, 300);
   ctx.fillStyle = "#15795a";
   ctx.font = "bold 84px sans-serif";
   ctx.fillText(roundedYen(lastResult.monthlySaving), cx, 390);
@@ -819,7 +824,7 @@ function generateImage() {
   // 年間
   ctx.fillStyle = "#6b7280";
   ctx.font = "bold 38px sans-serif";
-  ctx.fillText("年間の削減可能額の目安", cx, 500);
+  ctx.fillText("見直し余地の目安（年）", cx, 500);
   ctx.fillStyle = "#ff7a45";
   ctx.font = "bold 100px sans-serif";
   ctx.fillText(roundedYen(lastResult.yearlySaving), cx, 600);
@@ -831,10 +836,10 @@ function generateImage() {
     .slice(0, 3);
   ctx.fillStyle = "#1f2937";
   ctx.font = "bold 34px sans-serif";
-  ctx.fillText("優先して見直すべき項目 TOP3", cx, 680);
+  ctx.fillText("優先して確認する費目", cx, 680);
   ctx.font = "30px sans-serif";
   if (top3.length === 0) {
-    ctx.fillText("大きな見直し項目はありませんでした", cx, 730);
+    ctx.fillText("優先して確認する費目はありませんでした", cx, 730);
   } else {
     top3.forEach((i, idx) => {
       ctx.fillText(
@@ -926,87 +931,262 @@ function setupShare(yearly) {
   document.getElementById("share-image").onclick = generateImage;
 }
 
-/** 結果を画面に描画 */
+/**
+ * 費目と、その費目を理解するための自社記事の対応。
+ *
+ * 広告より先に「自分で読んで判断する材料」を出すための対応表。
+ * 記事が無い費目はここに載せない（無理に紐づけない）。
+ */
+const ARTICLE_BY_CATEGORY = {
+  mobile: { href: "/articles/4nin-kazoku-tsushinhi/", title: "4人家族の通信費はいくら？2025年家計調査から解説", cat: "通信費" },
+  internet: { href: "/articles/chintai-net-kaisen/", title: "賃貸で工事できない人のネット回線の選び方", cat: "通信費" },
+  electricity: { href: "/articles/denryoku-kirikae-demerit/", title: "電力会社の切り替えにデメリットは？", cat: "光熱費" },
+  gas: { href: "/articles/propane-gas-takai/", title: "プロパンガスが高いのはなぜ？賃貸でもできる見直しの手順", cat: "光熱費" },
+  waterserver: { href: "/articles/water-server-minaoshi/", title: "ウォーターサーバーは続けるべき？月の総額を出してから判断する手順", cat: "家計の考え方" },
+  subscription: { href: "/articles/subscription-tanaoroshi/", title: "サブスクの棚卸し手順｜続けるものだけ残す", cat: "家計の考え方" },
+  housing: { href: "/articles/hikkoshi-kotei-hi/", title: "引っ越しは固定費をまとめて見直せる唯一の機会", cat: "家計の考え方" },
+  eatingout: { href: "/articles/3nin-kazoku-seikatsuhi/", title: "3人家族の生活費はいくら？2025年家計調査から解説", cat: "家計の考え方" },
+};
+
+/** ガスの種類によって、読むべき記事が変わる */
+function articleFor(item, ctx) {
+  if (item.id === "gas" && ctx && ctx.gasType === "none") {
+    return { href: "/articles/all-denka-konetsuhi/", title: "オール電化の光熱費を見直す手順", cat: "光熱費" };
+  }
+  return ARTICLE_BY_CATEGORY[item.id] || null;
+}
+
+/**
+ * 費目の「状態」を4段階で返す。
+ *
+ * 医学的な表現（危険・異常・要治療など）は使わない。
+ * 高い／安いの判定でもなく、**いま確認する価値があるか**だけを示す。
+ *
+ * - unknown  情報不足（未入力、または「わからない」で入れた目安のまま）
+ * - ok       今は見直さなくてよい
+ * - check    確認する価値あり
+ * - priority 優先して確認（見直し余地が大きい上位3件）
+ *
+ * @param {any} item diagnose() の結果の1件
+ * @param {Set<string>} [prioritySet] 優先して確認する費目のID
+ * @returns {{ key: string, label: string }}
+ */
+function chartStage(item, prioritySet) {
+  if (!item || !(item.input > 0)) return { key: "unknown", label: "情報不足" };
+  // サイトが入れた目安値のままなら、本人の実額ではないので断定しない
+  if (item.guessed) return { key: "unknown", label: "情報不足" };
+  if (prioritySet && prioritySet.has(item.id)) return { key: "priority", label: "優先して確認" };
+
+  const b = item.benchmark;
+  if (b == null || b <= 0) {
+    // 目安を出していない費目（住宅費など）は、見直し余地の有無で判断する
+    return item.saving > 0
+      ? { key: "check", label: "確認する価値あり" }
+      : { key: "ok", label: "今は見直さなくてよい" };
+  }
+  if (item.input > b * 1.12) return { key: "check", label: "確認する価値あり" };
+  return { key: "ok", label: "今は見直さなくてよい" };
+}
+
+/**
+ * 「優先して確認」にする費目を決める。
+ *
+ * 目安値（guessed）だけを根拠に優先とは言わない。
+ * @param {any[]} ranked 見直し余地の大きい順に並べた診断結果
+ * @returns {Set<string>}
+ */
+function pickPriority(ranked) {
+  return new Set(
+    ranked
+      .filter((i) => i.input > 0 && i.saving > 0 && !i.guessed)
+      .slice(0, 3)
+      .map((i) => i.id)
+  );
+}
+
+/** 費目1行分のHTMLを組み立てる（カルテ本体） */
+function buildChartRow(item, stage, ctx) {
+  const article = articleFor(item, ctx);
+  const link = article
+    ? `<p class="chart-row__link"><a href="${article.href}" data-track="chart-article">${article.title} ›</a></p>`
+    : "";
+
+  let note = "";
+  if (stage.key === "unknown" && item.guessed) {
+    note = "「わからない」で入れた目安のままです。実際の金額に直すと判定できます。";
+  } else if (stage.key === "unknown") {
+    note = "金額が未入力です。";
+  } else if (item.benchmark == null && item.id === "housing") {
+    note = `${item.note}（地域差が大きいため、目安との比較はしていません）`;
+  } else {
+    note = item.note || "";
+  }
+
+  const amount =
+    item.input > 0
+      ? `<span class="chart-row__amount">${yen(item.input)}${item.guessed ? "（目安）" : ""}</span>`
+      : "";
+
+  const head =
+    `<div class="chart-row__head">` +
+    `<span class="chart-row__name">${item.name}</span>` +
+    amount +
+    `<span class="chart-stage chart-stage--${stage.key}">${stage.label}</span>` +
+    `</div>`;
+
+  // いま確認する価値がある費目だけを詳しく出す。
+  // それ以外（今は見直さなくてよい／情報不足）は1行にまとめ、カルテを長くしない。
+  const detailed = stage.key === "priority" || stage.key === "check";
+  if (!detailed) {
+    return (
+      `<div class="chart-row chart-row--${stage.key} chart-row--compact">` +
+      head +
+      (note ? `<p class="chart-row__note">${note}</p>` : "") +
+      `</div>`
+    );
+  }
+
+  return (
+    `<div class="chart-row chart-row--${stage.key}">` +
+    head +
+    buildGauge(item) +
+    (note ? `<p class="chart-row__note">${note}</p>` : "") +
+    link +
+    `</div>`
+  );
+}
+
+/**
+ * 出す広告を選ぶ。**最大3件。0件でもよい。**
+ *
+ * 選定に使うのは「診断結果との関連性・見直し余地・契約状況」だけ。
+ * 報酬額や確定率は使わない（編集方針と同じ基準にそろえる）。
+ * 目安値（guessed）だけを根拠にした広告は出さない（shouldShowAd 側で除外）。
+ *
+ * @param {any} result diagnose() の結果
+ * @param {any[]} ranked 見直し余地の大きい順
+ * @returns {{ slot: string, cfg: any }[]}
+ */
+function selectAds(result, ranked) {
+  const picked = ranked
+    .filter((i) => i.saving > 0) // 見直す余地が無いなら出す理由がない
+    .filter((i) => shouldShowAd(i, result.ctx)) // 該当しない人には出さない（既存条件）
+    .map((i) => ({ slot: i.id, cfg: resolveAffiliate(i.id) }))
+    .filter((a) => !!a.cfg);
+
+  // 貯蓄の相談は費目ではないが、同じ3枠の中で扱う。
+  // 固定費の話が先、残し方の話は後。
+  const savingsCfg = (window.SITE_CONFIG && window.SITE_CONFIG.savingsAdvisor) || null;
+  if (savingsCfg && savingsCfg.code && shouldShowSavingsAdvisor(result)) {
+    picked.push({ slot: "savings", cfg: savingsCfg });
+  }
+
+  return picked.slice(0, 3);
+}
+
+/** 結果を画面に描画（家計カルテ） */
 function render(result) {
   lastResult = result;
-  // サマリー
-  // 金額は「数値＋単位」に分けて表示する（単位を小さく組み、帳票らしい見え方にする）
+
+  // ---- A. 表題と総括 ----
+  // 見直し余地は推定なので丸める。入力額（本人の数字）はそのまま出す。
   setAmount(document.getElementById("monthly-saving"), result.monthlySaving);
   setAmount(document.getElementById("yearly-saving"), result.yearlySaving);
+
   const carrierLabel = result.ctx.carrier === "mvno" ? "格安SIM中心" : "大手キャリア中心";
-  // 入力額（本人の数字）はそのまま、削減余地（推定）は丸めて出す
-  document.getElementById("total-line").innerHTML =
-    `${result.ctx.n}人世帯・${carrierLabel}で診断／現在の支出合計：月 ${yen(result.totalInput)}（年 ${yen(result.totalInput * 12)}）` +
-    `<br><span class="split">└ 固定費 月${yen(result.fixedInput)}（削減余地 ${roundedYen(result.fixedSaving)}）／変動費 月${yen(result.variableInput)}（同 ${roundedYen(result.variableSaving)}）</span>`;
-
-  // 削減余地でソート
-  const ranked = [...result.items].sort((a, b) => b.saving - a.saving);
-
-  // TOP3
-  const top3 = ranked.filter((i) => i.saving > 0).slice(0, 3);
-  const top3List = document.getElementById("top3-list");
-  top3List.innerHTML = "";
-  if (top3.length === 0) {
-    const li = document.createElement("li");
-    li.innerHTML =
-      '<span class="top3__name">大きな見直し項目は見つかりませんでした</span>' +
-      '<p class="top3__desc">各項目すでに最適化されているか、入力額が少なめのようです。下のアドバイスもご確認ください。</p>';
-    top3List.appendChild(li);
-  } else {
-    top3.forEach((i) => {
-      const li = document.createElement("li");
-      const desc = i.note
-        ? `${i.note}。年間で${roundedYen(i.saving * 12)}の削減が見込めます。`
-        : `年間で${roundedYen(i.saving * 12)}の削減が見込めます。`;
-      li.innerHTML =
-        `<span class="top3__name">${i.name}</span> ` +
-        `<span class="top3__saving">月 ${roundedYen(i.saving)}</span>` +
-        `<p class="top3__desc">${desc}</p>`;
-      top3List.appendChild(li);
-    });
+  const today = new Date();
+  const meta = document.getElementById("chart-meta");
+  if (meta) {
+    meta.textContent =
+      `作成 ${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日` +
+      `／${result.ctx.n}人世帯・${carrierLabel}／この内容は保存も送信もされません`;
   }
 
-  // 全項目アドバイス（入力があるものを削減余地順に表示。固定費／変動費で分ける）
+  document.getElementById("total-line").innerHTML =
+    `現在の支出合計：月 ${yen(result.totalInput)}（年 ${yen(result.totalInput * 12)}）` +
+    `<br><span class="split">└ 固定費 月${yen(result.fixedInput)}（見直し余地 ${roundedYen(result.fixedSaving)}）` +
+    `／変動費 月${yen(result.variableInput)}（同 ${roundedYen(result.variableSaving)}）</span>`;
+
+  // 見直し余地の大きい順
+  const ranked = [...result.items].sort((a, b) => b.saving - a.saving);
+  const prioritySet = pickPriority(ranked);
+  const entered = ranked.filter((i) => i.input > 0);
+
+  // ---- B. 費目ごとの状態 ----
+  const rowsEl = document.getElementById("chart-rows");
+  rowsEl.innerHTML = "";
+  /** @type {Map<string, { key: string, label: string }>} */
+  const stages = new Map();
+  const order = { priority: 0, check: 1, ok: 2, unknown: 3 };
+  const rowItems = [...entered, ...ranked.filter((i) => !(i.input > 0))];
+  rowItems.forEach((i) => stages.set(i.id, chartStage(i, prioritySet)));
+  rowItems
+    .slice()
+    .sort((a, b) => order[stages.get(a.id).key] - order[stages.get(b.id).key])
+    .forEach((i) => {
+      const holder = document.createElement("div");
+      holder.innerHTML = buildChartRow(i, stages.get(i.id), result.ctx);
+      const row = holder.firstElementChild;
+      if (row) rowsEl.appendChild(row);
+    });
+
+  // 読み上げ用の一行要約（結果全体を読み上げさせない）
+  const status = document.getElementById("chart-status");
+  if (status) {
+    const n = prioritySet.size;
+    status.textContent =
+      n > 0
+        ? `家計カルテを作成しました。優先して確認する費目が${n}件あります。`
+        : "家計カルテを作成しました。優先して確認する費目はありませんでした。";
+  }
+
+  // ---- C. 何が起きているか（優先度の高い3件だけ開く） ----
   const adviceList = document.getElementById("advice-list");
   adviceList.innerHTML = "";
-  // 入力のある費目だけを出す。1件も無いときは診断自体を出さないため、
-  // ここで生の CATEGORIES にフォールバックしない
-  // （フォールバックすると input を持たない項目に広告が出てしまう）。
-  const toShow = ranked.filter((i) => i.input > 0);
 
-  const renderGroup = (label, sub, items) => {
-    if (items.length === 0) return;
-    const head = document.createElement("p");
-    head.className = "advice-group";
-    head.innerHTML = `${label} <span class="advice-group__sub">${sub}</span>`;
-    adviceList.appendChild(head);
-    items.forEach(appendAdvice);
-  };
-
-  function appendAdvice(i) {
+  const buildAdvice = (i) => {
     const div = document.createElement("div");
     div.className = "advice";
+    const stage = stages.get(i.id) || chartStage(i, prioritySet);
     const savingTag =
-      i.saving > 0 ? `<span class="advice__saving">削減目安 月${roundedYen(i.saving)}</span>` : "";
-    // 目安との比較メモ
-    const note = i.note ? `<p class="advice__note">${i.note}</p>` : "";
-    // 広告は config.js に ASP発行コード（code）がある項目だけ表示する
-    const cfg = resolveAffiliate(i.id);
-    // 該当しない人には出さない（信頼を損ねるうえ、クリックもされないため）
-    const aff = shouldShowAd(i, result.ctx) ? buildAdCard(cfg, i.id) : "";
+      i.saving > 0 && !i.guessed
+        ? `<span class="advice__saving">見直し余地 月${roundedYen(i.saving)}</span>`
+        : "";
     div.innerHTML =
       `<div class="advice__head"><span class="advice__name">${i.name}</span>${savingTag}</div>` +
-      buildGauge(i) +
-      note +
-      `<p class="advice__text">${i.advice}</p>` +
-      aff;
-    adviceList.appendChild(div);
+      `<p class="advice__stage">${stage.label}</p>` +
+      `<p class="advice__text">${i.advice}</p>`;
+    return div;
+  };
+
+  const priorityItems = entered.filter((i) => prioritySet.has(i.id));
+  const restItems = entered.filter((i) => !prioritySet.has(i.id));
+
+  if (priorityItems.length === 0) {
+    const p = document.createElement("p");
+    p.className = "muted";
+    p.textContent =
+      "優先して確認したほうがよい費目は見つかりませんでした。入力された範囲では、大きな見直し余地は出ていません。";
+    adviceList.appendChild(p);
+  } else {
+    priorityItems.forEach((i) => adviceList.appendChild(buildAdvice(i)));
   }
 
-  renderGroup("固定費", "毎月かかる・一度の見直しでずっと効く", toShow.filter((i) => !i.variable));
-  renderGroup("変動費", "使い方で変わる・習慣で効いてくる", toShow.filter((i) => i.variable));
+  if (restItems.length > 0) {
+    const details = document.createElement("details");
+    details.className = "more";
+    const summary = document.createElement("summary");
+    summary.className = "more__summary";
+    summary.textContent = `そのほかの費目の説明を見る（${restItems.length}件）`;
+    details.appendChild(summary);
+    const body = document.createElement("div");
+    body.className = "more__body";
+    restItems.forEach((i) => body.appendChild(buildAdvice(i)));
+    details.appendChild(body);
+    adviceList.appendChild(details);
+  }
 
-  // 今日やる3アクション
+  // ---- D. 今日やること ----
   const actionList = document.getElementById("action-list");
   actionList.innerHTML = "";
   buildTodayActions(ranked).forEach((text, idx) => {
@@ -1018,21 +1198,44 @@ function render(result) {
     actionList.appendChild(li);
   });
 
-  // シェアボタン
+  // ---- E. 理解するための記事（広告より先に出す） ----
+  const related = document.getElementById("related-articles");
+  if (related) {
+    related.innerHTML = "";
+    const seen = new Set();
+    entered
+      .filter((i) => {
+        const s = stages.get(i.id);
+        return s && (s.key === "priority" || s.key === "check");
+      })
+      .slice(0, 4) // 並べすぎると選べない
+      .forEach((i) => {
+        const a = articleFor(i, result.ctx);
+        if (!a || seen.has(a.href)) return;
+        seen.add(a.href);
+        const li = document.createElement("li");
+        li.innerHTML =
+          `<span class="article-list__meta">${a.cat}｜${i.name}</span>` +
+          `<a href="${a.href}" data-track="chart-article">${a.title}</a>`;
+        related.appendChild(li);
+      });
+  }
+
+  // ---- F. 相談・比較（広告はここだけ・最大3件・0件なら出さない） ----
+  const adSection = document.getElementById("ad-section");
+  const adSlots = document.getElementById("ad-slots");
+  if (adSection && adSlots) {
+    const ads = selectAds(result, ranked);
+    adSlots.innerHTML = ads.map((a) => buildAdCard(a.cfg, a.slot)).join("");
+    /** @type {HTMLElement} */ (adSection).hidden = ads.length === 0;
+  }
+
+  // ---- G. 持ち帰る ----
   setupShare(result.yearlySaving);
 
-  // CTA
-  document.getElementById("cta-lead").textContent = buildCtaLead(result.yearlySaving);
-
-  // 貯蓄の相談（条件を満たしたときだけ）
-  const savingsCard = document.getElementById("savings-advisor");
-  if (savingsCard) {
-    const savingsCfg = (window.SITE_CONFIG && window.SITE_CONFIG.savingsAdvisor) || null;
-    const showSavings = !!(savingsCfg && savingsCfg.code && shouldShowSavingsAdvisor(result));
-    savingsCard.hidden = !showSavings;
-    const slot = document.getElementById("savings-advisor-ad");
-    if (slot) slot.innerHTML = showSavings ? buildAdCard(savingsCfg, "savings") : "";
-  }
+  // CTA（config.js の cta.href 未設定ならカードごと非表示のまま）
+  const ctaLead = document.getElementById("cta-lead");
+  if (ctaLead) ctaLead.textContent = buildCtaLead(result.yearlySaving);
 
   // 表示＆スクロール
   const resultSection = document.getElementById("result");
@@ -1041,7 +1244,6 @@ function render(result) {
   renumberSections();
   resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
-
 /**
  * 見出しの通し番号を、表示されているセクションだけで振り直す。
  * 条件によって出し入れするカードがあるため、番号を固定で書くと欠番になる。
@@ -1152,5 +1354,9 @@ if (typeof module !== "undefined" && module.exports) {
     yen,
     roundedYen,
     shouldShowAd,
+    chartStage,
+    pickPriority,
+    selectAds,
+    articleFor,
   };
 }

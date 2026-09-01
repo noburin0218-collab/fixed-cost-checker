@@ -329,55 +329,64 @@
     </section>
 
     <!-- ===== 結果 ===== -->
-    <section id="result" class="result" hidden aria-live="polite">
-      <!-- サマリー -->
-      <div class="card summary">
-        <span class="stamp" aria-hidden="true"><span>診断</span><span>済</span></span>
-        <h2 class="section-title"><span class="section-title__no">02</span><span>あなたの削減可能額の目安</span></h2>
+    <!-- ===== 結果：家計カルテ =====
+         「診断→即広告」ではなく、
+         総括 → 費目ごとの状態 → 説明 → 今日やること → 記事 → （必要な人だけ）相談
+         の順に読ませる。広告は最後の1箇所にだけ置く。 -->
+    <section id="result" class="result" hidden>
+      <!-- A. 表題と総括 -->
+      <div class="card summary chart-head">
+        <span class="stamp" aria-hidden="true"><span>受付</span><span>済</span></span>
+        <h2 class="section-title"><span class="section-title__no">02</span><span>家計カルテ</span></h2>
+        <p class="chart-head__meta" id="chart-meta"></p>
+
         <div class="summary__numbers">
           <div class="summary__block">
-            <span class="summary__caption">月間の削減可能額</span>
+            <span class="summary__caption">見直し余地の目安（月）</span>
             <span class="summary__value" id="monthly-saving">0円</span>
           </div>
           <div class="summary__block summary__block--accent">
-            <span class="summary__caption">年間の削減可能額</span>
+            <span class="summary__caption">見直し余地の目安（年）</span>
             <span class="summary__value" id="yearly-saving">0円</span>
           </div>
         </div>
         <p class="summary__total muted" id="total-line"></p>
-
-        <div class="share">
-          <span class="share__label">結果をシェアして家計改善仲間に教える</span>
-          <div class="share__buttons">
-            <a href="#" id="share-x" class="share__btn share__btn--x" target="_blank" rel="noopener">Xでシェア</a>
-            <a href="#" id="share-line" class="share__btn share__btn--line" target="_blank" rel="noopener">LINEで送る</a>
-            <button type="button" id="share-copy" class="share__btn share__btn--copy">URLをコピー</button>
-            <button type="button" id="share-image" class="share__btn share__btn--image">結果を画像で保存</button>
-          </div>
-        </div>
+        <p class="chart-head__caveat">
+          この「見直し余地」は、世帯人数などから作った目安との差をもとにした<strong>推定</strong>です。
+          実際に下がる金額を示すものでも、保証するものでもありません。
+        </p>
+        <p class="chart-head__status" id="chart-status" role="status"></p>
       </div>
 
-      <!-- TOP3 -->
+      <!-- B. 費目ごとの状態 -->
       <div class="card">
-        <h2 class="section-title"><span class="section-title__no">03</span><span>優先して見直すべき項目 TOP3</span></h2>
-        <ol class="top3" id="top3-list"></ol>
+        <h2 class="section-title"><span class="section-title__no">03</span><span>費目ごとの状態</span></h2>
+        <p class="muted">
+          入力された金額と目安を並べ、いま確認する価値があるかどうかだけを示しています。
+          <small>※ 高い・安いの判定ではありません。順番を決めるための目印です。</small>
+        </p>
+        <div class="chart-rows" id="chart-rows"></div>
       </div>
 
-      <!-- 全項目アドバイス -->
+      <!-- C. 状態の説明（優先度の高いものだけ開いた状態にする） -->
       <div class="card">
-        <h2 class="section-title"><span class="section-title__no">04</span><span>各項目の改善アドバイス</span></h2>
+        <h2 class="section-title"><span class="section-title__no">04</span><span>何が起きているか</span></h2>
         <div class="advice-list" id="advice-list"></div>
       </div>
 
-      <!-- 今日やる3アクション -->
+      <!-- D. 今日やる3アクション -->
       <div class="card">
-        <h2 class="section-title"><span class="section-title__no">05</span><span>今日やるべき具体的アクション3つ</span></h2>
+        <h2 class="section-title"><span class="section-title__no">05</span><span>今日やること 3つ</span></h2>
         <ul class="actions" id="action-list"></ul>
       </div>
 
-      <!-- 関連する解説記事 -->
+      <!-- E. 理解するための記事（広告より先に置く） -->
       <div class="card related-articles">
         <h2 class="section-title"><span class="section-title__no">06</span><span>もう少し詳しく知る</span></h2>
+        <!-- 診断結果に対応する記事（JSで差し込む） -->
+        <ul class="article-list" id="related-articles"></ul>
+        <!-- ↓ ここから下は常にHTMLに存在する一覧（クローラ向けにも残す） -->
+        <p class="muted related-articles__all">解説記事の一覧</p>
         <ul class="article-list">
           <li>
             <span class="article-list__meta">家計の考え方</span>
@@ -408,46 +417,58 @@
         <p class="muted" style="margin-top:14px"><a href="/articles/">記事一覧を見る ›</a></p>
       </div>
 
-      <!-- 貯蓄の相談（保険とは別導線）。条件を満たしたときだけ表示する -->
-      <div class="card" id="savings-advisor" hidden>
-        <h2 class="section-title"><span class="section-title__no">06</span><span>浮いたお金を、どう残すか</span></h2>
-        <p class="muted">
-          固定費に見直し余地があり、かつ毎月の貯蓄が安定していない状態です。
-          削った分をそのまま生活費に吸収させてしまうと、家計は変わりません。<br />
-          <small>※ 先に固定費を見直し、そのうえで「残し方」を整えるのが順番です。</small>
+      <!-- F. 相談・比較（広告はここにだけ置く。該当が無ければカードごと出さない） -->
+      <div class="card ads" id="ad-section" hidden>
+        <h2 class="section-title"><span class="section-title__no">07</span><span>自分で確認したうえで、それでも決められないとき</span></h2>
+        <p class="ads__notice">
+          ここから先は<strong>広告</strong>です。報酬の有無で順位や評価を変えることはしていません。
+          該当しそうな費目のものだけを、最大3件まで出しています。
+          <a href="/editorial-policy/">編集方針</a>
         </p>
-        <div id="savings-advisor-ad"></div>
+        <div id="ad-slots"></div>
+        <p class="ads__alt">
+          <a href="/articles/">相談やサービスを使わず、自分で進める手順を読む ›</a>
+        </p>
       </div>
 
-      <!-- 無料配布：持ち帰り用チェックリスト -->
+      <!-- G. 持ち帰る -->
       <div class="card">
-        <h2 class="section-title"><span class="section-title__no">06</span><span>持ち帰り用：固定費 かんたんチェック10</span></h2>
+        <h2 class="section-title"><span class="section-title__no">08</span><span>持ち帰る</span></h2>
         <p class="muted">
           この診断の要点をA4・2枚にまとめた無料の資料です。印刷して冷蔵庫に貼る、家族と共有する、といった使い方ができます。
-          <br /><small>※ 登録不要・無料。そのままダウンロードできます。</small>
+          <br /><small>※ 登録不要・無料。そのままダウンロードできます。カルテはこのページを印刷しても残せます。</small>
         </p>
         <p style="margin-top:16px">
           <a class="btn btn--ghost" href="checklist.pdf" target="_blank" rel="noopener">
             チェックリスト（PDF・A4×2枚）をダウンロード
           </a>
         </p>
+
+        <div class="share">
+          <span class="share__label">結果をシェアして家計改善仲間に教える</span>
+          <div class="share__buttons">
+            <a href="#" id="share-x" class="share__btn share__btn--x" target="_blank" rel="noopener">Xでシェア</a>
+            <a href="#" id="share-line" class="share__btn share__btn--line" target="_blank" rel="noopener">LINEで送る</a>
+            <button type="button" id="share-copy" class="share__btn share__btn--copy">URLをコピー</button>
+            <button type="button" id="share-image" class="share__btn share__btn--image">結果を画像で保存</button>
+          </div>
+        </div>
       </div>
 
-      <!-- 収益化CTA -->
+      <!-- 収益化CTA（config.js の cta.href を設定すると表示される） -->
       <div class="card cta">
-        <h2 class="section-title"><span class="section-title__no">07</span><span>次の一歩：見直しを「完了」させる</span></h2>
+        <h2 class="section-title"><span class="section-title__no">09</span><span>次の一歩：見直しを「完了」させる</span></h2>
         <p id="cta-lead" class="cta__lead"></p>
         <ul class="cta__points">
           <li>10項目すべての見直し手順を1冊にまとめた<strong>「固定費見直し完全チェックリスト（PDF）」</strong></li>
           <li>「何から・どの順で・どこに連絡するか」がわかるので、迷わず行動できる</li>
           <li>我が家用に書き込める削減シミュレーションテンプレ付き</li>
         </ul>
-        <!-- ↓ 公開時にnote/Tips等の販売URLに差し替えてください -->
         <a href="#" class="btn btn--primary btn--block" id="cta-btn" rel="noopener">
           チェックリスト（PDF）を受け取る
         </a>
         <p class="muted cta__note">
-          ※ 関連サービス（格安SIM・電力/ガス比較・保険の無料相談など）のリンクは各アドバイス内に掲載予定です。
+          ※ 関連サービスのリンクは「自分で確認したうえで、それでも決められないとき」にまとめています。
         </p>
       </div>
 
