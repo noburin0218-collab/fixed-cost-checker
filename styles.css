@@ -8,13 +8,14 @@
   --paper: #faf9f6;      /* 紙 */
   --surface: #ffffff;    /* 記入用紙 */
   --ink: #141a17;        /* 本文 */
-  --ink-2: #59635d;      /* 副次 */
-  --ink-3: #8a938d;      /* 注記 */
-  --rule: #d8dcd8;       /* 罫線 */
+  --ink-2: #4d574f;      /* 副次（対 paper 7.14:1） */
+  --ink-3: #616b64;      /* 注記（対 paper 5.26:1／AA を満たす下限として使う） */
+  --rule: #d8dcd8;       /* 罫線：区切りなど装飾のみ */
+  --rule-strong: #828b85; /* 操作部品の境界（対 surface 3.51:1／WCAG 1.4.11） */
   --rule-dark: #1d2a24;  /* 見出し下の太罫 */
-  --seal: #0f5c43;       /* 診療緑（差し色） */
+  --seal: #0f5c43;       /* 診療緑（差し色・リンク色） */
   --seal-tint: #eef3f0;  /* ごく淡い面 */
-  --vermilion: #a33b23;  /* 朱：削減額にのみ使う */
+  --vermilion: #a33b23;  /* 朱：印章と金額の強調 */
   --radius: 2px;
 
   --serif: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, "Noto Serif JP", serif;
@@ -27,6 +28,47 @@
 [hidden] { display: none !important; }
 
 html { scroll-behavior: smooth; }
+
+/* リンクはブランドの緑で統一する。
+   ブラウザ既定の青／訪問済みの紫を残さない（色数を絞るため）。
+   色だけに頼らないよう、文中のリンクには下線を残す。 */
+a,
+a:visited {
+  color: var(--seal);
+}
+a:hover { color: #0b4a36; }
+
+/* 動きを減らす設定の端末では、スクロールと色の遷移を止める */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 本文へ飛ぶリンク。通常は見えず、キーボードで到達したときだけ現れる */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  color: var(--seal);
+  border: 1px solid var(--seal);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  font-size: 0.94rem;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 12px;
+  top: 12px;
+}
 
 body {
   margin: 0;
@@ -241,7 +283,7 @@ input[type="number"],
   flex: 1;
   min-width: 0;
   padding: 9px 11px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
   border-radius: var(--radius);
   font-family: var(--sans);
   font-size: 1rem;
@@ -255,7 +297,7 @@ input[type="number"],
   display: flex;
   align-items: center;
   gap: 9px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
   border-radius: var(--radius);
   padding: 10px 12px;
   background: var(--surface);
@@ -266,7 +308,7 @@ input[type="number"],
 }
 .prefs__radio:hover { border-color: var(--seal); }
 .prefs__radio:has(input:checked) { border-color: var(--seal); background: var(--seal-tint); }
-.prefs__radio input { accent-color: var(--seal); width: 17px; height: 17px; flex-shrink: 0; }
+.prefs__radio input { accent-color: var(--seal); width: 20px; height: 20px; flex-shrink: 0; }
 .prefs__radio small { color: var(--ink-3); }
 .prefs__hint {
   font-size: 0.78rem;
@@ -279,7 +321,7 @@ input[type="number"],
 
 /* ===== 補問（アコーディオン） ===== */
 .more {
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
   border-radius: var(--radius);
   margin: 12px 0 4px;
   background: var(--surface);
@@ -312,10 +354,14 @@ input[type="number"],
   margin-top: 22px;
   border-top: 1px solid var(--rule);
 }
+/* ラベルと入力は常に上下に積む。
+   2カラム表示（600px以上）では1列あたり約300pxしかなく、
+   横並びにするとラベルが1文字ずつ縦に折れて読めなくなるため。 */
 .field {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
   padding: 11px 0;
   border-bottom: 1px solid var(--rule);
 }
@@ -324,18 +370,19 @@ input[type="number"],
   font-weight: 500;
   color: var(--ink-2);
   flex: 1;
-  min-width: 0;
+  /* min-width: 0 にすると、幅の狭い2カラム時にラベルが1文字ずつ縦に折れる。
+     日本語のラベルが読める幅を必ず確保する。 */
+  min-width: 8em;
 }
 .field__input {
   display: flex;
   align-items: center;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--surface);
   transition: border-color 0.15s ease;
-  width: 168px;
-  flex-shrink: 0;
+  width: 100%;
 }
 .field__input:focus-within { border-color: var(--seal); }
 .field__input input {
@@ -368,6 +415,22 @@ input[type="number"],
   align-items: stretch;
 }
 .form-actions .btn--primary { width: 100%; }
+
+/* 金額が1つも入っていないまま送信されたときの案内。
+   結果を出さず、次の一歩だけを示す（広告は出さない）。 */
+.form-note {
+  margin: 16px 0 0;
+  border: 1px solid var(--rule-strong);
+  border-left: 3px solid var(--seal);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 14px 16px;
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: var(--ink);
+}
+.form-note strong { font-weight: 700; }
+.form-note small { display: block; margin-top: 6px; font-size: 0.84rem; color: var(--ink-2); }
 
 /* ===== 所見（結果サマリー） ===== */
 .summary { position: relative; }
@@ -481,12 +544,16 @@ input[type="number"],
   gap: 8px;
 }
 .share__btn {
-  border: 1px solid var(--rule);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px; /* 主要操作の最小タップ領域 */
+  border: 1px solid var(--rule-strong);
   border-radius: var(--radius);
   background: var(--surface);
-  padding: 9px 15px;
+  padding: 9px 16px;
   font-family: var(--sans);
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   text-decoration: none;
@@ -546,15 +613,18 @@ input[type="number"],
   gap: 8px;
   margin: 0;
 }
+/* 「広告」表示は、本文と見分けがつく大きさで出す。
+   警告色は使わない（驚かせるためではなく、事実を示すため）。 */
 .ad-tag {
   flex-shrink: 0;
   margin-top: 12px;
   border: 1px solid var(--ink-3);
   border-radius: var(--radius);
   color: var(--ink-2);
-  font-size: 0.68rem;
+  font-size: 0.82rem;
+  font-weight: 500;
   letter-spacing: 0.1em;
-  padding: 2px 7px;
+  padding: 3px 10px;
   line-height: 1.5;
 }
 .advice__link {
@@ -666,18 +736,31 @@ input[type="number"],
 }
 .field__guess {
   flex-shrink: 0;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--ink-2);
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   letter-spacing: 0.04em;
-  padding: 3px 9px;
+  padding: 6px 12px;
+  min-height: 32px; /* 補助操作の最小タップ領域 */
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 .field__guess:hover { background: var(--seal-tint); border-color: var(--seal); color: var(--seal); }
+.field__guess--on { border-color: var(--seal); color: var(--seal); background: var(--seal-tint); }
+
+/* 「わからない」で入れた目安であることを、入力欄のそばに出し続ける。
+   サイトが入れた数字を、本人の実額として扱わないため。 */
+.field__hint {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+  border-left: 2px solid var(--rule-strong);
+  padding-left: 10px;
+}
 .advice__note {
   margin: 10px 0 0;
   font-size: 0.84rem;
@@ -698,14 +781,22 @@ input[type="number"],
 }
 .actions li:last-child { border-bottom: none; padding-bottom: 0; }
 .actions input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  margin-top: 4px;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
   accent-color: var(--seal);
   flex-shrink: 0;
   border-radius: 0;
 }
-.actions label { cursor: pointer; font-size: 0.92rem; line-height: 1.75; }
+.actions label {
+  cursor: pointer;
+  font-size: 0.92rem;
+  line-height: 1.75;
+  /* ラベルもタップ領域として使えるように、縦の当たりを確保する */
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+}
 
 /* ===== 次の一歩（CTA） ===== */
 .cta { background: var(--surface); border: 1px solid var(--seal); }
@@ -731,34 +822,45 @@ input[type="number"],
 .cta__points strong { color: var(--ink); font-weight: 700; }
 .cta__note { margin-top: 14px; font-size: 0.8rem; color: var(--ink-3); }
 
-/* ===== 注記・脚部 ===== */
+/* ===== 注記・脚部 =====
+   免責と広告表記は、このサイトが最も正確に読まれるべき文章。
+   最小サイズ・最低コントラストで置かない。 */
 .disclaimer {
-  font-size: 0.78rem;
-  color: var(--ink-3);
+  font-size: 0.86rem;
+  color: var(--ink-2);
   line-height: 1.85;
   background: transparent;
   border-top: 1px solid var(--rule);
   padding: 16px 0 0;
   margin: 24px 0;
 }
-.disclaimer strong { color: var(--ink-2); font-weight: 500; }
+.disclaimer strong { color: var(--ink); font-weight: 500; }
 .disclaimer__label {
   display: block;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   letter-spacing: 0.14em;
   color: var(--ink-2);
   margin-bottom: 6px;
 }
 .footer {
   background: var(--surface);
-  color: var(--ink-3);
+  color: var(--ink-2);
   border-top: 1px solid var(--rule);
   padding: 28px 0;
   margin-top: 40px;
   text-align: left;
 }
-.footer__note { font-size: 0.78rem; margin: 0 0 8px; line-height: 1.8; }
-.footer__copy { font-size: 0.74rem; margin: 0; letter-spacing: 0.06em; }
+.footer__note { font-size: 0.86rem; margin: 0 0 10px; line-height: 1.8; }
+.footer__copy { font-size: 0.8rem; margin: 0; letter-spacing: 0.06em; color: var(--ink-3); }
+/* フッターのリンクも、色だけでなく下線で示す */
+.footer a {
+  color: var(--seal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  display: inline-block;
+  min-height: 32px;
+  line-height: 32px;
+}
 
 /* ===== 画面幅への対応 ===== */
 @media (max-width: 599px) {
@@ -772,12 +874,6 @@ input[type="number"],
   /* 選択肢は1行1件で積む（横並びだと文字が折れて読みにくいため） */
   .prefs__radios { flex-direction: column; gap: 6px; }
   .prefs__radio { min-width: 0; }
-  .field {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 7px;
-  }
-  .field__input { width: 100%; }
   .field__input input { text-align: left; }
 }
 

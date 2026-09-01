@@ -80,6 +80,8 @@
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">本文へ移動</a>
+
   <!-- ===== ヒーロー ===== -->
   <header class="hero">
     <div class="container">
@@ -101,7 +103,7 @@
     </div>
   </header>
 
-  <main class="container">
+  <main class="container" id="main">
     <!-- ===== 入力フォーム ===== -->
     <section id="form" class="card">
       <h2 class="section-title"><span class="section-title__no">01</span><span>毎月の支出を入力（固定費＋変動費）</span></h2>
@@ -311,6 +313,13 @@
             </span>
           </label>
         </div>
+
+        <!-- 金額が1つも入っていないまま送信されたときだけ表示する -->
+        <p class="form-note" id="input-empty" role="status" hidden>
+          <strong>まず1つだけ、金額を入れてみてください。</strong>
+          まだ金額が入っていないため、結果を出していません。スマホ代・電気代・保険料のどれか1つでも入れば診断できます。
+          <small>手元に明細がなければ、各項目の「わからない」を押すと目安を入れられます（あとから実際の金額に直せます）。</small>
+        </p>
 
         <div class="form-actions">
           <button type="submit" class="btn btn--primary">この内容で診断する</button>

@@ -226,6 +226,15 @@ const CATEGORIES = [
 /** ブラウザ保存用キー */
 const STORAGE_KEY = "fixedCostChecker.inputs.v1";
 
+/**
+ * 「わからない」で入れた目安値かどうかの記録用キー。
+ *
+ * 入力値そのものは STORAGE_KEY のまま変更しない（後方互換）。
+ * 「どの費目が目安値か」だけを別キーに持つので、
+ * 旧バージョンの保存データがあっても読み書きは壊れない。
+ */
+const GUESSED_KEY = "fixedCostChecker.guessed.v1";
+
 /** 直近の診断結果（画像生成で参照） */
 let lastResult = null;
 
@@ -291,12 +300,17 @@ function setupAdClickTracking() {
  * 方針：**当てはまらない人には出さない**。無関係な広告は信頼を損ね、
  * クリックもされないため、掲載しない方が結果的に成果につながる。
  *
- * @param {{ id: string, input: number }} item 診断項目
+ * @param {{ id: string, input: number, guessed?: boolean }} item 診断項目
  * @param {{ tenure?: string, gasType?: string, carrier?: string }} ctx 前提条件
  * @returns {boolean}
  */
 function shouldShowAd(item, ctx) {
-  if (!item || item.input <= 0) return false; // 支出が無い費目に広告は出さない
+  if (!item) return false;
+  // 未入力・未診断の項目には出さない。
+  // （input を持たない生のカテゴリが渡ることがあるため、数値かどうかから確かめる）
+  if (typeof item.input !== "number" || !(item.input > 0)) return false;
+  // サイトが入れた目安値だけを根拠に広告は出さない
+  if (item.guessed) return false;
   const c = ctx || {};
   switch (item.id) {
     case "housing":
@@ -365,10 +379,14 @@ function setupGuessButtons() {
       if (b == null) return;
       input.value = String(Math.round(b));
       input.dispatchEvent(new Event("input", { bubbles: true }));
-      btn.textContent = "目安を入れました";
-      setTimeout(() => {
-        btn.textContent = "わからない";
-      }, 1600);
+      // サイトが入れた数字であることを、以後ずっと分かるようにしておく
+      setGuessed(input, true);
+    });
+
+    // 本人が手で入力し直したら、目安値の扱いを解除する。
+    // isTrusted で、上の dispatchEvent（プログラムからの発火）と区別する。
+    input.addEventListener("input", (e) => {
+      if (e.isTrusted && isGuessed(cat.id)) setGuessed(input, false);
     });
 
     labelEl.appendChild(btn);
@@ -406,25 +424,124 @@ function buildGauge(item) {
 }
 
 /**
- * 金額を「数値」と「円」に分けて要素に描画する。
- * textContent は従来どおり「1,234円」となる（末尾は必ず「円」）。
+ * 金額を「数値」と「単位」に分けて要素に描画する。
+ * 単位は「円」または「万円」。textContent の末尾は必ず「円」。
  * @param {HTMLElement | null} el
  * @param {number} value
+ * @param {(n: number) => string} [format] 既定は推定値向けの丸め表示
  */
-function setAmount(el, value) {
+function setAmount(el, value, format) {
   if (!el) return;
+  const text = (format || roundedYen)(value);
+  const m = /^(.*?)(万円|円)$/.exec(text) || [text, text, ""];
   el.textContent = "";
   const num = document.createElement("span");
   num.className = "amount__num";
-  num.textContent = yen(value).replace(/円$/, "");
+  num.textContent = m[1];
   const unit = document.createElement("span");
   unit.className = "amount__unit";
-  unit.textContent = "円";
+  unit.textContent = m[2];
   el.append(num, unit);
 }
 
 function yen(n) {
   return Math.round(n).toLocaleString("ja-JP") + "円";
+}
+
+/**
+ * 「削減余地」のような**推定値**を表示するための丸め。
+ *
+ * 目安との差に係数を掛けて出した数字を1円単位で見せると、
+ * 実際には持っていない精度を持っているように読めてしまう。
+ * 表示だけを丸め、計算そのものには手を入れない。
+ *
+ *   368,820 → 約37万円 ／ 30,735 → 約3.1万円
+ *     7,675 → 約7,700円 ／    440 → 約440円 ／ 0 → 0円
+ *
+ * @param {number} n
+ * @returns {string}
+ */
+function roundedYen(n) {
+  const v = Math.max(0, Math.round(Number(n) || 0));
+  if (v === 0) return "0円";
+  if (v >= 100000) return `約${Math.round(v / 10000).toLocaleString("ja-JP")}万円`;
+  if (v >= 10000) return `約${(Math.round(v / 1000) / 10).toFixed(1)}万円`;
+  if (v >= 1000) return `約${(Math.round(v / 100) * 100).toLocaleString("ja-JP")}円`;
+  return `約${Math.round(v / 10) * 10}円`;
+}
+
+/**
+ * その費目の金額が「わからない」で入れた目安値かどうか。
+ *
+ * 目安値は診断の計算には使うが、**その人の実額としては扱わない**。
+ * （広告の根拠にしない／「あなたの金額」として断定しない）
+ *
+ * @param {string} id カテゴリID
+ * @returns {boolean}
+ */
+function isGuessed(id) {
+  if (typeof document === "undefined") return false;
+  const el = document.getElementById(id);
+  return !!(el && el.dataset && el.dataset.guessed === "1");
+}
+
+/**
+ * 目安値フラグを立てる／降ろす。入力欄のそばに状態の説明を出す。
+ * @param {HTMLInputElement} input
+ * @param {boolean} on
+ */
+function setGuessed(input, on) {
+  if (!input) return;
+  const field = input.closest(".field");
+  if (on) {
+    input.dataset.guessed = "1";
+  } else {
+    delete input.dataset.guessed;
+  }
+  if (!field) return;
+
+  const btn = /** @type {HTMLElement | null} */ (field.querySelector(".field__guess"));
+  if (btn) btn.classList.toggle("field__guess--on", on);
+
+  let hint = /** @type {HTMLElement | null} */ (field.querySelector(".field__hint"));
+  if (on) {
+    if (!hint) {
+      hint = document.createElement("p");
+      hint.className = "field__hint";
+      hint.textContent = "目安を入れました。実際の金額が分かれば変更できます。";
+      field.appendChild(hint);
+    }
+  } else if (hint) {
+    hint.remove();
+  }
+  saveGuessed();
+}
+
+/** 目安値フラグを保存（入力値の保存とは別キー） */
+function saveGuessed() {
+  try {
+    const ids = CATEGORIES.map((c) => c.id).filter(isGuessed);
+    if (ids.length === 0) localStorage.removeItem(GUESSED_KEY);
+    else localStorage.setItem(GUESSED_KEY, JSON.stringify(ids));
+  } catch (e) {
+    /* プライベートモード等で失敗しても無視 */
+  }
+}
+
+/** 保存済みの目安値フラグを復元（値が残っている費目のみ） */
+function restoreGuessed() {
+  try {
+    const raw = localStorage.getItem(GUESSED_KEY);
+    if (!raw) return;
+    const ids = JSON.parse(raw);
+    if (!Array.isArray(ids)) return;
+    ids.forEach((id) => {
+      const el = /** @type {HTMLInputElement | null} */ (document.getElementById(String(id)));
+      if (el && el.value !== "") setGuessed(el, true);
+    });
+  } catch (e) {
+    /* 壊れたデータは無視 */
+  }
 }
 
 /** 入力値を取得（空欄やマイナス・非数は0） */
@@ -530,7 +647,9 @@ function diagnose() {
     const benchmark = cat.benchmark(ctx);
     const saving = input > 0 ? cat.saving(input, ctx) : 0;
     const note = buildNote(cat, input, benchmark, ctx);
-    return { ...cat, input, benchmark, saving, note };
+    // guessed は「その金額がサイトの入れた目安である」ことの印。
+    // 計算（input / benchmark / saving）には一切影響させない。
+    return { ...cat, input, benchmark, saving, note, guessed: isGuessed(cat.id) };
   });
 
   const totalInput = items.reduce((s, i) => s + i.input, 0);
@@ -586,10 +705,10 @@ function buildTodayActions(rankedWithSaving) {
 /** CTA導線文を金額に応じて出し分け */
 function buildCtaLead(yearly) {
   if (yearly >= 100000) {
-    return `診断の結果、あなたの家計には年間 約${yen(yearly)} の削減余地があります。これは「やるかどうか」だけの差。次は実際に手続きを完了させる番です。`;
+    return `診断の結果、あなたの家計には年間 ${roundedYen(yearly)} の削減余地があります。これは「やるかどうか」だけの差。次は実際に手続きを完了させる番です。`;
   }
   if (yearly > 0) {
-    return `年間 約${yen(yearly)} の削減余地が見つかりました。金額の大小よりも、ここで止まらず行動に移せるかが家計改善の分かれ道です。`;
+    return `年間 ${roundedYen(yearly)} の削減余地が見つかりました。金額の大小よりも、ここで止まらず行動に移せるかが家計改善の分かれ道です。`;
   }
   return "今回は大きな削減余地は出ませんでしたが、固定費は契約条件の変化で再び膨らみがち。定期点検の習慣化が生活防衛のカギです。";
 }
@@ -648,9 +767,15 @@ function restoreInputs() {
 function clearInputs() {
   try {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(GUESSED_KEY);
   } catch (e) {
     /* 無視 */
   }
+  // 画面上の「目安を入れました」表示も消す
+  CATEGORIES.forEach((cat) => {
+    const el = /** @type {HTMLInputElement | null} */ (document.getElementById(cat.id));
+    if (el && isGuessed(cat.id)) setGuessed(el, false);
+  });
 }
 
 /** 診断結果を画像（PNG）にして保存／シェア（外部ライブラリ不要・Canvasで描画） */
@@ -689,7 +814,7 @@ function generateImage() {
   ctx.fillText("月間の削減可能額の目安", cx, 300);
   ctx.fillStyle = "#15795a";
   ctx.font = "bold 84px sans-serif";
-  ctx.fillText(yen(lastResult.monthlySaving), cx, 390);
+  ctx.fillText(roundedYen(lastResult.monthlySaving), cx, 390);
 
   // 年間
   ctx.fillStyle = "#6b7280";
@@ -697,7 +822,7 @@ function generateImage() {
   ctx.fillText("年間の削減可能額の目安", cx, 500);
   ctx.fillStyle = "#ff7a45";
   ctx.font = "bold 100px sans-serif";
-  ctx.fillText(yen(lastResult.yearlySaving), cx, 600);
+  ctx.fillText(roundedYen(lastResult.yearlySaving), cx, 600);
 
   // TOP3
   const top3 = [...lastResult.items]
@@ -713,7 +838,7 @@ function generateImage() {
   } else {
     top3.forEach((i, idx) => {
       ctx.fillText(
-        `${idx + 1}. ${i.name}（月 約${yen(i.saving)}）`,
+        `${idx + 1}. ${i.name}（月 ${roundedYen(i.saving)}）`,
         cx,
         730 + idx * 18
       );
@@ -766,7 +891,7 @@ function setupShare(yearly) {
   const url = location.href.split("#")[0];
   const text =
     yearly > 0
-      ? `「家計の保健室」の無料診断をやってみたら、年間 約${yen(yearly)} の削減余地が見つかった！登録不要で30秒👇`
+      ? `「家計の保健室」の無料診断をやってみたら、年間 ${roundedYen(yearly)} の削減余地が見つかった！登録不要で30秒👇`
       : `「家計の保健室」の無料診断で家計をチェック！登録不要で30秒👇`;
 
   const xUrl =
@@ -809,9 +934,10 @@ function render(result) {
   setAmount(document.getElementById("monthly-saving"), result.monthlySaving);
   setAmount(document.getElementById("yearly-saving"), result.yearlySaving);
   const carrierLabel = result.ctx.carrier === "mvno" ? "格安SIM中心" : "大手キャリア中心";
+  // 入力額（本人の数字）はそのまま、削減余地（推定）は丸めて出す
   document.getElementById("total-line").innerHTML =
     `${result.ctx.n}人世帯・${carrierLabel}で診断／現在の支出合計：月 ${yen(result.totalInput)}（年 ${yen(result.totalInput * 12)}）` +
-    `<br><span class="split">└ 固定費 月${yen(result.fixedInput)}（削減余地 ${yen(result.fixedSaving)}）／変動費 月${yen(result.variableInput)}（同 ${yen(result.variableSaving)}）</span>`;
+    `<br><span class="split">└ 固定費 月${yen(result.fixedInput)}（削減余地 ${roundedYen(result.fixedSaving)}）／変動費 月${yen(result.variableInput)}（同 ${roundedYen(result.variableSaving)}）</span>`;
 
   // 削減余地でソート
   const ranked = [...result.items].sort((a, b) => b.saving - a.saving);
@@ -830,11 +956,11 @@ function render(result) {
     top3.forEach((i) => {
       const li = document.createElement("li");
       const desc = i.note
-        ? `${i.note}。年間で約${yen(i.saving * 12)}の削減が見込めます。`
-        : `年間で約${yen(i.saving * 12)}の削減が見込めます。`;
+        ? `${i.note}。年間で${roundedYen(i.saving * 12)}の削減が見込めます。`
+        : `年間で${roundedYen(i.saving * 12)}の削減が見込めます。`;
       li.innerHTML =
         `<span class="top3__name">${i.name}</span> ` +
-        `<span class="top3__saving">月 約${yen(i.saving)}</span>` +
+        `<span class="top3__saving">月 ${roundedYen(i.saving)}</span>` +
         `<p class="top3__desc">${desc}</p>`;
       top3List.appendChild(li);
     });
@@ -843,8 +969,10 @@ function render(result) {
   // 全項目アドバイス（入力があるものを削減余地順に表示。固定費／変動費で分ける）
   const adviceList = document.getElementById("advice-list");
   adviceList.innerHTML = "";
-  const adviceItems = ranked.filter((i) => i.input > 0);
-  const toShow = adviceItems.length > 0 ? adviceItems : CATEGORIES;
+  // 入力のある費目だけを出す。1件も無いときは診断自体を出さないため、
+  // ここで生の CATEGORIES にフォールバックしない
+  // （フォールバックすると input を持たない項目に広告が出てしまう）。
+  const toShow = ranked.filter((i) => i.input > 0);
 
   const renderGroup = (label, sub, items) => {
     if (items.length === 0) return;
@@ -859,7 +987,7 @@ function render(result) {
     const div = document.createElement("div");
     div.className = "advice";
     const savingTag =
-      i.saving > 0 ? `<span class="advice__saving">削減目安 月${yen(i.saving)}</span>` : "";
+      i.saving > 0 ? `<span class="advice__saving">削減目安 月${roundedYen(i.saving)}</span>` : "";
     // 目安との比較メモ
     const note = i.note ? `<p class="advice__note">${i.note}</p>` : "";
     // 広告は config.js に ASP発行コード（code）がある項目だけ表示する
@@ -942,9 +1070,26 @@ document.addEventListener("DOMContentLoaded", () => {
   restoreInputs();
 
   const form = /** @type {HTMLFormElement} */ (document.getElementById("cost-form"));
+  const emptyNote = document.getElementById("input-empty");
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const result = diagnose();
+
+    // 金額が1つも入っていないときは結果を出さない。
+    // 中身の無い診断結果に広告だけが並ぶ状態を作らないため。
+    if (result.totalInput <= 0) {
+      if (emptyNote) emptyNote.hidden = false;
+      document.getElementById("result").hidden = true;
+      lastResult = null;
+      renumberSections();
+      if (emptyNote && typeof emptyNote.scrollIntoView === "function") {
+        emptyNote.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
+
+    if (emptyNote) emptyNote.hidden = true;
     saveInputs();
     render(result);
     track("diagnose", {
@@ -960,6 +1105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     form.reset();
     clearInputs();
     lastResult = null;
+    if (emptyNote) emptyNote.hidden = true;
     document.getElementById("result").hidden = true;
     renumberSections();
     document.getElementById("form").scrollIntoView({ behavior: "smooth" });
@@ -985,6 +1131,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   setupGuessButtons();
+  restoreGuessed(); // 「わからない」で入れた値かどうかも復元する
   renumberSections();
   setupAdClickTracking();
 });
@@ -1003,5 +1150,7 @@ if (typeof module !== "undefined" && module.exports) {
     mobileBenchmark,
     buildNote,
     yen,
+    roundedYen,
+    shouldShowAd,
   };
 }

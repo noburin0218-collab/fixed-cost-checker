@@ -23,3 +23,13 @@ jobs:
         run: npm run typecheck
       - name: Unit & DOM tests
         run: npm test
+
+      # 公開前チェック（tools/audit-site.py）。
+      # ASP発行コードの原文一致・記事の一次情報・広告表示・canonical・
+      # 内部リンク切れ・sitemap との一致を機械的に検証する。
+      # 人の記憶に頼らず、変更のたびに必ず走らせる。
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Site audit (ASP code / 一次情報 / 広告 / SEO)
+        run: python3 tools/audit-site.py
