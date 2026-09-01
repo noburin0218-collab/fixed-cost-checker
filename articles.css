@@ -216,3 +216,130 @@
 @media print {
   .to-diagnosis, .crumbs { display: none; }
 }
+
+/* ===== 節のラベル =====
+   出典・診断への導線など、本文の節ではないものの見出し。
+   本文のh2階層に混ぜず、見出しとしての見え方だけを与える。 */
+.section-label {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  font-family: var(--sans);
+}
+.section-label--cta {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ===== 記事タイプごとの差 =====
+   新しい部品は作らず、既存の罫線・見出し・note-box の重みだけを変える。 */
+
+/* 統計記事：数値の表と「平均＝適正額ではない」の注意書きを先に目立たせる */
+[data-article-type="stats"] .article-body table { border-top: 2px solid var(--rule-dark); }
+[data-article-type="stats"] .article-body th {
+  background: var(--seal-tint);
+  color: var(--ink);
+  font-weight: 700;
+}
+[data-article-type="stats"] .note-box {
+  border-left: 3px solid var(--seal);
+}
+
+/* 手順記事：見出しの左に短い罫を置き、診断UIの節番号と同じ調子にする。
+   手順番号は本文の見出しがすでに持っているため、CSSでは振らない。 */
+[data-article-type="steps"] .article-body h2 {
+  position: relative;
+  padding-left: 16px;
+}
+[data-article-type="steps"] .article-body h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.42em;
+  width: 6px;
+  height: 1em;
+  background: var(--seal);
+}
+
+/* 考え方記事：部品を足さない。段落の間だけ少し開けて読みやすくする。 */
+[data-article-type="essay"] .article-body p { margin-bottom: 18px; }
+
+/* ===== 比較（適合表） =====
+   順位を作らないための表。1位・★評価・No.1バッジは定義しない。
+   使うのは「条件が合うかどうか」だけ。 */
+.fit-table { margin: 0 0 8px; }
+.fit-table table {
+  width: 100%;
+  min-width: 34em; /* 潰さずに横スクロールさせる */
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.fit-table th,
+.fit-table td {
+  border: 1px solid var(--rule);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.75;
+}
+/* 行見出し（比較軸）。列（サービス）に強弱を付けない */
+.fit-table th[scope="row"] {
+  background: var(--seal-tint);
+  color: var(--ink-2);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.fit-table th[scope="col"] {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 700;
+  border-bottom: 2px solid var(--rule-dark);
+}
+/* 掲載順が優劣に見えないよう、並び順の根拠を必ず添える */
+.fit-table__order {
+  margin: 0 0 12px;
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  line-height: 1.8;
+}
+/* 各社の確認日。情報の鮮度を列ごとに持てるようにする */
+.fit-table__checked {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--ink-2);
+}
+.fit-table__note {
+  margin: 8px 0 18px;
+  font-size: 0.84rem;
+  color: var(--ink-2);
+  line-height: 1.8;
+}
+/* CTAは全列で同じ見た目にする（1社だけ目立たせない） */
+.fit-table .fit-cta {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--seal);
+  text-decoration: none;
+  border: 1px solid var(--seal);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  line-height: 1.5;
+  background: var(--surface);
+}
+.fit-table .fit-cta:hover { background: var(--seal-tint); }
+/* 「どれも使わない」を必ず並べる。比較表とセットで初めて成立する */
+.fit-optout {
+  margin: 0 0 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 0.94rem;
+  line-height: 1.8;
+}

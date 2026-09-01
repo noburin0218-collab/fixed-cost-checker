@@ -24,13 +24,24 @@
 <body data-article="articles-index">
   <a class="skip-link" href="#main">本文へ移動</a>
 
+  <!-- ===== ブランドヘッダー（全ページ共通・stickyにしない） ===== -->
+  <div class="brandbar">
+    <div class="container brandbar__inner">
+      <a class="brandbar__brand" href="/">
+        <span class="seal-mark" aria-hidden="true">保</span>
+        <span class="brandbar__name">家計の保健室</span>
+      </a>
+      <nav class="brandbar__nav" aria-label="サイト内の主な場所">
+        <a href="/">家計チェック</a>
+        <a href="/articles/" aria-current="page">記事を読む</a>
+        <a href="/editorial-policy/">編集方針</a>
+      </nav>
+    </div>
+  </div>
+
 
   <header class="hero">
     <div class="container">
-      <p class="hero__eyebrow">
-        <span><a href="/" style="color:inherit;text-decoration:none">家計の保健室</a>｜解説記事</span>
-        <span class="seal-mark" aria-hidden="true">保</span>
-      </p>
       <h1 class="hero__title">記事一覧</h1>
       <p class="hero__lead">
         <a href="/">固定費の診断</a>を補う解説です。制度や数値は、公的機関の公開情報をもとにしています。
@@ -46,110 +57,86 @@
         <li>記事一覧</li>
       </ol>
     </nav>
-
-    <section class="card" id="category-utilities">
-      <h2 class="section-title"><span class="section-title__no">01</span><span>光熱費</span></h2>
-      <ul class="article-list">
-        <li>
-          <span class="article-list__meta">2026年8月30日</span>
-          <a href="/articles/propane-gas-takai/">プロパンガスが高いのはなぜ？賃貸でもできる見直しの手順</a>
-          <p class="article-list__desc">
-            プロパンガスは自由料金のため、同じ使用量でも会社によって請求額が変わります。
-            持ち家と賃貸それぞれで取れる手順を、確認する順番に沿って解説します。
-          </p>
-        </li>
-        <li>
-          <span class="article-list__meta">2026年8月30日</span>
-          <a href="/articles/denryoku-kirikae-demerit/">電力会社の切り替えにデメリットは？停電・工事・倒産・違約金の不安を順番に確認</a>
-          <p class="article-list__desc">
-            資源エネルギー庁の公開情報をもとに、切り替え前によく挙がる不安を順番に確認します。
-          </p>
-        </li>
-        <li>
-          <span class="article-list__meta">2026年8月30日</span>
-          <a href="/articles/all-denka-konetsuhi/">オール電化の光熱費を見直す手順｜時間帯別プランと契約容量の確認から</a>
-          <p class="article-list__desc">
-            ガス代がない分、光熱費は電気代に集約されます。プランと使い方を確認する順番を整理しました。
-          </p>
-        </li>
-      </ul>
-    </section>
-
     <section class="card" id="category-basics">
-      <h2 class="section-title"><span class="section-title__no">02</span><span>家計の考え方</span></h2>
+      <h2 class="section-title"><span class="section-title__no">01</span><span>家計を見わたす<span class="section-title__count">（3）</span></span></h2>
+      <p class="muted">家計全体のどこから手をつけるか、平均をどう扱うかが判断できるようになります。</p>
       <ul class="article-list">
         <li>
           <span class="article-list__meta">2026年8月30日</span>
           <a href="/articles/3nin-kazoku-seikatsuhi/">3人家族の生活費はいくら？2025年家計調査から固定費の見直し順まで解説</a>
-          <p class="article-list__desc">
-            総務省統計局「家計調査」2025年の3人世帯の支出内訳を、出典と読み方の注意点つきで紹介します。
-            平均は「適正額」ではありません。
-          </p>
+          <p class="article-list__desc">総務省の家計調査から3人世帯の費目別の平均を確認し、そこから自分の家計をどう読むか。平均は「適正額」ではありません。</p>
         </li>
         <li>
           <span class="article-list__meta">2026年8月30日</span>
           <a href="/articles/kotei-hi-sagetemo-tamaranai/">固定費を削っても貯まらないときに、見直すこと</a>
-          <p class="article-list__desc">
-            支出は減ったのにお金が残らない。その原因を、収支・特別費・変動費・先取り貯蓄・負債・
-            ライフイベントの6つに切り分けて確認します。
-          </p>
+          <p class="article-list__desc">支出は減ったのにお金が残らない。その原因を、収支・特別費・変動費・先取り貯蓄・負債・ライフイベントの6つに切り分けて確認します。</p>
         </li>
         <li>
           <span class="article-list__meta">2026年8月30日</span>
-          <a href="/articles/subscription-tanaoroshi/">サブスクの棚卸し手順｜契約を全部洗い出して、続けるものだけ残す</a>
-          <p class="article-list__desc">
-            記憶ではなく支払い元をたどって洗い出し、解約・プラン変更・継続に仕分けます。
-          </p>
-        </li>
-        <li>
-          <span class="article-list__meta">2026年8月30日</span>
-          <a href="/articles/water-server-minaoshi/">ウォーターサーバーは続けるべき？月の総額を出してから判断する</a>
-          <p class="article-list__desc">
-            レンタル料だけでは判断できません。水代・電気代・手数料を合わせた総額の出し方。
-          </p>
-        </li>
-        <li>
-          <span class="article-list__meta">2026年8月30日</span>
-          <a href="/articles/hikkoshi-kotei-hi/">引っ越しは、固定費をまとめて見直せる機会です</a>
-          <p class="article-list__desc">
-            どのみち契約を触る時期だから、切り替えの手間がほぼゼロになります。手順と確認リスト。
-          </p>
+          <a href="/articles/hikkoshi-kotei-hi/">引っ越しは固定費をまとめて見直せる機会です</a>
+          <p class="article-list__desc">どのみち契約を触る時期だから、切り替えの手間がほぼゼロになります。手続きの順番と確認リスト。</p>
         </li>
       </ul>
     </section>
 
     <section class="card" id="category-telecom">
-      <h2 class="section-title"><span class="section-title__no">03</span><span>通信費</span></h2>
+      <h2 class="section-title"><span class="section-title__no">02</span><span>通信費を見直す<span class="section-title__count">（2）</span></span></h2>
+      <p class="muted">スマホ代と自宅のネット回線を分けて考え、自分の使い方に合う契約かどうかを判断できるようになります。</p>
       <ul class="article-list">
         <li>
           <span class="article-list__meta">2026年8月30日</span>
           <a href="/articles/4nin-kazoku-tsushinhi/">4人家族の通信費はいくら？2025年家計調査からスマホ・ネットの見直し方を解説</a>
-          <p class="article-list__desc">
-            家計調査の「通信」はスマホ代だけではありません。平均を入口に、請求明細を
-            スマホ・自宅ネット・端末代・オプションに分解する手順を解説します。
-          </p>
+          <p class="article-list__desc">家計調査の「通信」はスマホ代だけではありません。平均を入口に、スマホ・自宅ネット・端末代・オプションに分解する手順。</p>
         </li>
         <li>
           <span class="article-list__meta">2026年8月30日</span>
           <a href="/articles/chintai-net-kaisen/">賃貸で工事できない人のネット回線の選び方</a>
-          <p class="article-list__desc">
-            光回線・ホームルーター・モバイルWiFiは用途が違います。
-            利用人数・使い方・利用期間から選ぶ手順を整理しました。
-          </p>
+          <p class="article-list__desc">光回線・ホームルーター・モバイルWiFiは用途が違います。利用人数・使い方・利用期間から選ぶ手順を整理しました。</p>
         </li>
       </ul>
     </section>
 
-    <section class="card">
-      <h2 class="section-title"><span class="section-title__no">04</span><span>準備中のカテゴリ</span></h2>
-      <p class="muted">
-        保険、住宅費についても順次公開します。
-        公開の条件は「広告がなくても読む価値があること」です。
-      </p>
+    <section class="card" id="category-utilities">
+      <h2 class="section-title"><span class="section-title__no">03</span><span>光熱費を見直す<span class="section-title__count">（3）</span></span></h2>
+      <p class="muted">電気・ガスの料金がどう決まるかを踏まえて、切り替えるべきか・使い方を直すべきかを判断できるようになります。</p>
+      <ul class="article-list">
+        <li>
+          <span class="article-list__meta">2026年8月30日</span>
+          <a href="/articles/propane-gas-takai/">プロパンガスが高いのはなぜ？賃貸でもできる見直しの手順</a>
+          <p class="article-list__desc">プロパンガスは自由料金のため、同じ使用量でも請求額が変わります。持ち家と賃貸それぞれで取れる手順を、確認の順番に沿って解説します。</p>
+        </li>
+        <li>
+          <span class="article-list__meta">2026年8月30日</span>
+          <a href="/articles/denryoku-kirikae-demerit/">電力会社の切り替えにデメリットは？停電・工事・倒産・違約金の不安を順番に確認</a>
+          <p class="article-list__desc">資源エネルギー庁の公開情報をもとに、切り替え前によく挙がる不安を順番に確認します。</p>
+        </li>
+        <li>
+          <span class="article-list__meta">2026年8月30日</span>
+          <a href="/articles/all-denka-konetsuhi/">オール電化の光熱費を見直す手順｜時間帯別プランと契約容量の確認から</a>
+          <p class="article-list__desc">ガスがない分、光熱費は電気代に集中します。プランと使い方を確認する順番を整理しました。</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card" id="category-contracts">
+      <h2 class="section-title"><span class="section-title__no">04</span><span>毎月の契約を見直す<span class="section-title__count">（2）</span></span></h2>
+      <p class="muted">なんとなく続いている定額サービスを洗い出し、続ける／やめるを自分で決められるようになります。</p>
+      <ul class="article-list">
+        <li>
+          <span class="article-list__meta">2026年8月30日</span>
+          <a href="/articles/subscription-tanaoroshi/">サブスクの棚卸し手順｜契約を全部洗い出して、続けるものだけ残す</a>
+          <p class="article-list__desc">記憶ではなく明細をたどって洗い出し、解約・プラン変更・継続に仕分けます。</p>
+        </li>
+        <li>
+          <span class="article-list__meta">2026年8月30日</span>
+          <a href="/articles/water-server-minaoshi/">ウォーターサーバーは続けるべき？月の総額を出してから判断する手順</a>
+          <p class="article-list__desc">レンタル料だけでは判断できません。水代・電気代・手数料を合わせた総額の出し方。</p>
+        </li>
+      </ul>
     </section>
 
     <div class="to-diagnosis">
-      <h2>先に、我が家の数字を見る</h2>
+      <p class="section-label section-label--cta">先に、我が家の数字を見る</p>
       <p>
         記事を読む前に診断してしまうのが早道です。毎月の金額を入れると、
         どの費目にどれだけ余地があるかと、見直す順番が出ます。登録不要・入力した数字は送信されません。

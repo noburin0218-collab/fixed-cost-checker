@@ -82,31 +82,65 @@
 <body>
   <a class="skip-link" href="#main">本文へ移動</a>
 
+  <!-- ===== ブランドヘッダー（全ページ共通・stickyにしない） ===== -->
+  <div class="brandbar">
+    <div class="container brandbar__inner">
+      <a class="brandbar__brand" href="/">
+        <span class="seal-mark" aria-hidden="true">保</span>
+        <span class="brandbar__name">家計の保健室</span>
+      </a>
+      <nav class="brandbar__nav" aria-label="サイト内の主な場所">
+        <a href="/" aria-current="page">家計チェック</a>
+        <a href="/articles/">記事を読む</a>
+        <a href="/editorial-policy/">編集方針</a>
+      </nav>
+    </div>
+  </div>
+
   <!-- ===== ヒーロー ===== -->
   <header class="hero">
     <div class="container">
-      <p class="hero__eyebrow">
-        <span>家計の保健室｜30代・子育て世帯のための</span>
-        <span class="seal-mark" aria-hidden="true">保</span>
-      </p>
-      <h1 class="hero__title">固定費＆家計 見直し診断</h1>
+      <h1 class="hero__title">家計の不安、<br />まず正体をはっきりさせる。</h1>
       <p class="hero__lead">
-        毎月の固定費・変動費を入力するだけ。<br />
-        <strong>年間でいくら削れるか</strong>と<strong>今日やるべきこと</strong>が30秒でわかります。
+        売りたい人の話を聞く前に、自分の数字を見る。<strong>30秒の家計チェック</strong>から。
       </p>
       <ul class="badges">
         <li class="badge">完全無料</li>
         <li class="badge">登録不要</li>
         <li class="badge">データ送信なし</li>
       </ul>
-      <a href="#form" class="btn btn--ghost">さっそく診断する ↓</a>
+      <a href="#form" class="btn btn--ghost">家計チェックをはじめる ↓</a>
+
+      <!-- このサイトが約束すること（金額の話より先に、立場を示す） -->
+      <dl class="promise">
+        <div class="promise__item">
+          <dt class="promise__term">入力した家計の数字は、外に出しません</dt>
+          <dd class="promise__desc">計算はすべてあなたのブラウザ内で行い、サーバーには送信しません。</dd>
+        </div>
+        <div class="promise__item">
+          <dt class="promise__term">平均を「適正額」とは呼びません</dt>
+          <dd class="promise__desc">公的統計の平均は、あなたの家の正解ではありません。目安として扱います。</dd>
+        </div>
+        <div class="promise__item">
+          <dt class="promise__term">広告は載せますが、報酬で順位や評価は変えません</dt>
+          <dd class="promise__desc">報酬額や成果の確定率を、掲載の順番や評価の根拠に使っていません。</dd>
+        </div>
+        <div class="promise__item">
+          <dt class="promise__term">必要のない相談やサービスは勧めません</dt>
+          <dd class="promise__desc">当てはまらない費目には広告を出しません。0件のこともあります。</dd>
+        </div>
+      </dl>
+      <p class="promise__note">
+        カモられないために、広告や相談より先に、自分の数字と選択肢を整理します。
+        <a href="/editorial-policy/">編集方針</a>
+      </p>
     </div>
   </header>
 
   <main class="container" id="main">
     <!-- ===== 入力フォーム ===== -->
     <section id="form" class="card">
-      <h2 class="section-title"><span class="section-title__no">01</span><span>毎月の支出を入力（固定費＋変動費）</span></h2>
+      <h2 class="section-title"><span class="section-title__no">01</span><span>家計チェック（毎月の支出を入力）</span></h2>
       <p class="muted">
         わかる範囲で月額（円）を入力してください。空欄は0円として計算します。<br />
         <small>※入力した数字はあなたのブラウザ内だけで計算され、どこにも送信・保存されません。</small>
@@ -385,36 +419,66 @@
         <h2 class="section-title"><span class="section-title__no">06</span><span>もう少し詳しく知る</span></h2>
         <!-- 診断結果に対応する記事（JSで差し込む） -->
         <ul class="article-list" id="related-articles"></ul>
-        <!-- ↓ ここから下は常にHTMLに存在する一覧（クローラ向けにも残す） -->
-        <p class="muted related-articles__all">解説記事の一覧</p>
-        <ul class="article-list">
-          <li>
-            <span class="article-list__meta">家計の考え方</span>
-            <a href="/articles/3nin-kazoku-seikatsuhi/">3人家族の生活費はいくら？2025年家計調査から解説</a>
-            <p class="article-list__desc">公的統計の読み方と、平均を「適正額」として扱わないための注意点。</p>
-          </li>
-          <li>
-            <span class="article-list__meta">通信費</span>
-            <a href="/articles/4nin-kazoku-tsushinhi/">4人家族の通信費はいくら？2025年家計調査から解説</a>
-            <p class="article-list__desc">「通信」はスマホ代だけではありません。明細の分解のしかた。</p>
-          </li>
-          <li>
-            <span class="article-list__meta">光熱費</span>
-            <a href="/articles/denryoku-kirikae-demerit/">電力会社の切り替えにデメリットは？</a>
-            <p class="article-list__desc">停電・工事・倒産・違約金。切り替え前の不安を順番に確認します。</p>
-          </li>
-          <li>
-            <span class="article-list__meta">光熱費</span>
-            <a href="/articles/propane-gas-takai/">プロパンガスが高いのはなぜ？賃貸でもできる見直しの手順</a>
-            <p class="article-list__desc">使いすぎではなく、料金の決まり方が違うことが原因の場合があります。</p>
-          </li>
-          <li>
-            <span class="article-list__meta">家計の考え方</span>
-            <a href="/articles/kotei-hi-sagetemo-tamaranai/">固定費を削っても貯まらないときに、見直すこと</a>
-            <p class="article-list__desc">支出は減ったのにお金が残らない。その原因を6つに切り分けます。</p>
-          </li>
-        </ul>
-        <p class="muted" style="margin-top:14px"><a href="/articles/">記事一覧を見る ›</a></p>
+        <!-- ↓ 常にHTMLに存在する一覧（クローラ向けにも残す）。
+             畳んであるだけで、DOMには全10本のリンクがある。 -->
+        <details class="more related-articles__all">
+          <summary class="more__summary">解説記事の一覧（10本）</summary>
+          <div class="more__body">
+            <ul class="article-list">
+            <li>
+              <span class="article-list__meta">家計を見わたす</span>
+              <a href="/articles/3nin-kazoku-seikatsuhi/">3人家族の生活費はいくら？2025年家計調査から解説</a>
+              <p class="article-list__desc">平均を「適正額」として扱わないための読み方。</p>
+            </li>
+            <li>
+              <span class="article-list__meta">家計を見わたす</span>
+              <a href="/articles/kotei-hi-sagetemo-tamaranai/">固定費を削っても貯まらないときに、見直すこと</a>
+              <p class="article-list__desc">支出は減ったのに残らない原因を6つに切り分ける。</p>
+            </li>
+            <li>
+              <span class="article-list__meta">家計を見わたす</span>
+              <a href="/articles/hikkoshi-kotei-hi/">引っ越しは固定費をまとめて見直せる機会です</a>
+              <p class="article-list__desc">契約を触る時期だから、切り替えの手間がほぼゼロ。</p>
+            </li>
+            <li>
+              <span class="article-list__meta">通信費を見直す</span>
+              <a href="/articles/4nin-kazoku-tsushinhi/">4人家族の通信費はいくら？2025年家計調査から解説</a>
+              <p class="article-list__desc">「通信」はスマホ代だけではない。明細の分解。</p>
+            </li>
+            <li>
+              <span class="article-list__meta">通信費を見直す</span>
+              <a href="/articles/chintai-net-kaisen/">賃貸で工事できない人のネット回線の選び方</a>
+              <p class="article-list__desc">光・ホームルーター・モバイルWiFiの使い分け。</p>
+            </li>
+            <li>
+              <span class="article-list__meta">光熱費を見直す</span>
+              <a href="/articles/propane-gas-takai/">プロパンガスが高いのはなぜ？賃貸でもできる見直しの手順</a>
+              <p class="article-list__desc">使いすぎではなく、料金の決まり方が違う場合がある。</p>
+            </li>
+            <li>
+              <span class="article-list__meta">光熱費を見直す</span>
+              <a href="/articles/denryoku-kirikae-demerit/">電力会社の切り替えにデメリットは？</a>
+              <p class="article-list__desc">停電・工事・倒産・違約金の不安を順番に確認。</p>
+            </li>
+            <li>
+              <span class="article-list__meta">光熱費を見直す</span>
+              <a href="/articles/all-denka-konetsuhi/">オール電化の光熱費を見直す手順</a>
+              <p class="article-list__desc">時間帯別プランと契約容量の確認から。</p>
+            </li>
+            <li>
+              <span class="article-list__meta">毎月の契約を見直す</span>
+              <a href="/articles/subscription-tanaoroshi/">サブスクの棚卸し手順</a>
+              <p class="article-list__desc">明細をたどって洗い出し、続けるものだけ残す。</p>
+            </li>
+            <li>
+              <span class="article-list__meta">毎月の契約を見直す</span>
+              <a href="/articles/water-server-minaoshi/">ウォーターサーバーは続けるべき？</a>
+              <p class="article-list__desc">レンタル料・水代・電気代を合わせた総額で判断する。</p>
+            </li>
+            </ul>
+            <p class="muted" style="margin-top:14px"><a href="/articles/">記事一覧のページを見る ›</a></p>
+          </div>
+        </details>
       </div>
 
       <!-- F. 相談・比較（広告はここにだけ置く。該当が無ければカードごと出さない） -->

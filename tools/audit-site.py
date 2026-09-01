@@ -118,12 +118,29 @@ for p in pages:
     for m in re.findall(r'<script type="application/ld\+json">(.*?)</script>', s, re.S):
         try: json.loads(m)
         except Exception as e: fails.append(f"[構造化データ] {p}: {e}")
+    # 全ページ共通のブランドヘッダー
+    if 'class="brandbar"' not in s: fails.append(f"[ブランドヘッダー] {p} に brandbar が無い")
+    if 'class="skip-link"' not in s: fails.append(f"[アクセシビリティ] {p} にスキップリンクが無い")
     # 記事は日付・署名・出典・パンくず
     if p.startswith('articles/') and p!='articles/index.html':
         for need,label in [('datePublished','公開日'),('dateModified','更新日'),
                            ('家計の保健室 編集部','署名'),('class="sources"','出典'),
                            ('class="crumbs"','パンくず'),('data-track="to-diagnosis"','診断CTA')]:
             if need not in s: fails.append(f"[記事要素] {p} に{label}が無い")
+        # 出典・診断CTAの見出しは本文の h2 階層に混ぜない（アウトラインを保つ）。
+        # クラス名（.sources / .to-diagnosis）は据え置き、見出しだけ section-label に置く。
+        m = re.search(r'<section class="sources">(.*?)</section>', s, re.S)
+        if not m:
+            fails.append(f"[出典] {p} の .sources ブロックが見つからない")
+        else:
+            if '<h2' in m.group(1): fails.append(f"[見出し構造] {p} の出典が <h2> のまま")
+            if 'class="section-label"' not in m.group(1):
+                fails.append(f"[出典] {p} の出典に見出しラベルが無い")
+        m = re.search(r'<div class="to-diagnosis">(.*?)</div>', s, re.S)
+        if not m:
+            fails.append(f"[診断CTA] {p} の .to-diagnosis ブロックが見つからない")
+        elif '<h2' in m.group(1):
+            fails.append(f"[見出し構造] {p} の診断CTAが <h2> のまま")
         # 広告の出し過ぎ（1記事1枠まで）
         n_ad=s.count('data-ad-slot=')
         if n_ad>1: fails.append(f"[広告過多] {p} に広告枠が{n_ad}個")
@@ -132,6 +149,17 @@ for p in pages:
     for href in re.findall(r'href="(/[^"#?]*)', s):
         internal.add(href)
     defined.add('/'+p.replace('index.html',''))
+
+# ---- 3b) 記事カテゴリのアンカーが記事一覧に実在するか ----
+idx = open('articles/index.html', encoding='utf-8').read()
+for f in sorted(glob.glob('articles/*/index.html')):
+    if f == 'articles/index.html': continue
+    body = open(f, encoding='utf-8').read()
+    for anchor in re.findall(r'href="/articles/#(category-[a-z-]+)"', body):
+        if f'id="{anchor}"' not in idx:
+            fails.append(f"[カテゴリ] {f} が参照する #{anchor} が記事一覧に無い")
+if '準備中のカテゴリ' in idx:
+    fails.append("[カテゴリ] 記事一覧に「準備中のカテゴリ」が残っている")
 
 # ---- 4) 内部リンク切れ ----
 def exists(u):

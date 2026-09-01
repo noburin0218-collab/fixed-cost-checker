@@ -938,20 +938,20 @@ function setupShare(yearly) {
  * 記事が無い費目はここに載せない（無理に紐づけない）。
  */
 const ARTICLE_BY_CATEGORY = {
-  mobile: { href: "/articles/4nin-kazoku-tsushinhi/", title: "4人家族の通信費はいくら？2025年家計調査から解説", cat: "通信費" },
-  internet: { href: "/articles/chintai-net-kaisen/", title: "賃貸で工事できない人のネット回線の選び方", cat: "通信費" },
-  electricity: { href: "/articles/denryoku-kirikae-demerit/", title: "電力会社の切り替えにデメリットは？", cat: "光熱費" },
-  gas: { href: "/articles/propane-gas-takai/", title: "プロパンガスが高いのはなぜ？賃貸でもできる見直しの手順", cat: "光熱費" },
-  waterserver: { href: "/articles/water-server-minaoshi/", title: "ウォーターサーバーは続けるべき？月の総額を出してから判断する手順", cat: "家計の考え方" },
-  subscription: { href: "/articles/subscription-tanaoroshi/", title: "サブスクの棚卸し手順｜続けるものだけ残す", cat: "家計の考え方" },
-  housing: { href: "/articles/hikkoshi-kotei-hi/", title: "引っ越しは固定費をまとめて見直せる唯一の機会", cat: "家計の考え方" },
-  eatingout: { href: "/articles/3nin-kazoku-seikatsuhi/", title: "3人家族の生活費はいくら？2025年家計調査から解説", cat: "家計の考え方" },
+  mobile: { href: "/articles/4nin-kazoku-tsushinhi/", title: "4人家族の通信費はいくら？2025年家計調査から解説", cat: "通信費を見直す" },
+  internet: { href: "/articles/chintai-net-kaisen/", title: "賃貸で工事できない人のネット回線の選び方", cat: "通信費を見直す" },
+  electricity: { href: "/articles/denryoku-kirikae-demerit/", title: "電力会社の切り替えにデメリットは？", cat: "光熱費を見直す" },
+  gas: { href: "/articles/propane-gas-takai/", title: "プロパンガスが高いのはなぜ？賃貸でもできる見直しの手順", cat: "光熱費を見直す" },
+  waterserver: { href: "/articles/water-server-minaoshi/", title: "ウォーターサーバーは続けるべき？月の総額を出してから判断する手順", cat: "毎月の契約を見直す" },
+  subscription: { href: "/articles/subscription-tanaoroshi/", title: "サブスクの棚卸し手順｜続けるものだけ残す", cat: "毎月の契約を見直す" },
+  housing: { href: "/articles/hikkoshi-kotei-hi/", title: "引っ越しは固定費をまとめて見直せる唯一の機会", cat: "家計を見わたす" },
+  eatingout: { href: "/articles/3nin-kazoku-seikatsuhi/", title: "3人家族の生活費はいくら？2025年家計調査から解説", cat: "家計を見わたす" },
 };
 
 /** ガスの種類によって、読むべき記事が変わる */
 function articleFor(item, ctx) {
   if (item.id === "gas" && ctx && ctx.gasType === "none") {
-    return { href: "/articles/all-denka-konetsuhi/", title: "オール電化の光熱費を見直す手順", cat: "光熱費" };
+    return { href: "/articles/all-denka-konetsuhi/", title: "オール電化の光熱費を見直す手順", cat: "光熱費を見直す" };
   }
   return ARTICLE_BY_CATEGORY[item.id] || null;
 }
