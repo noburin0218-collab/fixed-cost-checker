@@ -946,6 +946,8 @@ const ARTICLE_BY_CATEGORY = {
   subscription: { href: "/articles/subscription-tanaoroshi/", title: "サブスクの棚卸し手順｜続けるものだけ残す", cat: "毎月の契約を見直す" },
   housing: { href: "/articles/hikkoshi-kotei-hi/", title: "引っ越しは固定費をまとめて見直せる唯一の機会", cat: "家計を見わたす" },
   eatingout: { href: "/articles/3nin-kazoku-seikatsuhi/", title: "3人家族の生活費はいくら？2025年家計調査から解説", cat: "家計を見わたす" },
+  // 保険料は、いきなり相談へ送らず「自分で確認できること」から入る
+  insurance: { href: "/articles/hoken-minaoshi-mae/", title: "保険料を見直す前に確認すること", cat: "保険と将来のお金" },
 };
 
 /** ガスの種類によって、読むべき記事が変わる */

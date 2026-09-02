@@ -70,4 +70,40 @@
     <lastmod>2026-08-30</lastmod>
     <priority>0.5</priority>
   </url>
+  <url>
+    <loc>https://kakei-hokenshitsu.com/articles/hoken-minaoshi-mae/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kakei-hokenshitsu.com/articles/hoken-shoken-yomikata/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kakei-hokenshitsu.com/articles/muryo-hoken-sodan-naze-muryo/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kakei-hokenshitsu.com/articles/hoken-sodan-hikaku/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kakei-hokenshitsu.com/articles/kodomo-kyoiku-hi/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kakei-hokenshitsu.com/articles/kotei-hi-minaoshi-junban/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>

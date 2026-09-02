@@ -69,7 +69,7 @@ if "外出し表示" not in a1 or "計上禁止" not in a1:
 for ng in ["すべて禁止された","全面的に禁止","一律に禁止","請求はすべてなくなりました"]:
     if ng in a1: fails.append(f"[LPガス制度] 断定表現 '{ng}' が含まれる")
 
-NEG = r"(ありません|ではない|ではありません|とまでは言えません|言えません|誤りです|ものではない|扱わず|扱いません|示していません|一択、ではありません)"
+NEG = r"(ありません|ではない|ではありません|とまでは言えません|言えません|誤りです|ものではない|扱わず|扱いません|示していません|作りません|付けません|一択、ではありません)"
 
 def assert_not_asserted(text, phrases, label, fails):
     """禁止語が『断定』として使われている場合だけ違反にする（否定・注意喚起の文脈は可）。"""
@@ -102,6 +102,24 @@ for must in ["送配電網","約15分","スマートメーター","原則無料"
 assert_not_asserted(a6, ["絶対に停電しない","倒産しても絶対に電気は止まりません","解約金はかかりません",
                           "違約金は一切かかりません","最終保障供給があるから大丈夫"], "#6 断定", fails)
 if "最終保障供給" in a6: fails.append("[#6] 最終保障供給を家庭向け説明に使用している")
+
+# ---- 2d) 比較記事：順位を作っていないか ----
+# 「1位」「★評価」「No.1」を**断定として**使っていないか。
+# 「順位は付けません」のような否定文脈は違反にしない（NEG で除外）。
+cmp_path = 'articles/hoken-sodan-hikaku/index.html'
+if os.path.exists(cmp_path):
+    c = open(cmp_path, encoding='utf-8').read()
+    assert_not_asserted(c, ["1位", "第1位", "No.1", "ナンバーワン", "★"], "比較 順位", fails)
+    # 適合表の必須要素（掲載順の根拠・確認日・使わない選択肢）
+    for need, label in [('fit-table__order', '掲載順の根拠'),
+                        ('fit-table__checked', '確認日'),
+                        ('fit-optout', '使わない選択肢')]:
+        if need not in c:
+            fails.append(f"[比較] {cmp_path} に{label}が無い")
+    # 報酬額・確定率を編集に持ち込んでいないか
+    for ng in ["報酬額が高い", "高単価", "確定率が高いので"]:
+        if ng in c:
+            fails.append(f"[比較] 報酬に基づく記述: '{ng}'")
 
 # ---- 3) 全HTMLの構造チェック ----
 pages=['index.html','articles/index.html','about/index.html','editorial-policy/index.html']+ \
