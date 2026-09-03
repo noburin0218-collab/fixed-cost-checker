@@ -538,3 +538,32 @@
   font-variant-numeric: tabular-nums;
 }
 .cat-index__list a:hover .cat-index__count { color: var(--seal); }
+
+/* ===== 比較表の中のCTA =====
+   3社とも同じ器・同じ大きさ。1社だけ目立たせない。
+   .ad-card をそのまま使い、表のセルに収まるよう余白だけ詰める。 */
+.fit-ad.ad-card {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+.fit-ad .ad-tag { margin-top: 0; display: inline-block; }
+.fit-ad .ad-card__link { margin: 8px 0 0; }
+/* 3社のボタンを同じ幅・同じ高さにそろえる。
+   アンカーテキストはASP発行コードの原文で、社名の長さが違う。
+   放っておくと行数の差でボタンの高さが変わり、それ自体が強弱になるため、
+   いちばん長い社名が3行で収まる高さに固定してそろえる。 */
+.fit-ad .ad-card__link a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 5.8em;
+  padding: 8px 10px;
+  font-size: 0.84rem;
+  text-align: center;
+  line-height: 1.45;
+}
+.fit-row-cta th[scope="row"],
+.fit-row-cta td { vertical-align: top; }

@@ -21,6 +21,11 @@ declare global {
     affiliates?: Record<string, SiteAffiliate>;
     /** 貯蓄相談の導線（保険とは別枠） */
     savingsAdvisor?: SiteAffiliate;
+    /**
+     * 比較記事で横並びにする案件。掲載順は五十音順で、順番に意味を持たせない。
+     * code はASP発行コードの原文。
+     */
+    insuranceComparison?: { slot: string; name: string; code: string }[];
   }
   interface Window {
     SITE_CONFIG?: SiteConfig;

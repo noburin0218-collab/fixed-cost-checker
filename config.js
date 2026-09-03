@@ -106,3 +106,34 @@ window.SITE_CONFIG = {
     code: `<a href="https://h.accesstrade.net/sp/cc?rk=0100pedo00owy6" rel="nofollow" referrerpolicy="no-referrer-when-downgrade">貯蓄の無料相談サイト「ガーデン」<img src="https://h.accesstrade.net/sp/rr?rk=0100pedo00owy6" width="1" height="1" border="0" alt=""></a>`,
   },
 };
+
+/**
+ * 比較記事（保険相談サービス）で横並びに使うコード。
+ *
+ * 「同一箇所に複数リンクを並べない」の唯一の例外が比較記事です
+ * （AFFILIATE_BACKLOG.md）。ここに並べる3社は、
+ *   - 掲載順は五十音順。順番に意味を持たせない
+ *   - CTAの大きさ・色・余白・強調度をすべて同一にする
+ *   - 報酬額・確定率は掲載順にも評価にも使わない
+ * という条件のもとでのみ表示します。
+ *
+ * code はASPが発行したHTMLを **1文字も変えずに** 保持します。
+ * 保険マンモスは affiliates.insurance と同じコードを参照し、二重管理を避けます。
+ */
+window.SITE_CONFIG.insuranceComparison = [
+  {
+    slot: "hoken-garden",
+    name: "保険の無料相談サイト「ガーデン」",
+    code: `<a href="https://h.accesstrade.net/sp/cc?rk=0100ped000owy6" rel="nofollow" referrerpolicy="no-referrer-when-downgrade">保険の無料相談サイト「ガーデン」<img src="https://h.accesstrade.net/sp/rr?rk=0100ped000owy6" width="1" height="1" border="0" alt=""></a>`,
+  },
+  {
+    slot: "hoken-mammoth",
+    name: "保険マンモス",
+    code: window.SITE_CONFIG.affiliates.insurance.code,
+  },
+  {
+    slot: "hoken-minna",
+    name: "みんなの生命保険アドバイザー",
+    code: `<a href="https://h.accesstrade.net/sp/cc?rk=0100pfk700owy6" rel="nofollow" referrerpolicy="no-referrer-when-downgrade">みんなの生命保険アドバイザー<img src="https://h.accesstrade.net/sp/rr?rk=0100pfk700owy6" width="1" height="1" border="0" alt=""></a>`,
+  },
+];

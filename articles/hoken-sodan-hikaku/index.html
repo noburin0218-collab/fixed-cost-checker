@@ -272,6 +272,12 @@
               <td>マッチングに時間がかかる場合がある</td>
               <td>地域・相談内容によっては手配できない場合がある</td>
             </tr>
+            <tr class="fit-row-cta">
+              <th scope="row">申し込み</th>
+              <td><div class="fit-ad" id="fit-cta-garden"></div></td>
+              <td><div class="fit-ad" id="fit-cta-mammoth"></div></td>
+              <td><div class="fit-ad" id="fit-cta-minna"></div></td>
+            </tr>
             <tr>
               <th scope="row">こういう人には合いやすい</th>
               <td>保険以外に、教育資金や住宅ローンなども一度に相談したい人</td>
@@ -329,14 +335,18 @@
 
       <h2>掲載しているリンクについて</h2>
       <p>
-        現時点では、この記事に<strong>各社への申し込みリンクを掲載していません</strong>。
-        3社のうち一部しかリンクを用意できておらず、一部だけにリンクを置くと、
-        掲載の有無が優劣に見えてしまうためです。
+        表のいちばん下に、3社の申し込みリンクを置いています。<strong>広告です。</strong>
+        3社とも、ボタンの大きさ・色・余白・並び方をすべて同じにしています。
+        どれか1社を目立たせる、上に置く、強調するといったことはしていません。
       </p>
       <p>
-        3社ぶんが同じ条件でそろった時点で、
-        <strong>同じデザイン・同じ大きさのボタンで、表の中に並べて掲載します</strong>。
-        それまでは、各社名で検索して公式サイトから直接お申し込みください。
+        掲載順は表と同じ五十音順で、<strong>報酬額や成果の確定率は、掲載順にも評価にも使っていません</strong>
+        （<a href="/editorial-policy/">編集方針</a>）。
+        リンクを経由して申し込みが行われた場合、当サイトが広告主から報酬を受け取ることがあります。
+        それによって、上の表の内容が変わることはありません。
+      </p>
+      <p class="fit-optout">
+        <a href="/articles/hoken-minaoshi-mae/">どれも使わず、自分で保険を確認する手順を読む ›</a>
       </p>
 
       <div class="to-diagnosis">
@@ -356,6 +366,7 @@
         <li>公式で確認できなかった項目は<strong>未確認</strong>のままにしている。無理に埋めていない</li>
         <li>「ガーデン」のオンライン可否は<strong>公式ページ間で案内が異なる</strong>ため未評価</li>
         <li>相談は必須ではない。<strong>使わずに自分で進める</strong>道も併せて示している</li>
+        <li>3社の申し込みリンクは<strong>まったく同じ見た目</strong>で並べている。1社だけ目立たせない</li>
       </ul>
 
 
@@ -423,6 +434,23 @@
     </div>
   </footer>
 
+  <script>
+    // 比較表のCTA。3社とも同じ器・同じ見た目で差し込む。
+    // ASP発行コードは config.js の原文をそのまま入れ、加工しない。
+    (function () {
+      var list = (window.SITE_CONFIG && window.SITE_CONFIG.insuranceComparison) || [];
+      var cell = { "hoken-garden": "fit-cta-garden", "hoken-mammoth": "fit-cta-mammoth", "hoken-minna": "fit-cta-minna" };
+      list.forEach(function (item) {
+        var el = document.getElementById(cell[item.slot]);
+        if (!el || !item.code) return;
+        el.className = "ad-card fit-ad";
+        el.setAttribute("data-ad-slot", item.slot);
+        el.innerHTML =
+          '<span class="ad-tag">広告</span>' +
+          '<p class="ad-card__link">' + item.code + "</p>";
+      });
+    })();
+  </script>
   <script src="/articles.js"></script>
   <script>document.getElementById("year").textContent = String(new Date().getFullYear());</script>
 </body>

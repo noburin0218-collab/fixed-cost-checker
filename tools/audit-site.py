@@ -28,6 +28,9 @@ expected={
  "gas_a8":'<a href="https://px.a8.net/svt/ejp?a8mat=4BA0X8+UYL0A+2W92+NVHCY" rel="nofollow">プロパンガス料金を比較し、最適なガス会社を選ぼう！【エネピ】</a>',
  "mammoth":'<a href="https://h.accesstrade.net/sp/cc?rk=010039sr00owy6" rel="nofollow" referrerpolicy="no-referrer-when-downgrade">無料保険相談<img src="https://h.accesstrade.net/sp/rr?rk=010039sr00owy6" width="1" height="1" border="0" alt=""></a>',
  "chochiku":'<a href="https://h.accesstrade.net/sp/cc?rk=0100pedo00owy6" rel="nofollow" referrerpolicy="no-referrer-when-downgrade">貯蓄の無料相談サイト「ガーデン」<img src="https://h.accesstrade.net/sp/rr?rk=0100pedo00owy6" width="1" height="1" border="0" alt=""></a>',
+ # 比較記事（保険相談3社）で横並びに使うコード
+ "hoken_garden":'<a href="https://h.accesstrade.net/sp/cc?rk=0100ped000owy6" rel="nofollow" referrerpolicy="no-referrer-when-downgrade">保険の無料相談サイト「ガーデン」<img src="https://h.accesstrade.net/sp/rr?rk=0100ped000owy6" width="1" height="1" border="0" alt=""></a>',
+ "hoken_minna":'<a href="https://h.accesstrade.net/sp/cc?rk=0100pfk700owy6" rel="nofollow" referrerpolicy="no-referrer-when-downgrade">みんなの生命保険アドバイザー<img src="https://h.accesstrade.net/sp/rr?rk=0100pfk700owy6" width="1" height="1" border="0" alt=""></a>',
 }
 for k,v in expected.items():
     if v not in cfg: fails.append(f"[ASPコード] {k} が原文一致しない")
@@ -116,6 +119,22 @@ if os.path.exists(cmp_path):
                         ('fit-optout', '使わない選択肢')]:
         if need not in c:
             fails.append(f"[比較] {cmp_path} に{label}が無い")
+    # 3社のCTAが同じ器でそろっているか（1社だけ目立たせない）
+    for slot in ["fit-cta-garden", "fit-cta-mammoth", "fit-cta-minna"]:
+        if slot not in c:
+            fails.append(f"[比較CTA] {cmp_path} に {slot} の枠が無い")
+    n_cta = c.count('class="fit-ad"')
+    if n_cta != 3:
+        fails.append(f"[比較CTA] CTA枠が3つではない（{n_cta}個）")
+    # 比較表の中で特定の1社だけを主ボタン扱いしていないか
+    if 'btn--primary' in c[c.find('fit-table'):c.find('</table>')]:
+        fails.append("[比較CTA] 表の中で1社だけ主ボタン扱いしている")
+    # 3社ぶんのコードが config.js に原文である前提で参照されているか
+    if 'insuranceComparison' not in cfg:
+        fails.append("[比較CTA] config.js に insuranceComparison が無い")
+    for slot in ["hoken-garden", "hoken-mammoth", "hoken-minna"]:
+        if f'"{slot}"' not in cfg:
+            fails.append(f"[比較CTA] config.js に {slot} が無い")
     # 報酬額・確定率を編集に持ち込んでいないか
     for ng in ["報酬額が高い", "高単価", "確定率が高いので"]:
         if ng in c:
