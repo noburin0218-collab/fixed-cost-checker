@@ -351,3 +351,190 @@
   font-size: 0.94rem;
   line-height: 1.8;
 }
+
+/* ===== 記事本文の中でも、部品は部品の色を保つ =====
+   .article-body a（詳細度 0,1,1）が .btn--primary（0,1,0）に勝つため、
+   これが無いと記事内の主CTAが「緑地に緑文字」になって読めなくなる。
+   同じファイルの後方で、より高い詳細度で明示的に打ち消す。 */
+.article-body .btn--primary,
+.article-body .btn--primary:visited {
+  color: #fff;
+  text-decoration: none;
+}
+.article-body .btn--ghost,
+.article-body .btn--ghost:visited {
+  color: var(--ink);
+  text-decoration: none;
+}
+.article-body .fit-cta,
+.article-body .fit-cta:visited {
+  color: var(--seal);
+  text-decoration: none;
+}
+
+/* ===== 記事クラスターのナビ（確認する順番の図を兼ねる） =====
+   4本のつながりを、記事の冒頭で見せる。いま読んでいる回を印で示す。
+   画像は使わず、番号と罫線だけで組む。 */
+.cluster {
+  margin: 0 0 24px;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 16px 18px 6px;
+}
+.cluster__title {
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-2);
+  margin: 0 0 12px;
+}
+.cluster__steps { list-style: none; padding: 0; margin: 0; counter-reset: cstep; }
+.cluster__step {
+  position: relative;
+  padding: 0 0 12px 34px;
+  line-height: 1.7;
+}
+.cluster__step::before {
+  counter-increment: cstep;
+  content: counter(cstep);
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 23px;
+  height: 23px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 50%;
+  color: var(--ink-2);
+  font-size: 0.76rem;
+  line-height: 21px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  background: var(--surface);
+  z-index: 1;
+}
+/* 縦の線でつなぐ */
+.cluster__step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 33px;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule);
+}
+.cluster__step a {
+  display: flex;
+  align-items: center;
+  min-height: 40px; /* 指で押せる高さを確保する */
+  font-size: 0.92rem;
+  color: var(--seal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.cluster__note { display: block; font-size: 0.82rem; color: var(--ink-2); line-height: 1.7; }
+/* いま読んでいる回 */
+.cluster__step--current::before { border-color: var(--seal); background: var(--seal); color: #fff; }
+.cluster__step--current > .cluster__name {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+.cluster__here {
+  margin-left: 8px;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  color: var(--seal);
+  border: 1px solid var(--seal);
+  border-radius: var(--radius);
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+
+/* ===== この記事で分かること ===== */
+.takeaway {
+  margin: 0 0 22px;
+  border-left: 3px solid var(--seal);
+  background: var(--seal-tint);
+  border-radius: var(--radius);
+  padding: 14px 16px 14px 18px;
+}
+.takeaway__title {
+  margin: 0 0 8px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+.takeaway ul { margin: 0; padding-left: 1.2em; }
+.takeaway li { font-size: 0.92rem; line-height: 1.8; margin-bottom: 4px; color: var(--ink); }
+.takeaway li:last-child { margin-bottom: 0; }
+.takeaway__conclusion {
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 0.92rem;
+  line-height: 1.85;
+  color: var(--ink);
+}
+.takeaway__conclusion strong { font-weight: 700; }
+
+/* ===== 次に読む（記事末尾） ===== */
+.next-read {
+  margin: 26px 0 0;
+  border-top: 2px solid var(--rule-dark);
+  padding-top: 16px;
+}
+.next-read__title {
+  margin: 0 0 4px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.next-read__lead { margin: 0 0 10px; font-size: 0.86rem; color: var(--ink-2); line-height: 1.75; }
+
+/* ===== カテゴリ目次（記事一覧の先頭） =====
+   探しているテーマへ、スクロールせずに飛べるようにする。 */
+.cat-index {
+  margin: 18px 0 4px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 14px 0;
+}
+.cat-index__title {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-2);
+}
+.cat-index__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cat-index__list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 14px;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: var(--surface);
+}
+.cat-index__list a:hover { border-color: var(--seal); color: var(--seal); background: var(--seal-tint); }
+.cat-index__count {
+  font-size: 0.78rem;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.cat-index__list a:hover .cat-index__count { color: var(--seal); }

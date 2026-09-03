@@ -134,8 +134,98 @@
         カモられないために、広告や相談より先に、自分の数字と選択肢を整理します。
         <a href="/editorial-policy/">編集方針</a>
       </p>
+
+      <!-- 使い方の流れ。画像は使わず、罫線と番号だけで示す -->
+      <div class="flow">
+        <p class="flow__title">このサイトの使い方</p>
+        <ol class="flow__steps">
+          <li class="flow__step">
+            <span class="flow__no" aria-hidden="true">1</span>
+            <span class="flow__body">
+              <span class="flow__name">家計チェック</span>
+              <span class="flow__desc">毎月の金額を入れる。30秒・登録不要</span>
+            </span>
+          </li>
+          <li class="flow__step">
+            <span class="flow__no" aria-hidden="true">2</span>
+            <span class="flow__body">
+              <span class="flow__name">家計カルテ</span>
+              <span class="flow__desc">費目ごとの状態と、確認する順番が出る</span>
+            </span>
+          </li>
+          <li class="flow__step">
+            <span class="flow__no" aria-hidden="true">3</span>
+            <span class="flow__body">
+              <span class="flow__name">記事で確認する</span>
+              <span class="flow__desc">気になった費目の仕組みを、自分で読む</span>
+            </span>
+          </li>
+          <li class="flow__step">
+            <span class="flow__no" aria-hidden="true">4</span>
+            <span class="flow__body">
+              <span class="flow__name">必要なら相談</span>
+              <span class="flow__desc">自分で決められない点が残ったときだけ</span>
+            </span>
+          </li>
+        </ol>
+        <p class="flow__note">3までで終わることも、よくあります。</p>
+      </div>
     </div>
   </header>
+
+  <!-- ===== 気になるテーマから見る =====
+       家計チェックをやる前に、知りたいテーマから読みたい人のための入口。
+       主要テーマへ1クリックで入れるようにする。 -->
+  <section class="themes" aria-labelledby="themes-heading">
+    <div class="container">
+      <h2 class="themes__title" id="themes-heading">気になるテーマから見る</h2>
+      <p class="themes__lead">先に読みたいテーマがあれば、ここから。診断をしなくても読めます。</p>
+      <ul class="themes__list">
+        <li>
+          <a class="themes__link" href="/articles/hoken-minaoshi-mae/">
+            <span class="themes__name">保険料</span>
+            <span class="themes__desc">見直す前に確認すること。証券の読み方から比較まで</span>
+            <span class="themes__count">4記事</span>
+          </a>
+        </li>
+        <li>
+          <a class="themes__link" href="/articles/#category-telecom">
+            <span class="themes__name">通信費</span>
+            <span class="themes__desc">スマホ代と自宅のネット回線を分けて考える</span>
+            <span class="themes__count">2記事</span>
+          </a>
+        </li>
+        <li>
+          <a class="themes__link" href="/articles/#category-utilities">
+            <span class="themes__name">光熱費</span>
+            <span class="themes__desc">電気・ガスの料金がどう決まるかを確認する</span>
+            <span class="themes__count">3記事</span>
+          </a>
+        </li>
+        <li>
+          <a class="themes__link" href="/articles/kodomo-kyoiku-hi/">
+            <span class="themes__name">教育費</span>
+            <span class="themes__desc">幼稚園から高校までの学習費を、公立／私立で整理</span>
+            <span class="themes__count">1記事</span>
+          </a>
+        </li>
+        <li>
+          <a class="themes__link" href="/articles/#category-contracts">
+            <span class="themes__name">毎月の契約</span>
+            <span class="themes__desc">サブスク・レンタルを洗い出して仕分ける</span>
+            <span class="themes__count">2記事</span>
+          </a>
+        </li>
+        <li>
+          <a class="themes__link" href="/articles/kotei-hi-minaoshi-junban/">
+            <span class="themes__name">家計全体</span>
+            <span class="themes__desc">どこから手をつけるか、順番の決め方</span>
+            <span class="themes__count">4記事</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
 
   <main class="container" id="main">
     <!-- ===== 入力フォーム ===== -->
@@ -356,7 +446,7 @@
         </p>
 
         <div class="form-actions">
-          <button type="submit" class="btn btn--primary">この内容で診断する</button>
+          <button type="submit" class="btn btn--primary">この内容で家計カルテを作る</button>
           <button type="button" id="reset-btn" class="btn btn--text">入力をリセット</button>
         </div>
       </form>

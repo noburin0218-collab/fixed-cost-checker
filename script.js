@@ -1009,8 +1009,10 @@ function pickPriority(ranked) {
 /** 費目1行分のHTMLを組み立てる（カルテ本体） */
 function buildChartRow(item, stage, ctx) {
   const article = articleFor(item, ctx);
+  // 記事への導線は「次に読む」と明示する（何が起きるか分かるようにする）
   const link = article
-    ? `<p class="chart-row__link"><a href="${article.href}" data-track="chart-article">${article.title} ›</a></p>`
+    ? `<p class="chart-row__link"><span class="chart-row__linklabel">次に読む</span>` +
+      `<a href="${article.href}" data-track="chart-article">${article.title} ›</a></p>`
     : "";
 
   let note = "";

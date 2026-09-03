@@ -121,6 +121,20 @@ if os.path.exists(cmp_path):
         if ng in c:
             fails.append(f"[比較] 報酬に基づく記述: '{ng}'")
 
+# ---- 2e) 記事内CTAの可読性を守るCSSが残っているか ----
+# .article-body a（0,1,1）は .btn--primary（0,1,0）に勝つため、
+# 打ち消しが消えると記事内の主CTAが「緑地に緑文字」になって読めなくなる。
+acss = open('articles.css', encoding='utf-8').read()
+for need, label in [('.article-body .btn--primary', '主CTA'),
+                    ('.article-body .btn--ghost', '副CTA'),
+                    ('.article-body .fit-cta', '比較表のCTA')]:
+    if need not in acss:
+        fails.append(f"[CTA可読性] articles.css に {label} の色を保つ指定が無い（{need}）")
+# 素のリンクだけに色を当てる指定（訪問済みで部品の色が壊れないように）
+scss = open('styles.css', encoding='utf-8').read()
+if 'a:not([class]):visited' not in scss:
+    fails.append("[CTA可読性] styles.css の a:visited が :not([class]) で絞られていない")
+
 # ---- 3) 全HTMLの構造チェック ----
 pages=['index.html','articles/index.html','about/index.html','editorial-policy/index.html']+ \
       sorted(glob.glob('articles/*/index.html'))

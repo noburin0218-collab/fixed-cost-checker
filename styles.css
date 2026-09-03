@@ -31,12 +31,17 @@ html { scroll-behavior: smooth; }
 
 /* リンクはブランドの緑で統一する。
    ブラウザ既定の青／訪問済みの紫を残さない（色数を絞るため）。
-   色だけに頼らないよう、文中のリンクには下線を残す。 */
-a,
-a:visited {
+   色だけに頼らないよう、文中のリンクには下線を残す。
+
+   :not([class]) で「素のリンク」だけに効かせている。
+   これを付けずに a:visited を書くと詳細度 (0,1,1) が .btn--primary (0,1,0) に勝ち、
+   訪問済みのボタンが「緑地に緑文字」になって読めなくなる。
+   クラスを持つ部品は、下の各定義が自分の色を持っている。 */
+a:not([class]),
+a:not([class]):visited {
   color: var(--seal);
 }
-a:hover { color: #0b4a36; }
+a:not([class]):hover { color: #0b4a36; }
 
 /* 動きを減らす設定の端末では、スクロールと色の遷移を止める */
 @media (prefers-reduced-motion: reduce) {
@@ -284,19 +289,23 @@ input[type="number"],
   text-align: center;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
-.btn--primary {
+/* ボタンは、リンクであっても訪問済みで色を変えない */
+.btn--primary,
+.btn--primary:visited {
   background: var(--seal);
   color: #fff;
   border-color: var(--seal);
 }
-.btn--primary:hover { background: #0b4a36; border-color: #0b4a36; }
-.btn--ghost {
+.btn--primary:hover { background: #0b4a36; border-color: #0b4a36; color: #fff; }
+.btn--ghost,
+.btn--ghost:visited {
   background: transparent;
   color: var(--ink);
   border-color: var(--ink-2);
 }
 .btn--ghost:hover { background: var(--seal-tint); border-color: var(--seal); color: var(--seal); }
-.btn--text {
+.btn--text,
+.btn--text:visited {
   background: transparent;
   color: var(--ink-2);
   padding: 13px 8px;
@@ -1120,3 +1129,128 @@ input[type="number"],
   .more[open] .more__body { padding-top: 12pt; }
   a { text-decoration: none; color: var(--ink); }
 }
+
+/* ===== 気になるテーマから見る =====
+   トップから主要テーマへ1クリックで入れるようにする。
+   カードは作らず、罫線と余白だけで組む。 */
+.themes {
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+  padding: 24px 0 8px;
+}
+.themes__title {
+  font-family: var(--serif);
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0 0 4px;
+}
+.themes__lead {
+  margin: 0 0 6px;
+  font-size: 0.86rem;
+  color: var(--ink-2);
+  line-height: 1.8;
+}
+.themes__list { list-style: none; padding: 0; margin: 0; }
+.themes__list li { border-top: 1px solid var(--rule); }
+.themes__list li:last-child { border-bottom: 1px solid var(--rule); }
+.themes__link {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  padding: 13px 0;
+  min-height: 44px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.themes__link:hover .themes__name { color: var(--seal); text-decoration: underline; text-underline-offset: 3px; }
+.themes__name {
+  font-weight: 700;
+  font-size: 0.98rem;
+  flex-shrink: 0;
+  min-width: 5.5em;
+}
+.themes__desc { font-size: 0.86rem; color: var(--ink-2); flex: 1; min-width: 0; line-height: 1.7; }
+.themes__count {
+  font-size: 0.78rem;
+  color: var(--ink-2);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  padding: 1px 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ===== 使い方の流れ（トップの補助図） =====
+   画像は使わず、罫線と番号だけで示す。 */
+.flow {
+  margin: 22px 0 26px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 16px 0 6px;
+}
+.flow__title {
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-2);
+  margin: 0 0 12px;
+}
+.flow__steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.flow__step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 10px;
+  position: relative;
+}
+.flow__step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 26px;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule-strong);
+}
+.flow__no {
+  flex-shrink: 0;
+  width: 23px;
+  height: 23px;
+  border: 1px solid var(--seal);
+  border-radius: 50%;
+  color: var(--seal);
+  font-size: 0.76rem;
+  line-height: 21px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  background: var(--surface);
+  position: relative;
+  z-index: 1;
+}
+.flow__body { flex: 1; min-width: 0; }
+.flow__name { display: block; font-weight: 700; font-size: 0.92rem; line-height: 1.6; }
+.flow__desc { display: block; margin: 2px 0 0; font-size: 0.84rem; color: var(--ink-2); line-height: 1.75; }
+.flow__note { margin: 4px 0 0; font-size: 0.84rem; color: var(--ink-2); }
+
+@media (min-width: 600px) {
+  .flow__steps { grid-template-columns: repeat(4, 1fr); gap: 0 14px; }
+  .flow__step { flex-direction: column; gap: 8px; padding-bottom: 0; }
+  .flow__step:not(:last-child)::after {
+    left: 30px; right: -14px; top: 11px; bottom: auto; width: auto; height: 1px;
+  }
+}
+
+/* カルテの各行から記事へ。何が起きるかを言葉で示す */
+.chart-row__linklabel {
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-2);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+.chart-row--priority .chart-row__linklabel { border-color: var(--seal); color: var(--seal); }
