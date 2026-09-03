@@ -176,7 +176,9 @@ for p in pages:
     if p.startswith('articles/') and p!='articles/index.html':
         for need,label in [('datePublished','公開日'),('dateModified','更新日'),
                            ('家計の保健室 編集部','署名'),('class="sources"','出典'),
-                           ('class="crumbs"','パンくず'),('data-track="to-diagnosis"','診断CTA')]:
+                           ('class="crumbs"','パンくず'),('data-track="to-diagnosis"','診断CTA'),
+                           ('class="takeaway"','この記事で分かること'),
+                           ('class="next-read"','次に読む')]:
             if need not in s: fails.append(f"[記事要素] {p} に{label}が無い")
         # 出典・診断CTAの見出しは本文の h2 階層に混ぜない（アウトラインを保つ）。
         # クラス名（.sources / .to-diagnosis）は据え置き、見出しだけ section-label に置く。
