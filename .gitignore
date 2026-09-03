@@ -1,3 +1,7 @@
 node_modules/
 *.log
 .DS_Store
+
+# スクリーンショット等の作業ファイルを誤って取り込まないように
+undefined/
+*.local.png
