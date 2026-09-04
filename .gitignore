@@ -5,3 +5,12 @@ node_modules/
 # スクリーンショット等の作業ファイルを誤って取り込まないように
 undefined/
 *.local.png
+
+# Growth Loop：GSC/GoatCounterから取得した生データ（トラフィック情報を含み、
+# 再生成可能）はリポジトリに含めない。article_registry.* はサイト本体から
+# 静的生成されるだけなのでコミットする。レポート（tools/growth/reports/*.md）は
+# 小さな要約であり、基準日との前後比較のため履歴として残す。
+tools/growth/data/gsc_*.csv
+tools/growth/data/gsc_meta.json
+tools/growth/data/goatcounter_*.csv
+tools/growth/data/goatcounter_meta.json

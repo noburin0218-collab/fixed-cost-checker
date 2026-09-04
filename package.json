@@ -8,7 +8,11 @@
     "check": "node --check script.js && node --check config.js",
     "typecheck": "tsc --noEmit",
     "audit:site": "python3 tools/audit-site.py",
-    "serve": "python3 -m http.server 8000"
+    "serve": "python3 -m http.server 8000",
+    "growth:registry": "python3 tools/growth/article_registry.py",
+    "growth:gsc": "python3 tools/growth/fetch_gsc.py",
+    "growth:goatcounter": "python3 tools/growth/fetch_goatcounter.py",
+    "growth:brief": "python3 tools/growth/build_growth_brief.py"
   },
   "license": "MIT",
   "devDependencies": {
