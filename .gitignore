@@ -1,6 +1,8 @@
 node_modules/
 *.log
 .DS_Store
+__pycache__/
+*.pyc
 
 # スクリーンショット等の作業ファイルを誤って取り込まないように
 undefined/
@@ -14,3 +16,9 @@ tools/growth/data/gsc_*.csv
 tools/growth/data/gsc_meta.json
 tools/growth/data/goatcounter_*.csv
 tools/growth/data/goatcounter_meta.json
+
+# Growth Loop：サービスアカウント鍵をローカルファイルとして置く場合の保険
+# （GSC_SERVICE_ACCOUNT_JSON は環境変数の中身か、こうした.gitignore済みファイルのパスでのみ渡す）。
+*service-account*.json
+*serviceaccount*.json
+tools/growth/*.key.json

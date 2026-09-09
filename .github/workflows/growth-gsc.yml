@@ -1,0 +1,85 @@
+name: Growth GSC Check
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/growth-gsc.yml"
+      - "tools/growth/fetch_gsc.py"
+
+permissions:
+  contents: read
+
+jobs:
+  fetch-gsc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+      GSC_SITE_URL: sc-domain:kakei-hokenshitsu.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify secret is available
+        shell: bash
+        run: |
+          if [ -z "$GSC_SERVICE_ACCOUNT_JSON" ]; then
+            echo "GSC_SERVICE_ACCOUNT_JSON is not configured."
+            echo "One-time manual setup required (cannot be automated from this workflow):"
+            echo "  1. Create a Google Cloud service account and enable the Search Console API."
+            echo "  2. Add the service account's email as a user of the sc-domain:kakei-hokenshitsu.com property in Search Console."
+            echo "  3. Store the service account key JSON as the GSC_SERVICE_ACCOUNT_JSON repository secret."
+            exit 1
+          fi
+          echo "GSC service account credential is configured."
+
+      - name: Install dependencies
+        run: pip install --quiet google-auth google-api-python-client
+
+      - name: Fetch GSC statistics
+        run: python3 tools/growth/fetch_gsc.py
+
+      - name: Show safe result summary
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import csv
+          import glob
+          import json
+
+          page_files = sorted(glob.glob("tools/growth/data/gsc_pages_*.csv"))
+          query_files = sorted(glob.glob("tools/growth/data/gsc_queries_*.csv"))
+          if not page_files or not query_files:
+              raise SystemExit("Expected GSC CSV outputs were not created")
+
+          def rows(path):
+              with open(path, encoding="utf-8", newline="") as f:
+                  return list(csv.DictReader(f))
+
+          pages = rows(page_files[-1])
+          queries = rows(query_files[-1])
+          print(f"page_date_rows={len(pages)}")
+          print(f"query_page_date_rows={len(queries)}")
+
+          with open("tools/growth/data/gsc_meta.json", encoding="utf-8") as f:
+              meta = json.load(f)
+          print(f"site={meta.get('site_url')}")
+          print(f"period={meta.get('start')}..{meta.get('end')}")
+          PY
+
+      - name: Upload GSC data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gsc-growth-data
+          path: |
+            tools/growth/data/gsc_pages_*.csv
+            tools/growth/data/gsc_queries_*.csv
+            tools/growth/data/gsc_meta.json
+          if-no-files-found: error
+          retention-days: 7

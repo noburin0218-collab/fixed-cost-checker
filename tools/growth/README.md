@@ -8,10 +8,17 @@
 
 ## 前提
 
-- **既存の計測環境**：GoatCounter（`config.js` の `goatCounterEndpoint`）のみ稼働中。GA4は未設定（空文字）。
-- **Google Search Console**：このリポジトリ内に設定・認証情報は一切ありません（サイト側の verification meta タグも無し）。
-  取得するには、GSC側でのプロパティ確認とサービスアカウント追加が別途・手動で必要です。
-- 認証情報・APIキーはこのリポジトリにコミットしないでください（`.gitignore` で `tools/growth/data/*.csv` 等を除外済み）。
+- **GoatCounter**：`config.js` の `goatCounterEndpoint` で計測中。GitHub Actions Secret
+  `GOATCOUNTER_API_TOKEN` を登録済みで、`.github/workflows/growth-goatcounter.yml` から
+  `fetch_goatcounter.py` の実取得に成功している（2026-09-09時点）。GA4は未設定（空文字）。
+- **Google Search Console**：ドメインプロパティ `sc-domain:kakei-hokenshitsu.com` は
+  GSC Wizard経由で所有権確認済み。**ただし、これはこのリポジトリのスクリプト（`fetch_gsc.py`）とは別物。**
+  `fetch_gsc.py` がAPI経由でデータを取れるようにするには、別途サービスアカウントを作成し、
+  そのメールアドレスを上記プロパティのユーザーとして追加する必要がある（未設定）。
+- 認証情報・APIキーはこのリポジトリにコミットしないでください
+  （`.gitignore` で `tools/growth/data/*.csv` 等を除外済み）。
+  サービスアカウント鍵は **GitHub Actions Secret**・**環境変数**・**.gitignore済みのローカルファイル**
+  のいずれかからのみ読み込む設計です（後述）。
 
 ## 1. 記事レジストリ（今すぐ実行できる・外部アクセス不要）
 
@@ -26,26 +33,34 @@ python3 tools/growth/article_registry.py
 
 ## 2. Google Search Console データの取得
 
+**事前に、ユーザー側での1回限りの手動操作が必要です（このスクリプト・ワークフローでは代替できません）：**
+
+1. Google Cloud でサービスアカウントを作成し、Search Console API を有効化して、鍵（JSON）を発行する
+2. Search Console の `sc-domain:kakei-hokenshitsu.com` プロパティ → 設定 → ユーザーと権限 →
+   そのサービスアカウントのメールアドレスを追加する（読み取りのみで可）
+3. 鍵JSONを、次のいずれかの方法で渡す（**リポジトリにはコミットしない**）：
+   - GitHub Actions Secret `GSC_SERVICE_ACCOUNT_JSON` に鍵JSONの中身をそのまま登録する
+     （`.github/workflows/growth-gsc.yml` が読む）
+   - ローカル実行時は、環境変数 `GSC_SERVICE_ACCOUNT_JSON` に鍵JSONの中身、または
+     `.gitignore`済みのローカルファイルへの絶対パスを設定する（どちらの形式かはスクリプトが自動判定する）
+
 ```bash
 pip install google-auth google-api-python-client   # このスクリプト専用。npm依存には含めない
 
-export GSC_SERVICE_ACCOUNT_JSON=/path/to/service-account.json
-export GSC_SITE_URL=https://kakei-hokenshitsu.com/   # 省略可（既定値）
+export GSC_SERVICE_ACCOUNT_JSON=/path/to/service-account.json   # または鍵JSONの中身そのもの
+export GSC_SITE_URL=sc-domain:kakei-hokenshitsu.com   # 省略可（既定値・ドメインプロパティのため sc-domain: 形式）
 
 python3 tools/growth/fetch_gsc.py
 # または: npm run growth:gsc
+# または GitHub Actions: growth-gsc.yml を workflow_dispatch で手動実行
 ```
-
-事前に必要な手動設定：
-
-1. Google Cloud でサービスアカウントを作成し、鍵（JSON）をダウンロードする
-2. Search Console の対象プロパティ → 設定 → ユーザーと権限 → そのサービスアカウントのメールアドレスを追加する（読み取りのみで可）
-3. 鍵ファイルのパスを `GSC_SERVICE_ACCOUNT_JSON` に設定する
 
 `GSC_LAG_DAYS`（既定3）だけ直近日を除外して取得します。GSCの確定データには遅延があるため、
 未確定の直近数日を最終評価に使わないためです。
 
-出力：`tools/growth/data/gsc_pages_<終了日>.csv`（記事単位）、`gsc_queries_<終了日>.csv`（クエリ単位）。
+取得する次元は `page × date`（記事単位・日別）と `query × page × date`（クエリ単位・日別）。
+出力：`tools/growth/data/gsc_pages_<終了日>.csv`、`gsc_queries_<終了日>.csv`（いずれも1行＝1日分）。
+`build_growth_brief.py` 側で、期間内の合算値（CTRはクリック÷表示回数で再計算、掲載順位は表示回数の加重平均）に集約する。
 
 ## 3. GoatCounter データの取得
 

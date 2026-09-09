@@ -82,12 +82,12 @@ npm run serve   # ローカルサーバ（python3 -m http.server 8000）
 
 ## 公開（ホスティング）
 
-**本番の公開先は Cloudflare Pages（無料・匿名・ブランドURL）を推奨**：`https://kakei-hokenshitsu.com/`
-→ 手順は [`HOSTING_CLOUDFLARE.md`](./HOSTING_CLOUDFLARE.md)。
+**現在の本番は GitHub Pages**：`https://kakei-hokenshitsu.com/`（独自ドメイン、`main` へのpushで自動デプロイ）。
 
-以下の GitHub Pages はソース／予備としてそのまま使えます（公開URLに本名系のユーザー名が出る点に注意）。
+Cloudflare Pagesは過去の構成です。専用Gmailの無効化にともない現在は使用しておらず、
+[`HOSTING_CLOUDFLARE.md`](./HOSTING_CLOUDFLARE.md) はGoogle/Cloudflareが復活した場合の参考として残しています。
 
-## GitHub Pages で公開する（予備）
+## GitHub Pages で公開する（本番）
 
 ### 方法A：GitHub Actions で自動デプロイ（推奨・設定不要）
 

@@ -78,18 +78,35 @@ def days_since(date_str):
 
 
 def build_search_index():
-    """GSCのページ単位CSVを slug -> {impressions, clicks, ctr, position} に変換する。"""
+    """
+    GSCのページ×日別CSV（fetch_gsc.py の出力）を slug -> {impressions, clicks, ctr, position} に集約する。
+
+    1行＝1ページ×1日のため、期間内の全行を合算してから求める。
+    ctrは合算後の clicks/impressions で再計算する（日別ctrの単純平均は使わない）。
+    positionはimpressions加重平均（表示回数が多い日の順位を重く見る）。
+    """
     path = latest_dated_file("gsc_pages")
     rows = read_csv(path)
-    out = {}
+    acc = {}
     for r in rows:
         slug = slug_from_page_url(r.get("page"))
         key = slug or "__home__"
+        impressions = int(float(r.get("impressions") or 0))
+        clicks = int(float(r.get("clicks") or 0))
+        position = float(r.get("position") or 0)
+        a = acc.setdefault(key, {"impressions": 0, "clicks": 0, "position_weighted_sum": 0.0})
+        a["impressions"] += impressions
+        a["clicks"] += clicks
+        a["position_weighted_sum"] += position * impressions
+
+    out = {}
+    for key, a in acc.items():
+        impressions = a["impressions"]
         out[key] = {
-            "impressions": int(float(r.get("impressions") or 0)),
-            "clicks": int(float(r.get("clicks") or 0)),
-            "ctr": float(r.get("ctr") or 0),
-            "position": float(r.get("position") or 0),
+            "impressions": impressions,
+            "clicks": a["clicks"],
+            "ctr": (a["clicks"] / impressions) if impressions else 0.0,
+            "position": (a["position_weighted_sum"] / impressions) if impressions else 0.0,
         }
     return out, path
 

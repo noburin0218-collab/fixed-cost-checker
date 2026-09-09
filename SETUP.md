@@ -36,7 +36,7 @@
 | **note** | 専用メールで登録。クリエイター名＝「家計の保健室」。本名・顔写真は不要 |
 | **X（旧Twitter）** | 同メールで登録。表示名・@は `MARKETING.md` の案。SMS認証を求められることあり（番号は公開されない） |
 | **Threads** | Instagramアカウントが必須。先にIGを匿名で作る→Threadsを開設 |
-| **Cloudflare** | 同メールで登録（公開ホスト。`HOSTING_CLOUDFLARE.md`）。**※既にこのGmailで作成済みなら、ログインできるうちにメール＆パスワードを変更しておく** |
+| **Cloudflare** | 過去の構成（現在は未使用。`HOSTING_CLOUDFLARE.md`）。本番はGitHub Pagesのため、新規登録は不要 |
 | **無料PDFの配布先** | Google Drive でなくてもOK（後述。Cloudflare R2 / Dropbox / GitHub の raw 等でも可） |
 | **ASP（A8.net等）** | サイトURLで登録（STEP3）。報酬の受取口座は本人名義が必要（非公開） |
 
