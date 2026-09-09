@@ -42,13 +42,13 @@ Google検索
 
 | 項目 | 状態 |
 |---|---|
-| GoatCounter | 稼働中。`config.js` の `goatCounterEndpoint`（`https://kakei-hokenshitsu.goatcounter.com/count`）。Cookie不使用 |
+| GoatCounter | **API接続済み。** `config.js` の `goatCounterEndpoint`（`https://kakei-hokenshitsu.goatcounter.com/count`）で計測中。`Read statistics` のみのAPIトークンをGitHub Actions Secret `GOATCOUNTER_API_TOKEN` に保存し、`.github/workflows/growth-goatcounter.yml` から `fetch_goatcounter.py` の実取得成功を2026-09-09に確認。Cookie不使用 |
 | GA4 | 未設定（`config.js` の `gaMeasurementId` が空文字）。コード自体はindex.htmlに実装済みで、IDを入れれば有効化される |
-| Google Search Console | **ドメインプロパティ `kakei-hokenshitsu.com` は2026-09-03に所有権確認済み。** Growth Loop API取得用のサービスアカウント／鍵はまだ未設定 |
+| Google Search Console | **ドメインプロパティ `kakei-hokenshitsu.com` は2026-09-03に所有権確認済み。GSC Wizard経由の直接分析は接続済み。** リポジトリ内 `fetch_gsc.py` 用のサービスアカウント／鍵は未設定 |
 | 既存イベント | `diagnose` / `result_view` / `article_to_diagnosis/{slug}` / `ad_view/{slot}` / `ad_click/{slot}` / `share/*` / `share_image/*` / `cta_click`（すべて実装済み・稼働中） |
 | slug↔イベント対応 | できる。記事の `<body data-article="{slug}">` を起点に `article_to_diagnosis/{slug}` が発火する |
 | slot↔イベント対応 | できる。`data-ad-slot` 属性を起点に `ad_view/{slot}` `ad_click/{slot}` が発火する（ASP発行コード自体は無改変） |
-| 既存のレポート機構 | 無かった。今回 `tools/growth/` として新設 |
+| 既存のレポート機構 | `tools/growth/` として新設。GoatCounterはGitHub Actionsから取得・artifact化できる状態 |
 
 `tools/growth/README.md` に手動セットアップ手順を記載。
 
@@ -115,8 +115,8 @@ ASP成果（CV・承認・報酬）の自動取得はしない。今回スクレ
 
 ## 7. 初回評価が可能になる条件
 
-- GSC：ドメインプロパティの所有権確認は完了済み。Growth Loop API取得用サービスアカウントをプロパティに追加し、`fetch_gsc.py` が動く状態にする
-- GoatCounter：読み取り専用APIトークンを発行し、`fetch_goatcounter.py` が動く状態にする
+- GSC：**GSC Wizard経由の直接分析は接続済み。** リポジトリの `fetch_gsc.py` を使った自動CSV取得は、サービスアカウントを追加した場合に利用可能
+- GoatCounter：**完了。** `GOATCOUNTER_API_TOKEN` をGitHub Actions Secretに設定済みで、`fetch_goatcounter.py` の実取得成功を確認済み
 - 上記に加えて、**記事の公開から14日以上経過**していること（5節のガード）
 - 統計的に読める最低限のボリューム（表示回数・PVがほぼ0の記事は、"F"ではなく判定保留のまま）
 
