@@ -1,0 +1,79 @@
+name: Growth GoatCounter Check
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/growth-goatcounter.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  fetch-goatcounter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GOATCOUNTER_API_TOKEN: ${{ secrets.GOATCOUNTER_API_TOKEN }}
+      GOATCOUNTER_SITE: kakei-hokenshitsu
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify secret is available
+        shell: bash
+        run: |
+          if [ -z "$GOATCOUNTER_API_TOKEN" ]; then
+            echo "GOATCOUNTER_API_TOKEN is not configured."
+            exit 1
+          fi
+          echo "GoatCounter token is configured."
+
+      - name: Fetch GoatCounter statistics
+        run: python3 tools/growth/fetch_goatcounter.py
+
+      - name: Show safe result summary
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import csv
+          import glob
+          import json
+
+          page_files = sorted(glob.glob("tools/growth/data/goatcounter_pages_*.csv"))
+          event_files = sorted(glob.glob("tools/growth/data/goatcounter_events_*.csv"))
+          if not page_files or not event_files:
+              raise SystemExit("Expected GoatCounter CSV outputs were not created")
+
+          def rows(path):
+              with open(path, encoding="utf-8", newline="") as f:
+                  return list(csv.DictReader(f))
+
+          pages = rows(page_files[-1])
+          events = rows(event_files[-1])
+          print(f"pages_rows={len(pages)}")
+          print(f"events_rows={len(events)}")
+          for name in ("diagnose", "result_view"):
+              matched = [r for r in events if name in (r.get("path") or "")]
+              print(f"event_{name}_rows={len(matched)}")
+
+          with open("tools/growth/data/goatcounter_meta.json", encoding="utf-8") as f:
+              meta = json.load(f)
+          print(f"period={meta.get('start')}..{meta.get('end')}")
+          PY
+
+      - name: Upload GoatCounter data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: goatcounter-growth-data
+          path: |
+            tools/growth/data/goatcounter_pages_*.csv
+            tools/growth/data/goatcounter_events_*.csv
+            tools/growth/data/goatcounter_meta.json
+          if-no-files-found: error
+          retention-days: 7
