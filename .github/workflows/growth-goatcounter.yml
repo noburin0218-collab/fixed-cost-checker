@@ -35,21 +35,6 @@ jobs:
           fi
           echo "GoatCounter token is configured."
 
-      - name: Diagnose GoatCounter API route
-        shell: bash
-        run: |
-          base="https://${GOATCOUNTER_SITE}.goatcounter.com/api/v0"
-          start="$(date -u -d '30 days ago' +%Y-%m-%dT00:00:00Z)"
-          end="$(date -u +%Y-%m-%dT23:59:59Z)"
-          for path in "/me" "/stats/total?start=${start}&end=${end}" "/stats/hits?start=${start}&end=${end}"; do
-            status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
-              --header 'Content-Type: application/json' \
-              --header 'Accept: application/json' \
-              --header "Authorization: Bearer ${GOATCOUNTER_API_TOKEN}" \
-              "${base}${path}" || true)
-            echo "${path%%\?*}: HTTP ${status}"
-          done
-
       - name: Fetch GoatCounter statistics
         run: python3 tools/growth/fetch_goatcounter.py
 
