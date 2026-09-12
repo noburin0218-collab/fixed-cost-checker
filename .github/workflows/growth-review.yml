@@ -1,0 +1,150 @@
+name: Growth Review
+
+# 週1回の定期Growth Loopレビュー。
+# GSC・GoatCounterの実データ取得 → article registry再生成 → Growth Brief生成 までを
+# 既存スクリプト（tools/growth/*.py）でそのまま実行する。新しい分析基盤は作らない。
+#
+# 生データ・Growth BriefはいずれもGitHub Actions Artifactとして保存するのみで、
+# このワークフロー自身がmainへcommitすることはない（サイト本体・記事は凍結のまま）。
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 毎週月曜 07:00 JST = 毎週日曜 22:00 UTC
+    - cron: "0 22 * * 0"
+
+permissions:
+  contents: read
+
+jobs:
+  growth-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+      GSC_SITE_URL: sc-domain:kakei-hokenshitsu.com
+      GOATCOUNTER_API_TOKEN: ${{ secrets.GOATCOUNTER_API_TOKEN }}
+      GOATCOUNTER_SITE: kakei-hokenshitsu
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify secrets are available
+        shell: bash
+        run: |
+          missing=0
+          if [ -z "$GSC_SERVICE_ACCOUNT_JSON" ]; then
+            echo "GSC_SERVICE_ACCOUNT_JSON is not configured."
+            missing=1
+          fi
+          if [ -z "$GOATCOUNTER_API_TOKEN" ]; then
+            echo "GOATCOUNTER_API_TOKEN is not configured."
+            missing=1
+          fi
+          if [ "$missing" = "1" ]; then
+            echo "Missing credentials are a hard failure (not treated as '0 rows')."
+            exit 1
+          fi
+          echo "GSC and GoatCounter credentials are configured."
+
+      - name: Install dependencies
+        run: pip install --quiet google-auth google-api-python-client
+
+      - name: Rebuild article registry
+        run: python3 tools/growth/article_registry.py
+
+      - name: Fetch GSC statistics (page x date, query x page x date)
+        run: python3 tools/growth/fetch_gsc.py
+
+      - name: Fetch GoatCounter statistics
+        run: python3 tools/growth/fetch_goatcounter.py
+
+      - name: Build Growth Brief
+        id: brief
+        run: |
+          python3 tools/growth/build_growth_brief.py
+          # 過去に手動生成・commit済みの古い growth-brief-*.md と混ざらないよう、
+          # 今回の実行で最後に更新されたファイルだけをartifact対象として特定する。
+          latest="$(ls -t tools/growth/reports/growth-brief-*.md | head -n1)"
+          echo "path=$latest" >> "$GITHUB_OUTPUT"
+
+      - name: Show safe result summary
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import csv
+          import glob
+          import json
+
+          def rows(path):
+              with open(path, encoding="utf-8", newline="") as f:
+                  return list(csv.DictReader(f))
+
+          def latest(prefix):
+              files = sorted(glob.glob(f"tools/growth/data/{prefix}_*.csv"))
+              return files[-1] if files else None
+
+          gsc_pages = latest("gsc_pages")
+          gsc_queries = latest("gsc_queries")
+          if not gsc_pages or not gsc_queries:
+              raise SystemExit("Expected GSC CSV outputs were not created")
+          print(f"gsc_page_date_rows={len(rows(gsc_pages))}")
+          print(f"gsc_query_page_date_rows={len(rows(gsc_queries))}")
+
+          gc_pages = latest("goatcounter_pages")
+          gc_events = latest("goatcounter_events")
+          if not gc_pages or not gc_events:
+              raise SystemExit("Expected GoatCounter CSV outputs were not created")
+          gc_events_rows = rows(gc_events)
+          print(f"goatcounter_pages_rows={len(rows(gc_pages))}")
+          print(f"goatcounter_events_rows={len(gc_events_rows)}")
+          for name in ("diagnose", "result_view"):
+              matched = [r for r in gc_events_rows if name in (r.get("path") or "")]
+              print(f"event_{name}_rows={len(matched)}")
+
+          with open("tools/growth/data/gsc_meta.json", encoding="utf-8") as f:
+              gsc_meta = json.load(f)
+          print(f"gsc_period={gsc_meta.get('start')}..{gsc_meta.get('end')}")
+
+          with open("tools/growth/data/goatcounter_meta.json", encoding="utf-8") as f:
+              gc_meta = json.load(f)
+          print(f"goatcounter_period={gc_meta.get('start')}..{gc_meta.get('end')}")
+
+          briefs = sorted(glob.glob("tools/growth/reports/growth-brief-*.md"))
+          if not briefs:
+              raise SystemExit("Growth Brief was not created")
+          print(f"growth_brief_file={briefs[-1]}")
+
+          # 0件は失敗ではない。ファイルが作られたことだけを確認する
+          # （行数0＝「検索データがまだ無い」という正常な状態であり得るため）。
+          print("note: zero rows in the above counts is not a failure by itself.")
+          PY
+
+      - name: Upload raw data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: growth-review-data
+          path: |
+            tools/growth/data/article_registry.csv
+            tools/growth/data/article_registry.json
+            tools/growth/data/gsc_pages_*.csv
+            tools/growth/data/gsc_queries_*.csv
+            tools/growth/data/gsc_meta.json
+            tools/growth/data/goatcounter_pages_*.csv
+            tools/growth/data/goatcounter_events_*.csv
+            tools/growth/data/goatcounter_meta.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload Growth Brief artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: growth-brief
+          path: ${{ steps.brief.outputs.path }}
+          if-no-files-found: error
+          retention-days: 90

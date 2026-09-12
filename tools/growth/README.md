@@ -12,9 +12,11 @@
   `GOATCOUNTER_API_TOKEN` を登録済みで、`.github/workflows/growth-goatcounter.yml` から
   `fetch_goatcounter.py` の実取得に成功している（2026-09-09時点）。GA4は未設定（空文字）。
 - **Google Search Console**：ドメインプロパティ `sc-domain:kakei-hokenshitsu.com` は
-  GSC Wizard経由で所有権確認済み。**ただし、これはこのリポジトリのスクリプト（`fetch_gsc.py`）とは別物。**
-  `fetch_gsc.py` がAPI経由でデータを取れるようにするには、別途サービスアカウントを作成し、
-  そのメールアドレスを上記プロパティのユーザーとして追加する必要がある（未設定）。
+  GSC Wizard経由で所有権確認済み（これはこのリポジトリのスクリプトとは別物）。
+  加えて、**repo-side（`fetch_gsc.py`）用のサービスアカウントも同プロパティに追加済みで、
+  `GSC_SERVICE_ACCOUNT_JSON` をGitHub Actions Secretに登録し、`growth-gsc.yml` の実行成功を確認済み**。
+  直近の取得期間（2026-08-11〜2026-09-07）はpage×date/query×page×dateとも0件だったが、
+  これは接続失敗ではなく、その期間に返却可能な検索データがまだ無い状態。
 - 認証情報・APIキーはこのリポジトリにコミットしないでください
   （`.gitignore` で `tools/growth/data/*.csv` 等を除外済み）。
   サービスアカウント鍵は **GitHub Actions Secret**・**環境変数**・**.gitignore済みのローカルファイル**
@@ -33,7 +35,7 @@ python3 tools/growth/article_registry.py
 
 ## 2. Google Search Console データの取得
 
-**事前に、ユーザー側での1回限りの手動操作が必要です（このスクリプト・ワークフローでは代替できません）：**
+**接続は完了済み。** 以下は完了済みの手順（参考・再設定時用）：
 
 1. Google Cloud でサービスアカウントを作成し、Search Console API を有効化して、鍵（JSON）を発行する
 2. Search Console の `sc-domain:kakei-hokenshitsu.com` プロパティ → 設定 → ユーザーと権限 →
@@ -96,9 +98,27 @@ python3 tools/growth/build_growth_brief.py
 - 分類の閾値（`MIN_IMPRESSIONS_FOR_JUDGEMENT` 等）はスクリプト冒頭の定数です。
   実データが貯まってから見直してください。現時点ではプレースホルダーです。
 
+## 5. 週次の自動レビュー（GitHub Actions）
+
+`.github/workflows/growth-review.yml` が、上記1〜4（記事レジストリ再生成・GSC取得・GoatCounter取得・
+Growth Brief生成）を通しで実行します。既存の `fetch_gsc.py` / `fetch_goatcounter.py` /
+`build_growth_brief.py` / `article_registry.py` をそのまま呼び出すだけで、新しい分析基盤は作っていません。
+
+- スケジュール：毎週月曜 07:00 JST（`cron: "0 22 * * 0"`、日曜22:00 UTC）
+- `workflow_dispatch` で手動実行も可能
+- 生データ（`gsc_*` / `goatcounter_*` / `article_registry.*`）は `growth-review-data` artifact、
+  Growth Briefは `growth-brief` artifact として保存（保持期間はワークフロー内の設定を参照）。
+  **どちらもmainへcommitしない。**
+- GSC・GoatCounterのいずれかが0件を返しても、ファイル自体が生成されていればワークフローは失敗にしない
+  （0件＝データがまだ無いだけで、接続失敗と区別する）。
+  Secret未設定・API認証エラー・スクリプトの異常終了は、そのステップの失敗としてワークフローが失敗する。
+- `growth-gsc.yml` / `growth-goatcounter.yml`（単体の疎通確認用）は従来どおり残しており、
+  個別に手動実行・診断したいときはそちらを使う。
+
 ## このツールが自動でやらないこと
 
 - title / description / 本文 / H1 / URL / canonical / 広告位置 / 家計カルテUI の変更
 - 新しい計測イベントの追加
 - ASP管理画面のスクレイピング（成果・承認・報酬データの自動取得）
 - 記事の追加・削除
+- Growth Brief・生データのmainへのcommit（`growth-review.yml` はArtifact保存のみ）

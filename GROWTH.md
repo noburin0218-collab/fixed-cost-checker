@@ -44,11 +44,11 @@ Google検索
 |---|---|
 | GoatCounter | **API接続済み。** `config.js` の `goatCounterEndpoint`（`https://kakei-hokenshitsu.goatcounter.com/count`）で計測中。`Read statistics` のみのAPIトークンをGitHub Actions Secret `GOATCOUNTER_API_TOKEN` に保存し、`.github/workflows/growth-goatcounter.yml` から `fetch_goatcounter.py` の実取得成功を2026-09-09に確認。Cookie不使用 |
 | GA4 | 未設定（`config.js` の `gaMeasurementId` が空文字）。コード自体はindex.htmlに実装済みで、IDを入れれば有効化される |
-| Google Search Console | **ドメインプロパティ `sc-domain:kakei-hokenshitsu.com` は2026-09-03に所有権確認済み。GSC Wizard経由の直接分析は接続済み。** これはリポジトリ内 `fetch_gsc.py`／`.github/workflows/growth-gsc.yml` とは別物で、そちらはまだサービスアカウントが未追加のため実データを取得できない（下記7節） |
+| Google Search Console | **repo-side接続も完了。** ドメインプロパティ `sc-domain:kakei-hokenshitsu.com` は2026-09-03に所有権確認済み（GSC Wizard経由の直接分析）。加えて、専用のサービスアカウント（読み取り専用）を同プロパティの制限付きユーザーとして追加し、鍵をGitHub Actions Secret `GSC_SERVICE_ACCOUNT_JSON` に登録。`growth-gsc.yml` の実行成功を確認済み（2026-08-11〜2026-09-07・page×date/query×page×date とも0件＝接続失敗ではなく、その期間に返却可能な検索データがまだ無い状態） |
 | 既存イベント | `diagnose` / `result_view` / `article_to_diagnosis/{slug}` / `ad_view/{slot}` / `ad_click/{slot}` / `share/*` / `share_image/*` / `cta_click`（すべて実装済み・稼働中） |
 | slug↔イベント対応 | できる。記事の `<body data-article="{slug}">` を起点に `article_to_diagnosis/{slug}` が発火する |
 | slot↔イベント対応 | できる。`data-ad-slot` 属性を起点に `ad_view/{slot}` `ad_click/{slot}` が発火する（ASP発行コード自体は無改変） |
-| 既存のレポート機構 | `tools/growth/` として新設。GoatCounterはGitHub Actionsから取得・artifact化できる状態。GSCも同型のワークフロー（`growth-gsc.yml`）を用意済みだが、サービスアカウント未設定のため未稼働 |
+| 既存のレポート機構 | `tools/growth/` として新設。GSC・GoatCounterとも個別ワークフロー（`growth-gsc.yml`／`growth-goatcounter.yml`）で取得成功済み。加えて、両方を1回で回す週次の `growth-review.yml` を新設（毎週月曜07:00 JST／手動実行も可） |
 
 `tools/growth/README.md` に手動セットアップ手順を記載。
 
@@ -115,20 +115,19 @@ ASP成果（CV・承認・報酬）の自動取得はしない。今回スクレ
 
 ## 7. 初回評価が可能になる条件
 
-- GSC：**GSC Wizard経由の直接分析は接続済み（別物）。** リポジトリ側の自動取得
-  （`fetch_gsc.py` / `.github/workflows/growth-gsc.yml`）はスクリプト・ワークフローとも準備済みだが、
-  **サービスアカウントの作成・`sc-domain:kakei-hokenshitsu.com` への権限付与・
-  `GSC_SERVICE_ACCOUNT_JSON` シークレットの登録という、ユーザー側の1回限りの手動操作が未実施**。
-  これが完了するまで `fetch_gsc.py` は実データを取得できない（手順は `tools/growth/README.md` 2節）
+- GSC：**接続完了。** サービスアカウント追加・Secret登録・`growth-gsc.yml`の実行成功まで完了。
+  ただし直近の取得期間（2026-08-11〜2026-09-07）はpage×date/query×page×dateとも0件で、
+  検索データの蓄積自体がまだこれから。0件は接続失敗ではないため、判定不能（データ不足）として扱う
 - GoatCounter：**完了。** `GOATCOUNTER_API_TOKEN` をGitHub Actions Secretに設定済みで、`fetch_goatcounter.py` の実取得成功を確認済み
+- **`growth-review.yml` により、上記2つの取得とGrowth Brief生成を毎週月曜07:00 JSTに自動実行**
+  （生データ・BriefともArtifact保存のみで、mainへのcommitはしない）
 - 上記に加えて、**記事の公開から14日以上経過**していること（5節のガード）
 - 統計的に読める最低限のボリューム（表示回数・PVがほぼ0の記事は、"F"ではなく判定保留のまま）
 
 ## 8. 次に自動化できること（今回は実施しない・候補のみ）
 
-- `fetch_gsc.py` / `fetch_goatcounter.py` / `build_growth_brief.py` を
-  CIやスケジュール実行で定期的に回し、レポートの履歴を `tools/growth/reports/` に積み上げる
 - クエリ単位データから「伸び始めたクエリ」（直近と前期間の比較）を検出するロジックの追加
 - ASPにCSVエクスポート等の自動取得手段があれば、`ad_click → CV` の突き合わせスクリプトを追加
 
 いずれも、今回は実装しない。データが十分に貯まり、次の指示があってから着手する。
+（定期実行によるレポート履歴の蓄積は `growth-review.yml` として実装済み）
