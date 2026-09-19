@@ -78,6 +78,11 @@ python3 tools/growth/fetch_goatcounter.py
 ページのヒットとイベント（`event/...` パス）に分けて
 `goatcounter_pages_<終了日>.csv` / `goatcounter_events_<終了日>.csv` に書き出します。
 
+一時的な404/429/5xx・ネットワーク断は、最大3回・短いbackoff（1s, 2s）で自動的に再試行します
+（401/403は再試行せず即失敗）。`growth-goatcounter.yml`／`growth-review.yml` のどちらから呼んでも
+同じリトライが効きます。ロジックのテストは `python3 tools/growth/test_fetch_goatcounter_retry.py`
+（実APIにはアクセスしません）。
+
 このサンドボックス実行環境では、egressプロキシの制限により `*.goatcounter.com` への
 直接アクセス自体がブロックされることを確認済みです。その場合は、ネットワーク制限のない環境
 （手元PC・CI等）で実行してください。

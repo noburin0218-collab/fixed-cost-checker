@@ -24,12 +24,18 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
 
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# 一時的な障害（GoatCounter API側の404/429/5xxやネットワーク断）だけを対象にしたリトライ設定。
+# 401/403（認証・権限エラー）は対象外で、再試行せず即失敗させる。
+RETRY_MAX_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = 1.0  # 1回目の待機時間。以降は倍々（1s, 2s）。
 
 
 def fail(msg):
@@ -48,6 +54,12 @@ def guess_site_code():
 
 
 def api_get(site, token, path, params):
+    """
+    GoatCounter API を1回呼ぶ。一時的な障害（404/429/5xx・ネットワーク断）は
+    最大 RETRY_MAX_ATTEMPTS 回まで短いbackoffで再試行する。
+    401/403（認証・権限エラー）は再試行しても無駄なので即失敗させる。
+    トークンの値はどの経路でもログに出さない。
+    """
     url = f"https://{site}.goatcounter.com/api/v0{path}?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(
         url,
@@ -57,18 +69,47 @@ def api_get(site, token, path, params):
             "Content-Type": "application/json",
         },
     )
-    try:
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            return json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8", "replace")
-        fail(f"GoatCounter API がエラーを返しました（{e.code}）: {body[:300]}")
-    except urllib.error.URLError as e:
-        fail(
-            f"GoatCounter ({site}.goatcounter.com) に到達できませんでした: {e.reason}\n"
-            "  実行環境のネットワーク制限で GoatCounter への直接アクセスがブロックされる場合があります。"
-            "  その場合はネットワークアクセスのある環境（手元PC・CI等）で実行してください。"
-        )
+
+    for attempt in range(1, RETRY_MAX_ATTEMPTS + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "replace")
+            if e.code in (401, 403):
+                fail(f"GoatCounter API が認証/権限エラーを返しました（{e.code}）: {body[:300]}")
+            retryable = e.code == 404 or e.code == 429 or e.code >= 500
+            if retryable and attempt < RETRY_MAX_ATTEMPTS:
+                _wait_before_retry(attempt, f"HTTP {e.code}")
+                continue
+            if retryable:
+                fail(
+                    f"GoatCounter API が{RETRY_MAX_ATTEMPTS}回の試行後も失敗しました"
+                    f"（最後: HTTP {e.code}）: {body[:300]}"
+                )
+            fail(f"GoatCounter API がエラーを返しました（{e.code}）: {body[:300]}")
+        except OSError as e:
+            # urllib.error.URLError・タイムアウト・接続断など、HTTPステータスを
+            # 持たないネットワーク系エラーはすべてOSErrorのサブクラスになる。
+            reason = getattr(e, "reason", e)
+            if attempt < RETRY_MAX_ATTEMPTS:
+                _wait_before_retry(attempt, f"network error: {reason}")
+                continue
+            fail(
+                f"GoatCounter ({site}.goatcounter.com) に到達できませんでした（{RETRY_MAX_ATTEMPTS}回試行）: {reason}\n"
+                "  実行環境のネットワーク制限で GoatCounter への直接アクセスがブロックされる場合があります。"
+                "  その場合はネットワークアクセスのある環境（手元PC・CI等）で実行してください。"
+            )
+
+
+def _wait_before_retry(attempt, reason):
+    wait = RETRY_BACKOFF_SECONDS * (2 ** (attempt - 1))
+    print(
+        f"[fetch_goatcounter] 一時的なエラー（{reason}）。"
+        f"{attempt}/{RETRY_MAX_ATTEMPTS}回目。{wait:.0f}秒後に再試行します。",
+        file=sys.stderr,
+    )
+    time.sleep(wait)
 
 
 def api_datetime(date_str, *, end=False):
