@@ -36,3 +36,17 @@ When responding to another AI's review:
 - One focused remediation pass is the default ceiling.
 
 Final response should include summary, files changed, checks run/results, accepted/rejected review findings, and remaining risks.
+
+<!-- AI-DEV-CONTROL-V2:START -->
+
+## Shared AI cross-review protocol (supersedes older routing instructions)
+- The GitHub Issue and acceptance criteria define the task.
+- Codex implementation: codex/<task>, independently reviewed by Claude Code.
+- Claude implementation: claude/<task>, independently reviewed by Codex.
+- Bake-off: two independent branches, bakeoff/codex/<task> and bakeoff/claude/<task>.
+- Run deterministic CI before AI review; report material P0/P1/P2 only.
+- One builder remediation pass and no more than one re-review.
+- Use the local subscription-backed reviewer; the old API-key/OAuth review Actions are retired.
+- Production-impacting changes still require a human merge decision.
+
+<!-- AI-DEV-CONTROL-V2:END -->

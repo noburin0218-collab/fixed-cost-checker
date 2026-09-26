@@ -29,3 +29,6 @@ Do not invent findings. Distinguish verified defects from hypotheses. Prefer exe
 - Blocking findings: N
 - Non-blocking findings: N
 - Top risks
+
+<!-- AI-DEV-CONTROL-V2:RUBRIC -->
+Shared review severity: P0 critical, P1 high (both blocking), P2 material non-blocking by default, P3 style suppressed. Every finding needs location, evidence or failure scenario, and minimal fix. Legacy numeric scores do not authorize merges. Preserve stricter project-specific domain checks.
