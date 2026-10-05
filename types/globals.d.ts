@@ -17,6 +17,7 @@ declare global {
     /** GoatCounter の集計先URL。空なら計測しない */
     goatCounterEndpoint?: string;
     gaMeasurementId?: string;
+    affiliateTracking?: Record<string, { merchant: string; affiliate_program: string }>;
     cta?: { label?: string; href?: string };
     affiliates?: Record<string, SiteAffiliate>;
     /** 貯蓄相談の導線（保険とは別枠） */
