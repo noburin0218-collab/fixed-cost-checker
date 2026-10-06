@@ -34,7 +34,7 @@
     "ad_slots": "mobile",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 3,
+    "next_read_count": 4,
     "body_chars": 1517
   },
   {
@@ -262,7 +262,7 @@
     "ad_slots": "",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 3,
+    "next_read_count": 4,
     "body_chars": 1471
   },
   {
@@ -414,8 +414,27 @@
     "ad_slots": "",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 3,
+    "next_read_count": 4,
     "body_chars": 1556
+  },
+  {
+    "slug": "smartphone-keiyaku-erabi",
+    "url": "/articles/smartphone-keiyaku-erabi/",
+    "category_id": "category-telecom",
+    "category": "通信費を見直す",
+    "type": "steps",
+    "title": "スマホの契約を選ぶ手順｜データ量・家族・端末・自宅回線から決める",
+    "description": "スマホの契約は「料金の安さ」より先に、データ量・回線数・端末・自宅回線の4つを決めると絞れます。申し込み前の確認項目と、乗り換えで見落としやすい点を整理します。",
+    "h1": "スマホの契約を選ぶ手順 データ量・家族・端末・自宅回線から決める",
+    "canonical": "https://kakei-hokenshitsu.com/articles/smartphone-keiyaku-erabi/",
+    "date_published": "2026-10-06",
+    "date_modified": "2026-10-06",
+    "has_ads": true,
+    "ad_slots": "mobile-choice",
+    "has_cluster": false,
+    "has_takeaway": true,
+    "next_read_count": 3,
+    "body_chars": 2124
   },
   {
     "slug": "subscription-kaiyaku-mae",
