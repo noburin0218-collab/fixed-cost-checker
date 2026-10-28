@@ -21,6 +21,9 @@ function render(mutateConfig) {
   const dom = new JSDOM(html.replace(/<script[\s\S]*?<\/script>/g, ""), { runScripts: "outside-only" });
   const w = dom.window;
   w.eval(configSource);
+  // 本番の config.js に mobileChoice が設定されても、このテストが意図せず壊れないよう、
+  // 既定は「未設定」に揃えてから個別ケースで上書きする。
+  delete w.SITE_CONFIG.affiliates.mobileChoice;
   if (mutateConfig) mutateConfig(w.SITE_CONFIG);
   w.eval(hookScript());
   return w;
