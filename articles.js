@@ -12,6 +12,18 @@
 (function () {
   var cfg = window.SITE_CONFIG || {};
 
+  // 記事でも診断ページと同じGA4設定を使う。未設定なら読み込まない。
+  if (cfg.gaMeasurementId && !window.gtag) {
+    var ga = document.createElement("script");
+    ga.async = true;
+    ga.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(cfg.gaMeasurementId);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag("js", new Date());
+    window.gtag("config", cfg.gaMeasurementId);
+    document.head.appendChild(ga);
+  }
+
   // ---- アクセス解析の読み込み ----
   if (cfg.goatCounterEndpoint) {
     var s = document.createElement("script");
@@ -30,7 +42,7 @@
     if (gc && typeof gc.count === "function") {
       gc.count({ path: "event/" + name, title: name, event: true });
     }
-    if (typeof window.gtag === "function") {
+    if (typeof window.gtag === "function" && name.indexOf("ad_click/") !== 0) {
       window.gtag("event", name, {});
     }
   }
@@ -57,6 +69,14 @@
         var card = adLink.closest(".ad-card");
         var adSlot = (card && card.getAttribute("data-ad-slot")) || "unknown";
         track("ad_click/" + adSlot);
+        var metadata = (cfg.affiliateTracking || {})[adSlot] || {};
+        if (typeof window.gtag === "function") {
+          window.gtag("event", "affiliate_click", {
+            merchant: metadata.merchant || "unknown",
+            affiliate_program: metadata.affiliate_program || "unknown",
+            placement: "article/" + slug + "/" + adSlot,
+          });
+        }
       }
     },
     true

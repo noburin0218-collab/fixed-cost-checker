@@ -240,7 +240,7 @@ let lastResult = null;
 
 /** GA等のイベント送信（未設定なら何もしない） */
 function track(eventName, params) {
-  if (typeof window.gtag === "function") {
+  if (typeof window.gtag === "function" && !eventName.startsWith("ad_click/")) {
     window.gtag("event", eventName, params || {});
   }
   // GoatCounter へはイベント名だけを送る。
@@ -289,6 +289,15 @@ function setupAdClickTracking() {
       const card = link.closest(".ad-card");
       const slot = (card && card.getAttribute("data-ad-slot")) || "unknown";
       track(`ad_click/${slot}`, {});
+      // GA4ではスラッシュ入りイベント名を使わず、案件と掲載箇所を属性にする。
+      const metadata = window.SITE_CONFIG?.affiliateTracking?.[slot];
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "affiliate_click", {
+          merchant: metadata?.merchant || "unknown",
+          affiliate_program: metadata?.affiliate_program || "unknown",
+          placement: "diagnosis/" + slot,
+        });
+      }
     },
     true // 遷移前に確実に拾うためキャプチャ段階で
   );

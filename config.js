@@ -137,3 +137,16 @@ window.SITE_CONFIG.insuranceComparison = [
     code: `<a href="https://h.accesstrade.net/sp/cc?rk=0100pfk700owy6" rel="nofollow" referrerpolicy="no-referrer-when-downgrade">みんなの生命保険アドバイザー<img src="https://h.accesstrade.net/sp/rr?rk=0100pfk700owy6" width="1" height="1" border="0" alt=""></a>`,
   },
 ];
+
+// 計測用メタデータ。ASP発行HTMLやURLは変更せず、入力値も送信しない。
+window.SITE_CONFIG.affiliateTracking = {
+  mobile: { merchant: "LIBMO", affiliate_program: "a8" },
+  internet: { merchant: "イツキ光", affiliate_program: "a8" },
+  electricity: { merchant: "電気チョイス", affiliate_program: "a8" },
+  gas: { merchant: "エネピ", affiliate_program: "a8" },
+  insurance: { merchant: "保険マンモス", affiliate_program: "accesstrade" },
+  savings: { merchant: "貯蓄ガーデン", affiliate_program: "accesstrade" },
+  "hoken-garden": { merchant: "保険ガーデン", affiliate_program: "accesstrade" },
+  "hoken-mammoth": { merchant: "保険マンモス", affiliate_program: "accesstrade" },
+  "hoken-minna": { merchant: "みんなの生命保険アドバイザー", affiliate_program: "accesstrade" },
+};
