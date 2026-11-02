@@ -43,3 +43,18 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # Bing/Yandex等へ更新を通知（IndexNow・無料）。キーは公開前提の値で、ルートの 922d0eaa9c2bf01b7b941e0557f9cb92.txt と一致させる。
+      # 失敗してもデプロイは成功扱いにする。
+      - name: Ping IndexNow
+        continue-on-error: true
+        run: |
+          python3 - <<'PY'
+          import json, re, urllib.request
+          urls = re.findall(r"<loc>(.*?)</loc>", open("sitemap.xml", encoding="utf-8").read())
+          body = json.dumps({"host": "kakei-hokenshitsu.com", "key": "922d0eaa9c2bf01b7b941e0557f9cb92",
+                             "keyLocation": "https://kakei-hokenshitsu.com/922d0eaa9c2bf01b7b941e0557f9cb92.txt", "urlList": urls}).encode()
+          req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body,
+                                       headers={"Content-Type": "application/json; charset=utf-8"})
+          print(len(urls), "urls ->", urllib.request.urlopen(req, timeout=30).status)
+          PY
