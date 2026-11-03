@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>通信費の見直しシミュレーション｜家族のスマホ代とネット代を合計して試算｜家計の保健室</title>
+  <meta name="description" content="家族の人数、各人のスマホ代、自宅ネット代を入れると、月額と年額の合計が分かります。月に◯円下げた場合の年間の差も試算できます。入力した数字は端末の外に送信されません。" />
+  <link rel="canonical" href="https://kakei-hokenshitsu.com/articles/tsushinhi-simulator/" />
+  <meta name="robots" content="index, follow" />
+
+  <meta property="og:title" content="通信費の見直しシミュレーション｜家族のスマホ代とネット代を合計して試算" />
+  <meta property="og:description" content="スマホ代とネット代を入れて、月額・年額の合計と、月に◯円下げた場合の年間の差を試算します。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kakei-hokenshitsu.com/articles/tsushinhi-simulator/" />
+  <meta property="og:image" content="https://kakei-hokenshitsu.com/ogp.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://kakei-hokenshitsu.com/ogp.png" />
+
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/articles.css" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <script src="/config.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "通信費の見直しシミュレーション",
+    "description": "家族の人数、各人のスマホ代、自宅ネット代から、通信費の月額・年額の合計と、月に◯円下げた場合の年間の差を試算する無料ツール。入力値は端末の外に送信されません。",
+    "url": "https://kakei-hokenshitsu.com/articles/tsushinhi-simulator/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "JavaScript が有効なブラウザ",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+    "datePublished": "2026-11-03",
+    "dateModified": "2026-11-03",
+    "inLanguage": "ja",
+    "image": "https://kakei-hokenshitsu.com/ogp.png",
+    "author": { "@type": "Organization", "name": "家計の保健室 編集部", "url": "https://kakei-hokenshitsu.com/about/" },
+    "publisher": { "@type": "Organization", "name": "家計の保健室", "url": "https://kakei-hokenshitsu.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://kakei-hokenshitsu.com/" },
+      { "@type": "ListItem", "position": 2, "name": "記事一覧", "item": "https://kakei-hokenshitsu.com/articles/" },
+      { "@type": "ListItem", "position": 3, "name": "通信費", "item": "https://kakei-hokenshitsu.com/articles/#category-telecom" },
+      { "@type": "ListItem", "position": 4, "name": "通信費の見直しシミュレーション" }
+    ]
+  }
+  </script>
+</head>
+<body data-article="tsushinhi-simulator" data-article-type="tool">
+  <a class="skip-link" href="#main">本文へ移動</a>
+
+  <!-- ===== ブランドヘッダー（全ページ共通・stickyにしない） ===== -->
+  <div class="brandbar">
+    <div class="container brandbar__inner">
+      <a class="brandbar__brand" href="/">
+        <span class="seal-mark" aria-hidden="true">保</span>
+        <span class="brandbar__name">家計の保健室</span>
+      </a>
+      <nav class="brandbar__nav" aria-label="サイト内の主な場所">
+        <a href="/">家計チェック</a>
+        <a href="/articles/" aria-current="page">記事を読む</a>
+        <a href="/editorial-policy/">編集方針</a>
+      </nav>
+    </div>
+  </div>
+
+
+  <header class="hero article-head">
+    <div class="container">
+      <a class="article-cat" href="/articles/#category-telecom">通信費を見直す</a>
+      <h1 class="article-title">通信費の見直しシミュレーション<br />家族のスマホ代とネット代を合計する</h1>
+      <p class="article-meta">
+        <a href="/about/">家計の保健室 編集部</a>　/
+        公開日 <time datetime="2026-11-03">2026年11月3日</time>　/
+        最終更新日 <time datetime="2026-11-03">2026年11月3日</time><br />
+        情報源：総務省統計局「家計調査」2025年（平均の参考表示のみ）　/　<a href="/editorial-policy/">編集方針</a>
+      </p>
+      <p class="article-lead">
+        通信費は、家族それぞれのスマホと自宅のネット回線に分かれて請求されるため、合計が見えにくい費目です。
+        人数と金額を入れると、月額・年額の合計が出ます。入力した数字は<strong>この端末の中だけで計算</strong>し、送信しません。
+      </p>
+    </div>
+  </header>
+
+  <main class="container" id="main">
+    <nav class="crumbs" aria-label="パンくず">
+      <ol>
+        <li><a href="/">ホーム</a></li>
+        <li><a href="/articles/">記事一覧</a></li>
+        <li><a href="/articles/#category-telecom">通信費</a></li>
+        <li>通信費の見直しシミュレーション</li>
+      </ol>
+    </nav>
+
+    <article class="card article-body">
+
+      <div class="takeaway">
+        <p class="takeaway__title">この記事で分かること</p>
+        <ul>
+          <li>家族全体の通信費が、月額・年額でいくらになるか</li>
+          <li>月に◯円下げられた場合に、年間でいくら変わるか</li>
+          <li>3人・4人世帯では、家計調査の平均との差（参考）</li>
+        </ul>
+        <p class="takeaway__conclusion">このツールは<strong>現在の請求額を合計し、仮の削減額を年額に直す</strong>ためのものです。実際にいくら下げられるかは、契約内容や条件しだいで変わります。</p>
+      </div>
+
+      <h2>1. 現在の通信費を入れる</h2>
+      <p>請求書や明細アプリの金額（税込）を入力してください。端末代金の分割払いは、スマホ代に含めても別にしても構いません。同じ基準で入れることだけ揃えてください。</p>
+
+      <div class="sim" id="sim">
+        <label class="field">
+          <span class="field__label">スマホを使っている人数</span>
+          <span class="field__input">
+            <select id="sim-people" class="prefs__select" aria-label="スマホを使っている人数">
+              <option value="1">1人</option>
+              <option value="2">2人</option>
+              <option value="3">3人</option>
+              <option value="4" selected>4人</option>
+              <option value="5">5人</option>
+              <option value="6">6人</option>
+            </select>
+          </span>
+        </label>
+        <div id="sim-phones"></div>
+        <label class="field">
+          <span class="field__label">自宅のネット回線（月額）</span>
+          <span class="field__input">
+            <input type="number" inputmode="numeric" min="0" step="100" id="sim-net" placeholder="例: 5000" />
+            <span class="field__unit">円/月</span>
+          </span>
+        </label>
+      </div>
+
+      <h2>2. 合計</h2>
+      <div class="sim-result" id="sim-result" aria-live="polite">
+        <p class="muted">金額を入力すると、ここに合計が表示されます。</p>
+      </div>
+
+      <h2>3. 「月に◯円下げたら」の試算</h2>
+      <p>下げられる金額が分からないときは、仮の数字で構いません。ここでの金額は<strong>仮定</strong>で、実際の削減額を示すものではありません。</p>
+      <div class="sim">
+        <label class="field">
+          <span class="field__label">仮に月額を下げた場合の金額</span>
+          <span class="field__input">
+            <input type="number" inputmode="numeric" min="0" step="100" id="sim-cut" placeholder="例: 3000" />
+            <span class="field__unit">円/月</span>
+          </span>
+        </label>
+      </div>
+      <div class="sim-result" id="sim-cut-result" aria-live="polite">
+        <p class="muted">金額を入力すると、年間の差が表示されます。</p>
+      </div>
+
+      <h2>結果の読み方</h2>
+      <ul>
+        <li>家計調査の「通信」は、スマホ代だけでなく自宅のネット回線なども含む費目です。ここで入力した合計と範囲が完全には一致しないため、<strong>平均より多い・少ないで良し悪しは判断できません</strong>。</li>
+        <li>合計が出たら、内訳を<strong>スマホ／自宅ネット／端末代／オプション</strong>に分けて見るのが次の一歩です。手順は<a href="/articles/4nin-kazoku-tsushinhi/">4人家族の通信費の記事</a>にまとめています。</li>
+        <li>乗り換えや割引は、適用条件・契約期間・解約時の費用で結果が変わります。月額だけでなく合計で比べてください。</li>
+      </ul>
+
+      <div class="to-diagnosis">
+        <p class="section-label section-label--cta">通信費以外も含めて確認する</p>
+        <p>
+          住居・光熱費・保険なども含め、どの費目に見直しの余地があるかを整理できます。
+          登録不要・入力した数字は送信されません。
+        </p>
+        <a class="btn btn--primary" href="/" data-track="to-diagnosis">家計チェックをはじめる（無料・30秒）</a>
+      </div>
+
+      <div id="ad-slot-mobile"></div>
+
+      <section class="sources">
+        <p class="section-label">出典</p>
+        <ol>
+          <li>
+            総務省統計局「家計調査 家計収支編 二人以上の世帯 詳細結果表」2025年、
+            第3-1表「世帯人員別1世帯当たり1か月間の収入と支出」の「通信」（3人 12,438円／4人 13,328円）<br />
+            <a href="https://www.stat.go.jp/data/kakei/" rel="noopener">https://www.stat.go.jp/data/kakei/</a>
+          </li>
+        </ol>
+        <p style="font-size:0.78rem;color:var(--ink-3);margin-top:10px">
+          平均の金額は出典の数値をそのまま掲載しています。1人・2人・5人・6人世帯の数値は本サイトで確認できていないため、比較は表示しません。
+          平均は「適正額」ではありません。
+        </p>
+      </section>
+
+      <div class="byline">
+        <p class="byline__name">家計の保健室 編集部</p>
+        <p>
+          30代・子育て世帯に向けて、一度見直せばずっと効く「固定費」を中心に発信しています。
+          運営者は金融・保険の資格を有しておらず、専門家として個別の助言は行いません。
+          公的機関などが公開している情報を整理し、判断の材料をそろえる立場で書いています。
+        </p>
+        <ul>
+          <li>重視している情報源：総務省統計局など公的機関の公開情報、各サービスの公式情報</li>
+          <li><a href="/about/">運営者情報</a>　/　<a href="/editorial-policy/">編集方針</a></li>
+        </ul>
+      </div>
+
+      <section class="next-read">
+        <h2 class="next-read__title">次に読む</h2>
+        <p class="next-read__lead">合計が出たあとに読むと、判断がつながります。</p>
+        <ul class="article-list">
+          <li>
+            <span class="article-list__meta">通信費を見直す</span>
+            <a href="/articles/4nin-kazoku-tsushinhi/">4人家族の通信費はいくら？2025年家計調査からスマホ・ネットの見直し方を解説</a>
+            <p class="article-list__desc">合計を内訳に分解する手順と、平均の読み方。</p>
+          </li>
+          <li>
+            <span class="article-list__meta">通信費を見直す</span>
+            <a href="/articles/smartphone-keiyaku-erabi/">スマホの契約を選ぶ手順｜データ量・家族・端末・自宅回線から決める</a>
+            <p class="article-list__desc">乗り換えを考えるとき、比べる前に決める4つ。</p>
+          </li>
+          <li>
+            <span class="article-list__meta">通信費を見直す</span>
+            <a href="/articles/set-wari-kangaekata/">ネット回線とスマホのセット割は本当に得か</a>
+            <p class="article-list__desc">割引額ではなく合計額で比べます。</p>
+          </li>
+          <li>
+            <span class="article-list__meta">通信費を見直す</span>
+            <a href="/articles/kodomo-smartphone-tsushinhi/">子どもがスマホを持つときの通信費の考え方</a>
+            <p class="article-list__desc">家族全体の合計で判断する手順。</p>
+          </li>
+        </ul>
+      </section>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="footer__note">
+        本サイトは家計改善・生活防衛を目的とした情報提供サイトです。診断ツールに入力したデータはサーバーに送信されません。
+      </p>
+      <p class="footer__note">
+        <a href="/articles/">記事一覧</a>　/　<a href="/about/">運営者情報</a>　/　<a href="/editorial-policy/">編集方針</a>
+      </p>
+      <p class="footer__copy">© <span id="year"></span> 家計の保健室</p>
+    </div>
+  </footer>
+
+  <script>
+    // 広告は config.js のスマホ枠をそのまま使う（ASP発行コードは無改変）
+    (function () {
+      var cfg = (window.SITE_CONFIG && window.SITE_CONFIG.affiliates && window.SITE_CONFIG.affiliates.mobile) || null;
+      var slot = document.getElementById("ad-slot-mobile");
+      if (!cfg || !cfg.code || !slot) return;
+      slot.innerHTML =
+        '<div class="ad-card" data-ad-slot="mobile">' +
+        '<span class="ad-tag">広告</span>' +
+        (cfg.heading ? '<p class="ad-card__heading">' + cfg.heading + "</p>" : "") +
+        (cfg.body ? '<p class="ad-card__body">' + cfg.body + "</p>" : "") +
+        '<p class="ad-card__link">' + cfg.code + "</p>" +
+        "</div>";
+    })();
+  </script>
+  <script>
+    // 通信費シミュレーション。外部通信なし・保存なし（入力値はこのページのメモリ内だけで使う）。
+    (function () {
+      // 総務省統計局 家計調査 2025年 第3-1表「通信」（1か月）。4人世帯の記事と同じ値。
+      var AVG = { 3: 12438, 4: 13328 };
+      var yen = function (n) { return Math.round(n).toLocaleString("ja-JP") + "円"; };
+      var num = function (el) { var v = parseInt(el.value, 10); return v > 0 ? v : 0; };
+      var $ = function (id) { return document.getElementById(id); };
+      var people = $("sim-people"), phones = $("sim-phones"), net = $("sim-net"), cut = $("sim-cut");
+      var EMPTY_TOTAL = '<p class="muted">金額を入力すると、ここに合計が表示されます。</p>';
+      var EMPTY_CUT = '<p class="muted">金額を入力すると、年間の差が表示されます。</p>';
+
+      function row(label, text) {
+        var tr = document.createElement("tr");
+        var th = document.createElement("th"), td = document.createElement("td");
+        th.textContent = label; td.textContent = text;
+        tr.appendChild(th); tr.appendChild(td);
+        return tr;
+      }
+      function table(rows, note) {
+        var wrap = document.createElement("div");
+        var wrapScroll = document.createElement("div");
+        wrapScroll.className = "table-scroll";
+        var t = document.createElement("table");
+        rows.forEach(function (r) { t.appendChild(r); });
+        wrapScroll.appendChild(t);
+        wrap.appendChild(wrapScroll);
+        if (note) { var p = document.createElement("p"); p.className = "muted"; p.textContent = note; wrap.appendChild(p); }
+        return wrap;
+      }
+
+      function buildPhones() {
+        var n = parseInt(people.value, 10) || 1;
+        var old = [].map.call(phones.querySelectorAll("input"), function (i) { return i.value; });
+        phones.textContent = "";
+        for (var i = 0; i < n; i++) {
+          var label = document.createElement("label"); label.className = "field";
+          var name = document.createElement("span"); name.className = "field__label"; name.textContent = (i + 1) + "人目のスマホ（月額）";
+          var box = document.createElement("span"); box.className = "field__input";
+          var input = document.createElement("input");
+          input.type = "number"; input.inputMode = "numeric"; input.min = "0"; input.step = "100";
+          input.placeholder = "例: 3000"; input.value = old[i] || ""; input.className = "sim-phone";
+          var unit = document.createElement("span"); unit.className = "field__unit"; unit.textContent = "円/月";
+          box.appendChild(input); box.appendChild(unit); label.appendChild(name); label.appendChild(box);
+          phones.appendChild(label);
+        }
+      }
+
+      function render() {
+        var inputs = phones.querySelectorAll("input");
+        var n = inputs.length, phoneTotal = 0, any = net.value !== "";
+        [].forEach.call(inputs, function (i) { phoneTotal += num(i); if (i.value !== "") any = true; });
+        var monthly = phoneTotal + num(net);
+        var res = $("sim-result"), cutRes = $("sim-cut-result");
+        res.textContent = ""; cutRes.textContent = "";
+        if (!any) { res.innerHTML = EMPTY_TOTAL; cutRes.innerHTML = EMPTY_CUT; return; }
+
+        var rows = [
+          row("スマホ（" + n + "人）", yen(phoneTotal) + " / 月"),
+          row("自宅ネット", yen(num(net)) + " / 月"),
+          row("月額の合計", yen(monthly)),
+          row("年額の合計（月額×12）", yen(monthly * 12))
+        ];
+        var note;
+        if (AVG[n]) {
+          var diff = monthly - AVG[n];
+          rows.push(row("家計調査2025年の" + n + "人世帯「通信」", yen(AVG[n]) + " / 月"));
+          rows.push(row("平均との差（月額）", (diff >= 0 ? "+" : "-") + yen(Math.abs(diff))));
+          note = "家計調査の「通信」は、スマホ代と自宅ネットなどを含む費目で、ここでの合計とは範囲が一致しない場合があります。平均は適正額ではなく、多い・少ないの良し悪しを示すものではありません。";
+        } else {
+          note = "平均との比較は、本サイトで出典を確認できている3人・4人世帯のみ表示しています。";
+        }
+        res.appendChild(table(rows, note));
+
+        if (cut.value === "") { cutRes.innerHTML = EMPTY_CUT; return; }
+        var c = num(cut), eff = Math.min(c, monthly);
+        cutRes.appendChild(table([
+          row("仮に下がる金額", yen(eff) + " / 月"),
+          row("下がった場合の月額", yen(monthly - eff)),
+          row("年間の差（仮定）", yen(eff * 12))
+        ], c > monthly
+          ? "入力した金額が現在の合計を超えているため、合計までで計算しています。"
+          : "仮の金額での試算です。実際の削減額は契約内容や条件で変わり、端末代・解約時の費用などは含みません。"));
+      }
+
+      people.addEventListener("change", function () { buildPhones(); render(); });
+      document.addEventListener("input", function (e) { if (e.target && e.target.tagName === "INPUT") render(); });
+      buildPhones(); render();
+    })();
+  </script>
+  <script src="/articles.js"></script>
+  <script>document.getElementById("year").textContent = String(new Date().getFullYear());</script>
+</body>
+</html>
