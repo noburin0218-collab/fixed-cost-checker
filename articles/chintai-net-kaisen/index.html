@@ -248,11 +248,9 @@
       </div>
 
       <!--
-        広告枠：現時点では表示しません。
-        フレッツ光・おてがる光は別メディアでの提携承認であり、
-        家計の保健室での利用可否が確認できていないためです。
-        当サイト名義での提携が確認できたら、config.js の
-        affiliates.internetNoConstruction.code にASP発行コードをそのまま入れると表示されます。
+        広告枠：B節（ホームルーター）の内容に対応する SoftBank Air の窓口を、まとめの前に1件だけ置く。
+        GMOとくとくBBの「ソフトバンク光」は広告主の告知により一時停止のため使わない。
+        コードは config.js の affiliates.internetNoConstruction（ASP発行コード原文）。
       -->
       <div id="ad-slot-internet-nc"></div>
 
@@ -329,7 +327,7 @@
   </footer>
 
   <script>
-    // 提携が確認できた場合のみ表示する（未設定なら何も出ない）
+    // config.js に広告コードがある場合のみ表示する（未設定なら何も出ない）
     (function () {
       var a = (window.SITE_CONFIG && window.SITE_CONFIG.affiliates) || {};
       var cfg = a.internetNoConstruction || null;

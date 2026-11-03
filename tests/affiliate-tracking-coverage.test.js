@@ -25,10 +25,12 @@ for (const dir of fs.readdirSync(articlesDir, { withFileTypes: true })) {
 }
 
 // 記事内の静的slot -> 表示可否を決める code の持ち主。
-// internet-nc は affiliates.internetNoConstruction が空（未提携）のため表示されない。
-// 表示されない枠はクリックされないので追跡対象外。将来 code が入ったら自動的に対象になる。
+// 記事内の静的slotは、code の持ち主（affiliates のキー）が空なら表示されないので追跡対象外。
+// code が入っている枠は自動的に対象になり、affiliateTracking への追記が必須になる。
 const articleSlotOwner = {
   "internet-nc": () => cfg.affiliates.internetNoConstruction,
+  "mobile-choice": () => cfg.affiliates.mobileChoice,
+  "denryoku-direct": () => cfg.affiliates.electricityDirect,
   savings: () => cfg.savingsAdvisor,
 };
 
@@ -47,7 +49,7 @@ for (const slot of articleSlots) {
 }
 
 test("表示され得る広告slotが検出できる（テスト自体の健全性）", () => {
-  for (const s of ["mobile", "internet", "electricity", "gas", "insurance", "savings", "hoken-garden", "hoken-mammoth", "hoken-minna"]) {
+  for (const s of ["mobile", "internet", "electricity", "gas", "insurance", "savings", "hoken-garden", "hoken-mammoth", "hoken-minna", "internet-nc", "mobile-choice", "denryoku-direct"]) {
     assert.ok(slots.has(s), `slot ${s} を検出できていない`);
   }
   assert.ok(!slots.has("housing") && !slots.has("car"), "code が空の枠は対象外");
