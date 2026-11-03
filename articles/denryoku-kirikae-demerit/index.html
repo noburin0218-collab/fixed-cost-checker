@@ -228,6 +228,17 @@
         まずやることは、比較サイトを開くことではなく、<strong>今の契約と使用量を確認すること</strong>です。
       </p>
 
+      <p>
+        個別の電力会社と直接契約する選択肢の一例として、idemitsuでんきがあります。
+        公式サイトで確認できた条件は次のとおりです（2026年11月4日確認）。料金プランや規約は改定されることがあるため、申し込み前に最新の公式案内を確認してください。
+      </p>
+      <ul>
+        <li><strong>供給エリア</strong>：北海道・東北・北陸・東京・中部・関西・中国・四国・九州の各電力エリア。ただし離島は除く（<a href="https://denki.idemitsu.com/faq/number-57/" rel="noopener" target="_blank">公式FAQ</a>）。住所で契約できるかは公式で確認が必要</li>
+        <li><strong>料金の決まり方</strong>：使用量に応じた段階制の従量料金で、燃料費調整額や再生可能エネルギー発電促進賦課金は別途かかる（<a href="https://denki.idemitsu.com/sp/" rel="noopener" target="_blank">Sプランの公式案内</a>）</li>
+        <li><strong>契約期間と解約</strong>：契約成立日から最初の12月31日までで、以降は1年ごとに同一条件で更新される。原則として違約金や解約手数料はない（<a href="https://denki.idemitsu.com/faq/number-110/" rel="noopener" target="_blank">公式FAQ</a>）。ただし供給地点の新設や契約容量の増加で送配電事業者から工事費などを請求された場合は、負担が生じることがある（<a href="https://denki.idemitsu.com/faq/number-45/" rel="noopener" target="_blank">公式FAQ</a>）</li>
+      </ul>
+      <div id="ad-slot-denryoku-direct"></div>
+
       <h2>切り替えを検討する前に確認する3点</h2>
       <ol>
         <li><strong>今の電気代</strong>（直近数か月の請求額）</li>
@@ -320,6 +331,22 @@
     </div>
   </footer>
 
+  <script>
+    // config.js の affiliates.electricityDirect があるときだけ表示する（未設定なら何も出ない）。
+    // ASP発行コードは原文のまま挿入し、加工しない。
+    (function () {
+      var cfg = (window.SITE_CONFIG && window.SITE_CONFIG.affiliates && window.SITE_CONFIG.affiliates.electricityDirect) || null;
+      var slot = document.getElementById("ad-slot-denryoku-direct");
+      if (!cfg || !cfg.code || !slot) return;
+      slot.innerHTML =
+        '<div class="ad-card" data-ad-slot="denryoku-direct">' +
+        '<span class="ad-tag">広告</span>' +
+        (cfg.heading ? '<p class="ad-card__heading">' + cfg.heading + "</p>" : "") +
+        (cfg.body ? '<p class="ad-card__body">' + cfg.body + "</p>" : "") +
+        '<p class="ad-card__link">' + cfg.code + "</p>" +
+        "</div>";
+    })();
+  </script>
   <script src="/articles.js"></script>
   <script>document.getElementById("year").textContent = String(new Date().getFullYear());</script>
 </body>

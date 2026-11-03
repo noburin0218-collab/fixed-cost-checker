@@ -41,6 +41,28 @@ window.SITE_CONFIG = {
 
   // 診断結果の各項目に出す広告。code はASP発行コードをそのまま貼る。
   affiliates: {
+    // 記事内の広告枠（articles/* の data-ad-slot）。code は ASP 発行コードを原文のまま保持する。
+    internetNoConstruction: {
+      heading: "工事をしないで使える自宅回線の一例",
+      body: "ホームルーター型の SoftBank Air を、GMOとくとくBB経由で申し込める窓口の一例です。提供エリア・料金・契約期間は、申し込み前に公式ページで確認してください。",
+      code: `<a href="https://px.a8.net/svt/ejp?a8mat=4BA1P8+2DQGNU+50+744OG2" rel="nofollow">GMOとくとくBB【SoftBank Air】</a>
+<img border="0" width="1" height="1" src="https://www10.a8.net/0.gif?a8mat=4BA1P8+2DQGNU+50+744OG2" alt="">`,
+    },
+
+    mobileChoice: {
+      heading: "契約先の一例",
+      body: "上の4つの項目（データ量・回線数・端末・自宅回線）に当てはめて、条件が合うかを確かめる際の一例です。ほかの会社も同じ項目で比べられます。プランの区分・手続き・提供条件は公式ページで確認してください。",
+      code: `<a href="https://px.a8.net/svt/ejp?a8mat=4BA0X8+N7Y56+3MP0+5YJRM" rel="nofollow">NURO Mobile</a>
+<img border="0" width="1" height="1" src="https://www16.a8.net/0.gif?a8mat=4BA0X8+N7Y56+3MP0+5YJRM" alt="">`,
+    },
+
+    electricityDirect: {
+      heading: "個別の電力会社と直接契約する場合の窓口の一例",
+      body: "電力比較サービスではなく、事業者と直接契約する選択肢です。住所と使用量で料金がどう変わるかは、申し込み前に公式のシミュレーションで確認してください。",
+      code: `<a href="https://px.a8.net/svt/ejp?a8mat=4BA0X8+XXR16+5GVS+5YJRM" rel="nofollow">【idemitsuでんき】</a>
+<img border="0" width="1" height="1" src="https://www18.a8.net/0.gif?a8mat=4BA0X8+XXR16+5GVS+5YJRM" alt="">`,
+    },
+
     housing: {
       heading: "住宅ローンは、残高が多いほど見直しの効果が大きい費目です",
       body: "借り換えの試算は無料でできます。残高・残期間・金利差の条件しだいで総返済額が変わります。",
@@ -149,4 +171,7 @@ window.SITE_CONFIG.affiliateTracking = {
   "hoken-garden": { merchant: "保険ガーデン", affiliate_program: "accesstrade" },
   "hoken-mammoth": { merchant: "保険マンモス", affiliate_program: "accesstrade" },
   "hoken-minna": { merchant: "みんなの生命保険アドバイザー", affiliate_program: "accesstrade" },
+  "internet-nc": { merchant: "GMOとくとくBB SoftBank Air", affiliate_program: "a8" },
+  "mobile-choice": { merchant: "NUROモバイル", affiliate_program: "a8" },
+  "denryoku-direct": { merchant: "idemitsuでんき", affiliate_program: "a8" },
 };

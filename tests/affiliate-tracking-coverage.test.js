@@ -25,17 +25,23 @@ for (const dir of fs.readdirSync(articlesDir, { withFileTypes: true })) {
 }
 
 // 記事内の静的slot -> 表示可否を決める code の持ち主。
-// internet-nc は affiliates.internetNoConstruction が空（未提携）のため表示されない。
-// 表示されない枠はクリックされないので追跡対象外。将来 code が入ったら自動的に対象になる。
+// 記事内の静的slotは、code の持ち主（affiliates のキー）が空なら表示されないので追跡対象外。
+// code が入っている枠は自動的に対象になり、affiliateTracking への追記が必須になる。
 const articleSlotOwner = {
   "internet-nc": () => cfg.affiliates.internetNoConstruction,
+  "mobile-choice": () => cfg.affiliates.mobileChoice,
+  "denryoku-direct": () => cfg.affiliates.electricityDirect,
   savings: () => cfg.savingsAdvisor,
 };
 
 // 広告として表示され得るslotの一覧を組み立てる。
 const slots = new Map(); // slot -> 出所
 // 診断ページ: affiliates のキー名がそのまま slot。code が空の枠(housing, car 等)は表示されない。
-for (const [key, entry] of Object.entries(cfg.affiliates)) if (hasCode(entry)) slots.set(key, `affiliates.${key}`);
+// 記事専用のキー（articleSlotOwner が持つもの）は診断ページには出ないので、ここでは数えない。
+const articleOnlyEntries = new Set(Object.values(articleSlotOwner).map((f) => f()));
+for (const [key, entry] of Object.entries(cfg.affiliates)) {
+  if (hasCode(entry) && !articleOnlyEntries.has(entry)) slots.set(key, `affiliates.${key}`);
+}
 // 貯蓄アドバイザー: slot は "savings"。
 if (hasCode(cfg.savingsAdvisor)) slots.set("savings", "savingsAdvisor");
 // 比較記事。
@@ -47,7 +53,7 @@ for (const slot of articleSlots) {
 }
 
 test("表示され得る広告slotが検出できる（テスト自体の健全性）", () => {
-  for (const s of ["mobile", "internet", "electricity", "gas", "insurance", "savings", "hoken-garden", "hoken-mammoth", "hoken-minna"]) {
+  for (const s of ["mobile", "internet", "electricity", "gas", "insurance", "savings", "hoken-garden", "hoken-mammoth", "hoken-minna", "internet-nc", "mobile-choice", "denryoku-direct"]) {
     assert.ok(slots.has(s), `slot ${s} を検出できていない`);
   }
   assert.ok(!slots.has("housing") && !slots.has("car"), "code が空の枠は対象外");
