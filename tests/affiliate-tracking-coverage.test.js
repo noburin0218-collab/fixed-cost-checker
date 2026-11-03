@@ -37,7 +37,11 @@ const articleSlotOwner = {
 // 広告として表示され得るslotの一覧を組み立てる。
 const slots = new Map(); // slot -> 出所
 // 診断ページ: affiliates のキー名がそのまま slot。code が空の枠(housing, car 等)は表示されない。
-for (const [key, entry] of Object.entries(cfg.affiliates)) if (hasCode(entry)) slots.set(key, `affiliates.${key}`);
+// 記事専用のキー（articleSlotOwner が持つもの）は診断ページには出ないので、ここでは数えない。
+const articleOnlyEntries = new Set(Object.values(articleSlotOwner).map((f) => f()));
+for (const [key, entry] of Object.entries(cfg.affiliates)) {
+  if (hasCode(entry) && !articleOnlyEntries.has(entry)) slots.set(key, `affiliates.${key}`);
+}
 // 貯蓄アドバイザー: slot は "savings"。
 if (hasCode(cfg.savingsAdvisor)) slots.set("savings", "savingsAdvisor");
 // 比較記事。
