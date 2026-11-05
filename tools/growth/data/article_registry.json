@@ -105,9 +105,9 @@
     "h1": "電力会社の切り替えに デメリットはある？",
     "canonical": "https://kakei-hokenshitsu.com/articles/denryoku-kirikae-demerit/",
     "date_published": "2026-08-30",
-    "date_modified": "2026-08-30",
-    "has_ads": false,
-    "ad_slots": "",
+    "date_modified": "2026-11-04",
+    "has_ads": true,
+    "ad_slots": "denryoku-direct",
     "has_cluster": false,
     "has_takeaway": true,
     "next_read_count": 3,
@@ -200,13 +200,13 @@
     "h1": "保険相談サービス3社を比べる 順位ではなく、条件で選ぶ",
     "canonical": "https://kakei-hokenshitsu.com/articles/hoken-sodan-hikaku/",
     "date_published": "2026-09-02",
-    "date_modified": "2026-09-02",
+    "date_modified": "2026-11-03",
     "has_ads": true,
     "ad_slots": "hoken-garden|hoken-mammoth|hoken-minna",
     "has_cluster": true,
     "has_takeaway": true,
     "next_read_count": 3,
-    "body_chars": 2721
+    "body_chars": 3214
   },
   {
     "slug": "kakeibo-saishougen",
@@ -434,7 +434,7 @@
     "has_cluster": false,
     "has_takeaway": true,
     "next_read_count": 3,
-    "body_chars": 2124
+    "body_chars": 2218
   },
   {
     "slug": "subscription-kaiyaku-mae",
@@ -492,6 +492,25 @@
     "has_takeaway": true,
     "next_read_count": 3,
     "body_chars": 2130
+  },
+  {
+    "slug": "tsushinhi-simulator",
+    "url": "/articles/tsushinhi-simulator/",
+    "category_id": "category-telecom",
+    "category": "通信費を見直す",
+    "type": "tool",
+    "title": "通信費の見直しシミュレーション｜家族のスマホ代とネット代を合計して試算",
+    "description": "家族の人数、各人のスマホ代、自宅ネット代を入れると、月額と年額の合計が分かります。月に◯円下げた場合の年間の差も試算できます。入力した数字は端末の外に送信されません。",
+    "h1": "通信費の見直しシミュレーション 家族のスマホ代とネット代を合計する",
+    "canonical": "https://kakei-hokenshitsu.com/articles/tsushinhi-simulator/",
+    "date_published": "2026-11-03",
+    "date_modified": "2026-11-03",
+    "has_ads": true,
+    "ad_slots": "mobile",
+    "has_cluster": false,
+    "has_takeaway": true,
+    "next_read_count": 4,
+    "body_chars": 652
   },
   {
     "slug": "water-server-minaoshi",
