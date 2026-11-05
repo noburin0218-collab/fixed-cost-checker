@@ -209,6 +209,25 @@
     "body_chars": 3214
   },
   {
+    "slug": "jidosha-hoken-koshin-mae",
+    "url": "/articles/jidosha-hoken-koshin-mae/",
+    "category_id": "category-insurance",
+    "category": "保険と将来のお金",
+    "type": "steps",
+    "title": "自動車保険の更新前にやること｜保険証券・等級・見積もり条件をそろえる手順",
+    "description": "自動車保険の更新案内が届いたときに、保険証券で何を確認し、どの条件をそろえて比べるかを手順で整理します。等級の引き継ぎ、補償を途切れさせない時期、一括見積もりの注意点まで。特定の会社や商品は勧めません。",
+    "h1": "自動車保険の更新前にやること 保険証券・等級・見積もり条件をそろえる手順",
+    "canonical": "https://kakei-hokenshitsu.com/articles/jidosha-hoken-koshin-mae/",
+    "date_published": "2026-11-05",
+    "date_modified": "2026-11-05",
+    "has_ads": true,
+    "ad_slots": "car-insurance",
+    "has_cluster": false,
+    "has_takeaway": true,
+    "next_read_count": 3,
+    "body_chars": 3537
+  },
+  {
     "slug": "kakeibo-saishougen",
     "url": "/articles/kakeibo-saishougen/",
     "category_id": "category-basics",
@@ -338,7 +357,7 @@
     "ad_slots": "",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 3,
+    "next_read_count": 4,
     "body_chars": 2675
   },
   {
