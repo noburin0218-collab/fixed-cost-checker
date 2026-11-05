@@ -107,6 +107,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://kakei-hokenshitsu.com/articles/keiyaku-koshin-calendar/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://kakei-hokenshitsu.com/articles/kotei-hi-minaoshi-junban/</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>

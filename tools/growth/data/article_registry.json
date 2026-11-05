@@ -247,6 +247,25 @@
     "body_chars": 1414
   },
   {
+    "slug": "keiyaku-koshin-calendar",
+    "url": "/articles/keiyaku-koshin-calendar/",
+    "category_id": "category-basics",
+    "category": "家計を見わたす",
+    "type": "steps",
+    "title": "固定費の契約更新月カレンダーの作り方｜違約金がかからない時期を先に書き出す",
+    "description": "契約ごとの開始日・更新月・解約時の費用の条件を1枚の表に書き出し、見直す月を決める手順。確認先と、リマインダーの置き方をまとめます。",
+    "h1": "固定費の契約更新月カレンダーの作り方 違約金がかからない時期を先に書き出す",
+    "canonical": "https://kakei-hokenshitsu.com/articles/keiyaku-koshin-calendar/",
+    "date_published": "2026-11-05",
+    "date_modified": "2026-11-05",
+    "has_ads": false,
+    "ad_slots": "",
+    "has_cluster": false,
+    "has_takeaway": true,
+    "next_read_count": 4,
+    "body_chars": 2063
+  },
+  {
     "slug": "kodomo-kyoiku-hi",
     "url": "/articles/kodomo-kyoiku-hi/",
     "category_id": "category-insurance",
@@ -300,7 +319,7 @@
     "ad_slots": "",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 5,
+    "next_read_count": 6,
     "body_chars": 1412
   },
   {
@@ -490,7 +509,7 @@
     "ad_slots": "",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 3,
+    "next_read_count": 4,
     "body_chars": 1598
   },
   {
