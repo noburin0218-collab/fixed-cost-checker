@@ -47,7 +47,7 @@ def detect_charset(header_charset, body):
     """HTTPヘッダーに文字コードが無いときは、<meta charset> を見る（Shift_JIS のページ対策）。"""
     if header_charset:
         return header_charset
-    m = re.search(rb'<meta[^>]+charset=["\']?([A-Za-z0-9_-]+)', body[:4096], re.I)
+    m = re.search(rb'<meta[^>]+charset\s*=\s*["\']?([A-Za-z0-9_-]+)', body[:4096], re.I)
     if m:
         name = m.group(1).decode("ascii").lower()
         try:
