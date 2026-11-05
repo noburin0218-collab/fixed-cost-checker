@@ -43,13 +43,27 @@ def cited_urls():
     return found
 
 
+def detect_charset(header_charset, body):
+    """HTTPヘッダーに文字コードが無いときは、<meta charset> を見る（Shift_JIS のページ対策）。"""
+    if header_charset:
+        return header_charset
+    m = re.search(rb'<meta[^>]+charset=["\']?([A-Za-z0-9_-]+)', body[:4096], re.I)
+    if m:
+        name = m.group(1).decode("ascii").lower()
+        try:
+            "".encode(name)
+            return name
+        except LookupError:
+            pass
+    return "utf-8"
+
+
 def fetch(url, timeout=30):
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Language": "ja"})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as res:
             body = res.read(5_000_000)
-            charset = res.headers.get_content_charset() or "utf-8"
-            return res.status, res.geturl(), body.decode(charset, errors="replace")
+            return res.status, res.geturl(), body.decode(detect_charset(res.headers.get_content_charset(), body), errors="replace")
     except urllib.error.HTTPError as e:
         return e.code, url, ""
     except Exception as e:  # DNS・タイムアウト・TLS など
