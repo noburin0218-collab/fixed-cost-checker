@@ -13,6 +13,7 @@ const CASES = [
   { article: "smartphone-keiyaku-erabi", key: "mobileChoice", slotId: "ad-slot-mobile-choice", slot: "mobile-choice" },
   { article: "chintai-net-kaisen", key: "internetNoConstruction", slotId: "ad-slot-internet-nc", slot: "internet-nc" },
   { article: "denryoku-kirikae-demerit", key: "electricityDirect", slotId: "ad-slot-denryoku-direct", slot: "denryoku-direct" },
+  { article: "jidosha-hoken-koshin-mae", key: "carInsurance", slotId: "ad-slot-car-insurance", slot: "car-insurance" },
 ];
 
 for (const c of CASES) {
