@@ -50,3 +50,6 @@ Final response should include summary, files changed, checks run/results, accept
 - Production-impacting changes still require a human merge decision.
 
 <!-- AI-DEV-CONTROL-V2:END -->
+## Project-specific notes (fixed-cost-checker)
+- Cloud sessions may be unable to reach official sites (network policy). Do not guess; verify via the `Source Check` GitHub Actions workflow (`workflow_dispatch` with `urls`, then read the job log), or mark the item as unverified. See `RESUME.md`.
+- Codex cannot run in the cloud session. When a Claude PR is ready, give the owner the exact command: `.\scripts\invoke-cross-review.ps1 -Repo noburin0218-collab/fixed-cost-checker -Pr <N>`, and state in the PR whether the Codex review has been done.

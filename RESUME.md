@@ -66,5 +66,22 @@ ASP発行コードは**原文のまま**保持し、`tools/audit-site.py` が原
 | 公開前チェック | `python3 tools/audit-site.py` |
 | 開発の進め方（レビュー・マージ） | `AGENTS.md`／`CLAUDE.md`（独立レビュー＋人間のマージ判断） |
 
+## 外部サイトの確認とクロスレビュー（毎回つまずかないための手順）
+
+**公式ページの確認**（Claude Code のクラウド環境は、ネットワーク設定で外部サイトへの通信が止められていることがある）
+- 恒久対応①（環境側・運営者が1回だけ設定）：クラウド環境の設定 → Network access → Allowed domains に、
+  `python3 tools/check-sources.py --domains` が出すドメインと、広告主の公式サイト（例：`www.nuro.jp`、`gmobb.jp`）を追加する。
+  手順：https://code.claude.com/docs/en/cloud-environments#network-access
+- 恒久対応②（環境に左右されない）：GitHub Actions の **Source Check** を使う。
+  - 週1回、記事の出典リンクがすべて開けるかを確認（ページが無くなっていたら失敗）
+  - 手動実行で `urls` にURLを入れると、そのページの本文がジョブログに出る → 記事の記載と照合する
+- どちらでも開けない場合は、推測で補わず「未確認」と明記する（編集方針どおり）。
+
+**Codex による独立レビュー**（Claude が作ったPRは Codex がレビューする決まり）
+- Codex はこのクラウド環境では動かない（OpenAI アカウントでのログインが必要なため）。運営者のPCで実行する。
+- PRが「Ready」になったら、Windows の control-plane リポジトリで：
+  `.\scripts\invoke-cross-review.ps1 -Repo noburin0218-collab/fixed-cost-checker -Pr <番号>`
+- 指摘は Claude が1件ずつ検証し、正しいものだけを1回の修正で直す。そのうえで人間がマージを判断する。
+
 ## 変更の反映方法
 ブランチで作業 → PR → CI（test／baseline／Cloudflare Pagesプレビュー）→ 独立レビュー → 人間がマージ判断 → mainへのマージで自動デプロイ。
