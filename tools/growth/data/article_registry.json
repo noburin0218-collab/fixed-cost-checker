@@ -167,7 +167,7 @@
     "ad_slots": "",
     "has_cluster": true,
     "has_takeaway": true,
-    "next_read_count": 4,
+    "next_read_count": 5,
     "body_chars": 2547
   },
   {
@@ -224,7 +224,7 @@
     "ad_slots": "car-insurance",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 3,
+    "next_read_count": 4,
     "body_chars": 3537
   },
   {
@@ -245,6 +245,25 @@
     "has_takeaway": true,
     "next_read_count": 4,
     "body_chars": 1414
+  },
+  {
+    "slug": "kasai-hoken-minaoshi",
+    "url": "/articles/kasai-hoken-minaoshi/",
+    "category_id": "category-insurance",
+    "category": "保険と将来のお金",
+    "type": "steps",
+    "title": "火災保険の見直し、更新前に確認すること｜賃貸と持ち家で見る項目が違う",
+    "description": "火災保険の更新前に、保険証券で何を書き出し、賃貸と持ち家で何を確認するかを整理します。水災補償はハザードマップを見て考える材料をそろえ、同じ条件で見積もりを比べる手順まで。特定の会社や商品は勧めません。",
+    "h1": "火災保険の見直し、更新前に確認すること 賃貸と持ち家で見る項目が違う",
+    "canonical": "https://kakei-hokenshitsu.com/articles/kasai-hoken-minaoshi/",
+    "date_published": "2026-11-05",
+    "date_modified": "2026-11-05",
+    "has_ads": true,
+    "ad_slots": "fire-insurance",
+    "has_cluster": false,
+    "has_takeaway": true,
+    "next_read_count": 3,
+    "body_chars": 5480
   },
   {
     "slug": "keiyaku-koshin-calendar",

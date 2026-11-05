@@ -14,6 +14,7 @@ const CASES = [
   { article: "chintai-net-kaisen", key: "internetNoConstruction", slotId: "ad-slot-internet-nc", slot: "internet-nc" },
   { article: "denryoku-kirikae-demerit", key: "electricityDirect", slotId: "ad-slot-denryoku-direct", slot: "denryoku-direct" },
   { article: "jidosha-hoken-koshin-mae", key: "carInsurance", slotId: "ad-slot-car-insurance", slot: "car-insurance" },
+  { article: "kasai-hoken-minaoshi", key: "fireInsurance", slotId: "ad-slot-fire-insurance", slot: "fire-insurance" },
 ];
 
 for (const c of CASES) {
