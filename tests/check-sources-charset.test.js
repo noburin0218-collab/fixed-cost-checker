@@ -24,19 +24,37 @@ test("ヘッダーに文字コードがあれば、それを使う", () => {
   assert.equal(detect("euc-jp", '<meta charset="utf-8">'), "euc-jp");
 });
 
-test("ヘッダーが無ければ meta charset を使う", () => {
-  assert.equal(detect("", '<meta charset="Shift_JIS">'), "shift_jis");
+test("ヘッダーが無ければ meta charset を使う（Shift_JIS 系は cp932 として読む）", () => {
+  assert.equal(detect("", '<meta charset="Shift_JIS">'), "cp932");
+  assert.equal(detect("", '<meta charset="utf-8">'), "utf-8");
+});
+
+test("ヘッダーの Shift_JIS 指定も cp932 として読む", () => {
+  assert.equal(detect("Shift_JIS", ""), "cp932");
 });
 
 test("http-equiv 形式の meta からも読む", () => {
-  assert.equal(detect("", '<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">'), "shift_jis");
+  assert.equal(detect("", '<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">'), "cp932");
 });
 
 test("= の前後に空白がある meta charset も読む", () => {
-  assert.equal(detect("", '<meta charset = "Shift_JIS">'), "shift_jis");
+  assert.equal(detect("", '<meta charset = "Shift_JIS">'), "cp932");
 });
 
 test("知らない文字コード名や指定なしは UTF-8 に戻す", () => {
   assert.equal(detect("", "<meta charset=bogus>"), "utf-8");
   assert.equal(detect("", "<p>no meta</p>"), "utf-8");
+});
+
+test("Shift_JIS ページの丸数字（①）などの拡張文字が文字化けしない", () => {
+  const code = `
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("cs", sys.argv[1])
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+body = '<meta charset="Shift_JIS"><p>①料金</p>'.encode("cp932")
+cs = m.detect_charset(None, body)
+sys.stdout.buffer.write(body.decode(cs, errors="replace").encode("utf-8"))
+`;
+  const out = execFileSync("python3", ["-I", "-c", code, script], { encoding: "utf8" });
+  assert.ok(out.includes("①料金"), out);
 });
