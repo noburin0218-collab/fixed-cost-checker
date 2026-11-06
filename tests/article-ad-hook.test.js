@@ -15,6 +15,7 @@ const CASES = [
   { article: "denryoku-kirikae-demerit", key: "electricityDirect", slotId: "ad-slot-denryoku-direct", slot: "denryoku-direct" },
   { article: "jidosha-hoken-koshin-mae", key: "carInsurance", slotId: "ad-slot-car-insurance", slot: "car-insurance" },
   { article: "kasai-hoken-minaoshi", key: "fireInsurance", slotId: "ad-slot-fire-insurance", slot: "fire-insurance" },
+  { article: "toshi-gas-minaoshi", key: "cityGas", slotId: "ad-slot-city-gas", slot: "city-gas" },
 ];
 
 for (const c of CASES) {

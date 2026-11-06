@@ -91,7 +91,7 @@
     "ad_slots": "",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 4,
+    "next_read_count": 5,
     "body_chars": 1474
   },
   {
@@ -452,7 +452,7 @@
     "ad_slots": "gas",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 3,
+    "next_read_count": 4,
     "body_chars": 2521
   },
   {
@@ -549,6 +549,25 @@
     "has_takeaway": true,
     "next_read_count": 3,
     "body_chars": 2130
+  },
+  {
+    "slug": "toshi-gas-minaoshi",
+    "url": "/articles/toshi-gas-minaoshi/",
+    "category_id": "category-utilities",
+    "category": "光熱費を見直す",
+    "type": "steps",
+    "title": "都市ガスの料金を見直す前に確認すること｜検針票の見方と、切り替えで変わること・変わらないこと",
+    "description": "都市ガスの契約先を変える前に、検針票で確認する項目と、切り替えで変わること・変わらないことを整理します。国民生活センターの公表情報をもとに、契約条件の確認の順番をまとめます。",
+    "h1": "都市ガスの料金を見直す前に確認すること 検針票の見方と、切り替えで変わること・変わらないこと",
+    "canonical": "https://kakei-hokenshitsu.com/articles/toshi-gas-minaoshi/",
+    "date_published": "2026-11-06",
+    "date_modified": "2026-11-06",
+    "has_ads": true,
+    "ad_slots": "city-gas",
+    "has_cluster": false,
+    "has_takeaway": true,
+    "next_read_count": 3,
+    "body_chars": 2643
   },
   {
     "slug": "tsushinhi-simulator",
