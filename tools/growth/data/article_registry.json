@@ -114,6 +114,25 @@
     "body_chars": 1946
   },
   {
+    "slug": "hikari-kaiyaku-hiyou",
+    "url": "/articles/hikari-kaiyaku-hiyou/",
+    "category_id": "category-telecom",
+    "category": "通信費を見直す",
+    "type": "steps",
+    "title": "光回線を乗り換える前に確認する費用｜解約金・工事費の残り・撤去工事を先に書き出す",
+    "description": "光回線の乗り換えで先に確認したい、解約時の費用の項目と探し場所を整理。契約書面・会員ページ・請求明細のどこを見るか、新回線との比較、開通日と解約日の順番まで。",
+    "h1": "光回線を乗り換える前に確認する費用 解約金・工事費の残り・撤去工事を先に書き出す",
+    "canonical": "https://kakei-hokenshitsu.com/articles/hikari-kaiyaku-hiyou/",
+    "date_published": "2026-11-06",
+    "date_modified": "2026-11-06",
+    "has_ads": false,
+    "ad_slots": "",
+    "has_cluster": false,
+    "has_takeaway": true,
+    "next_read_count": 3,
+    "body_chars": 3245
+  },
+  {
     "slug": "hikkoshi-konetsuhi-tetsuzuki",
     "url": "/articles/hikkoshi-konetsuhi-tetsuzuki/",
     "category_id": "category-utilities",
@@ -281,7 +300,7 @@
     "ad_slots": "",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 4,
+    "next_read_count": 5,
     "body_chars": 2063
   },
   {
@@ -471,7 +490,7 @@
     "ad_slots": "",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 4,
+    "next_read_count": 5,
     "body_chars": 1556
   },
   {
@@ -567,7 +586,7 @@
     "has_cluster": false,
     "has_takeaway": true,
     "next_read_count": 3,
-    "body_chars": 2643
+    "body_chars": 2607
   },
   {
     "slug": "tsushinhi-simulator",
