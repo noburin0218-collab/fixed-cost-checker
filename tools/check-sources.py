@@ -43,13 +43,23 @@ def cited_urls():
     return found
 
 
+# ブラウザ（WHATWG）と同じく、Shift_JIS 系の宣言は Windows-31J（cp932）として読む。
+# Python の shift_jis は丸数字（①）などの拡張文字を含まず、置換文字になるため。
+SJIS_ALIASES = {"shift_jis", "shift-jis", "sjis", "x-sjis", "ms_kanji", "csshiftjis", "windows-31j", "ms932", "cp932"}
+
+
+def normalize_charset(name):
+    name = name.strip().lower()
+    return "cp932" if name in SJIS_ALIASES else name
+
+
 def detect_charset(header_charset, body):
     """HTTPヘッダーに文字コードが無いときは、<meta charset> を見る（Shift_JIS のページ対策）。"""
     if header_charset:
-        return header_charset
+        return normalize_charset(header_charset)
     m = re.search(rb'<meta[^>]+charset\s*=\s*["\']?([A-Za-z0-9_-]+)', body[:4096], re.I)
     if m:
-        name = m.group(1).decode("ascii").lower()
+        name = normalize_charset(m.group(1).decode("ascii"))
         try:
             "".encode(name)
             return name
