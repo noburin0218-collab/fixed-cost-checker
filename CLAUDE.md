@@ -52,4 +52,5 @@ Final response should include summary, files changed, checks run/results, accept
 <!-- AI-DEV-CONTROL-V2:END -->
 ## Project-specific notes (fixed-cost-checker)
 - Cloud sessions may be unable to reach official sites (network policy). Do not guess; verify via the `Source Check` GitHub Actions workflow (`workflow_dispatch` with `urls`, then read the job log), or mark the item as unverified. See `RESUME.md`.
-- Codex cannot run in the cloud session. When a Claude PR is ready, give the owner the exact command: `.\scripts\invoke-cross-review.ps1 -Repo noburin0218-collab/fixed-cost-checker -Pr <N>`, and state in the PR whether the Codex review has been done.
+- Codex cannot run in the cloud session. When a Claude PR is ready, give the owner the exact command, run from `C:\Users\nobur\ai-dev-control`: `.\scripts\invoke-cross-review.ps1 -Repo noburin0218-collab/fixed-cost-checker -Pr <N>`, and state in the PR whether the Codex review has been done.
+- Merge order (owner decision, 2026-11-06): do not merge a Claude PR until its Codex review has been posted and every valid finding is fixed. The script only reviews open PRs, so never merge first and review later. The owner has pre-approved merging once the review is clean.

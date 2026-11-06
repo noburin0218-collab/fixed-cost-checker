@@ -79,9 +79,10 @@ ASP発行コードは**原文のまま**保持し、`tools/audit-site.py` が原
 
 **Codex による独立レビュー**（Claude が作ったPRは Codex がレビューする決まり）
 - Codex はこのクラウド環境では動かない（OpenAI アカウントでのログインが必要なため）。運営者のPCで実行する。
-- PRが「Ready」になったら、Windows の control-plane リポジトリで：
+- PRが「Ready」になったら、Windows の `C:\Users\nobur\ai-dev-control` で：
   `.\scripts\invoke-cross-review.ps1 -Repo noburin0218-collab/fixed-cost-checker -Pr <番号>`
-- 指摘は Claude が1件ずつ検証し、正しいものだけを1回の修正で直す。そのうえで人間がマージを判断する。
+- スクリプトは **open の PR しか対象にできない**。マージしてからでは遅いので、**Codex レビュー → 指摘の修正 → マージ** の順にする（2026-11-06 運営者決定。レビューが通れば、マージは事前承認済み）。
+- 指摘は Claude が1件ずつ検証し、正しいものだけを1回の修正で直す。
 
 ## 変更の反映方法
 ブランチで作業 → PR → CI（test／baseline／Cloudflare Pagesプレビュー）→ 独立レビュー → 人間がマージ判断 → mainへのマージで自動デプロイ。
