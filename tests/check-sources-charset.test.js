@@ -58,3 +58,21 @@ sys.stdout.buffer.write(body.decode(cs, errors="replace").encode("utf-8"))
   const out = execFileSync("python3", ["-I", "-c", code, script], { encoding: "utf8" });
   assert.ok(out.includes("①料金"), out);
 });
+
+test("URL や Content-Type で分からない Excel（e-Stat のダウンロード形式）も、ZIP の中身で判定する", () => {
+  const code = `
+import importlib.util, io, sys, zipfile
+from email.message import Message
+spec = importlib.util.spec_from_file_location("cs", sys.argv[1])
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+h = Message(); h["Content-Type"] = "application/octet-stream"
+def zipped(name):
+    b = io.BytesIO()
+    with zipfile.ZipFile(b, "w") as z: z.writestr(name, "x")
+    return b.getvalue()
+url = "https://www.e-stat.go.jp/stat-search/file-download?statInfId=1&fileKind=0"
+print(m.kind_of(url, h, zipped("xl/workbook.xml")), m.kind_of(url, h, zipped("a.txt")), m.kind_of(url, h, b"%PDF-1.7"))
+`;
+  const out = execFileSync("python3", ["-I", "-c", code, script], { encoding: "utf8" }).trim();
+  assert.equal(out, "xlsx html pdf");
+});

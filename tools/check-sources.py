@@ -27,6 +27,7 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 OWN_HOSTS = {"kakei-hokenshitsu.com", "www.kakei-hokenshitsu.com", "schema.org"}
 UA = "kakei-hokenshitsu-source-check/1.0 (+https://kakei-hokenshitsu.com/editorial-policy/)"
 TEXT_LIMIT = 60000
+MAX_BYTES = 20_000_000
 
 
 def cited_urls():
@@ -73,7 +74,10 @@ def fetch_raw(url, timeout=30):
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Language": "ja"})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as res:
-            return res.status, res.geturl(), res.headers, res.read(20_000_000), ""
+            body = res.read(MAX_BYTES + 1)
+            if len(body) > MAX_BYTES:
+                return res.status, res.geturl(), res.headers, b"", f"ファイルが大きすぎます（{MAX_BYTES // 1_000_000}MB超）。途中までしか読めないため、本文の取り出しを中止しました"
+            return res.status, res.geturl(), res.headers, body, ""
     except urllib.error.HTTPError as e:
         return e.code, url, None, b"", ""
     except Exception as e:  # DNS・タイムアウト・TLS など
@@ -91,11 +95,24 @@ def kind_of(url, headers, body):
     """本文の種類（pdf / xlsx / html）を、中身の先頭バイト・Content-Type・拡張子から判定する。"""
     ctype = (headers.get_content_type() if headers else "") or ""
     path = urlparse(url).path.lower()
+    disposition = (headers.get("Content-Disposition", "") if headers else "").lower()
     if body[:5] == b"%PDF-" or ctype == "application/pdf" or path.endswith(".pdf"):
         return "pdf"
-    if body[:2] == b"PK" and (path.endswith(".xlsx") or "spreadsheetml" in ctype):
-        return "xlsx"
+    if body[:2] == b"PK":
+        # e-Stat などは /file-download?… から application/octet-stream で配るため、ZIP の中身でも判定する
+        if path.endswith(".xlsx") or "spreadsheetml" in ctype or ".xlsx" in disposition or is_xlsx_zip(body):
+            return "xlsx"
     return "html"
+
+
+def is_xlsx_zip(body):
+    import io
+    import zipfile
+    try:
+        with zipfile.ZipFile(io.BytesIO(body)) as z:
+            return "xl/workbook.xml" in z.namelist()
+    except zipfile.BadZipFile:
+        return False
 
 
 def pdf_text(body):
@@ -151,7 +168,9 @@ def main():
             status, final, headers, body, err = fetch_raw(url)
             kind = kind_of(final, headers, body) if headers is not None else "-"
             print(f"===== {url}\nstatus: {status}  final_url: {final}  kind: {kind}")
-            if status and 200 <= status < 300:
+            if err:
+                print(err)
+            elif status and 200 <= status < 300:
                 try:
                     if kind == "pdf":
                         text = pdf_text(body)
@@ -164,8 +183,6 @@ def main():
                 print(text[:TEXT_LIMIT])
                 if len(text) > TEXT_LIMIT:
                     print(f"...（{len(text) - TEXT_LIMIT}文字省略）")
-            elif err:
-                print(err)
             print()
         return 0
 
