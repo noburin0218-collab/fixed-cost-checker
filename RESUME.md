@@ -4,7 +4,7 @@
 > ⚠️ このリポジトリは**公開**です。メールアドレス・パスワード・本名・ASPの管理画面情報など
 > 秘密情報はここに書かないこと（控えはパスワード管理アプリ等の安全な場所へ）。
 >
-> 最終更新：2026-11-05（main `ef95ad6` 時点の事実にもとづく）
+> 最終更新：2026-11-07（main `d1a6e82` 時点の事実にもとづく）
 
 ## いま何をやっているか（30秒で思い出す）
 - 屋号：**家計の保健室**（匿名・顔出しなしの副業）
@@ -17,7 +17,10 @@
 
 | 区分 | 状態 |
 |---|---|
-| サイト | 診断ツール＋**記事28本**（`articles/`）＋カテゴリまとめ・通信費シミュレーター |
+| サイト | 診断ツール＋**記事32本**＋通信費シミュレーター（どちらも `articles/`）＋カテゴリまとめ |
+| 市場調査 | `MARKET_RESEARCH_2026-11.md`（AI検索対策の根拠の有無、未提携の案件候補、記事テーマ） |
+| 公式情報の確認 | GitHub Actions **Source Check**（週1回の出典リンク確認＋手動で本文取得）。`tools/check-sources.py` |
+| Codex レビュー | PC のタスク **AI Cross Review Watcher**（`ai-dev-control`）が30分ごとに open の `claude/*` PR を自動レビュー。`CLAUDE.md` などAIへの指示ファイルを含むPRは対象外で、`-Force` の手動実行が必要 |
 | 無料PDF | **自サイトで配布中**：`/checklist.pdf`（Dropbox等は不要になった） |
 | 計測 | **GoatCounter**（クッキーなし）で計測中。**Google Search Console** 接続済み。GA4は**未設定**（`gaMeasurementId` が空） |
 | 定期レビュー | Growth Loop（`GROWTH.md`）。週次の Growth Review が GitHub Actions で動いている |
@@ -43,7 +46,8 @@ ASP発行コードは**原文のまま**保持し、`tools/audit-site.py` が原
 | `denryoku-direct` | idemitsuでんき（個別事業者） | A8 | 電力会社の切り替え |
 
 - 新しい枠を足すときは、`affiliateTracking` に同じslotを追加する（`tests/affiliate-tracking-coverage.test.js` が漏れを検知）。
-- 未設置：住宅ローン借り換え・自動車保険（未提携）。GMOとくとくBB ソフトバンク光は、広告主の告知により 2026-11-16 から一時停止のため未設置。
+- **空の広告枠（未提携。コードが入れば表示）**：`carInsurance`（/articles/jidosha-hoken-koshin-mae/）、`fireInsurance`（/articles/kasai-hoken-minaoshi/）、`cityGas`（/articles/toshi-gas-minaoshi/）。
+- 未設置：住宅ローン借り換え（未提携・記事もまだ）。GMOとくとくBB ソフトバンク光は、広告主の告知により 2026-11-16 から一時停止のため未設置。
 - 配置の判断と経緯は `AFFILIATE_PLACEMENT_AUDIT.md`、候補一覧は `AFFILIATE_BACKLOG.md`。
 
 ## 運営者側で確認・判断が必要なこと（私には代行できない）
@@ -51,7 +55,7 @@ ASP発行コードは**原文のまま**保持し、`tools/audit-site.py` が原
 - [ ] Threads / note アカウントの要否
 - [ ] GA4 を使うか。使う場合は、ID設定の前に `/about/` の計測の説明を更新する（現在は GoatCounter のみと記載）
 - [ ] 診断結果から「スマホの契約を選ぶ手順」記事へ直接リンクするか（CV導線の変更に当たるため保留中）
-- [ ] 住宅ローン借り換え・自動車保険一括見積もりの提携申請
+- [ ] 案件の提携申請：自動車保険・火災保険の一括見積もり、都市ガス比較、住宅ローン借り換え、縛りなし光回線（申請はASPの管理画面へのログインが必要。PCの Claude in Chrome で代行させる方法あり）
 - [ ] 一次情報の提供（`ARTICLE_PLAN.md` の「保留している内容」参照）
 
 ## ファイルマップ
