@@ -153,6 +153,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--text", nargs="+", metavar="URL", help="本文テキストを出すURL")
     ap.add_argument("--domains", action="store_true", help="参照している外部ドメインを一覧にする")
+    ap.add_argument("--grep", metavar="REGEX", help="--text のとき、この正規表現に合う行（と、Excel のシート名・表の見出し行）だけを出す")
     args = ap.parse_args()
 
     if args.domains:
@@ -180,6 +181,10 @@ def main():
                         text = page_text(body.decode(detect_charset(headers.get_content_charset(), body), errors="replace"))
                 except Exception as e:  # 壊れたファイル・未対応の形式
                     text = f"（本文を取り出せませんでした：{type(e).__name__}: {e}）"
+                if args.grep:
+                    pat = re.compile(args.grep)
+                    keep = [l for i, l in enumerate(text.splitlines()) if pat.search(l) or l.startswith("--- ") or i < 12]
+                    text = "\n".join(keep)
                 print(text[:TEXT_LIMIT])
                 if len(text) > TEXT_LIMIT:
                     print(f"...（{len(text) - TEXT_LIMIT}文字省略）")
