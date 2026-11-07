@@ -957,12 +957,18 @@ const ARTICLE_BY_CATEGORY = {
   eatingout: { href: "/articles/3nin-kazoku-seikatsuhi/", title: "3人家族の生活費はいくら？2025年家計調査から解説", cat: "家計を見わたす" },
   // 保険料は、いきなり相談へ送らず「自分で確認できること」から入る
   insurance: { href: "/articles/hoken-minaoshi-mae/", title: "保険料を見直す前に確認すること", cat: "保険と将来のお金" },
+  // 車関連費は、保険だけでなく駐車場・燃料なども含むため、まず費用を分解する記事へ
+  car: { href: "/articles/kuruma-hiyou-bunkai/", title: "車にかかるお金はいくら？維持費を月額ではなく項目ごとに分解する", cat: "家計を見わたす" },
 };
 
 /** ガスの種類によって、読むべき記事が変わる */
 function articleFor(item, ctx) {
   if (item.id === "gas" && ctx && ctx.gasType === "none") {
     return { href: "/articles/all-denka-konetsuhi/", title: "オール電化の光熱費を見直す手順", cat: "光熱費を見直す" };
+  }
+  // 都市ガスの家庭に、プロパンガスの記事を出さない
+  if (item.id === "gas" && ctx && ctx.gasType === "city") {
+    return { href: "/articles/toshi-gas-minaoshi/", title: "都市ガスの料金を見直す前に確認すること", cat: "光熱費を見直す" };
   }
   return ARTICLE_BY_CATEGORY[item.id] || null;
 }
