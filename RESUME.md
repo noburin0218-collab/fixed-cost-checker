@@ -17,7 +17,7 @@
 
 | 区分 | 状態 |
 |---|---|
-| サイト | 診断ツール＋**記事33本**（`articles/`）＋カテゴリまとめ・通信費シミュレーター |
+| サイト | 診断ツール＋**記事32本**＋通信費シミュレーター（どちらも `articles/`）＋カテゴリまとめ |
 | 市場調査 | `MARKET_RESEARCH_2026-11.md`（AI検索対策の根拠の有無、未提携の案件候補、記事テーマ） |
 | 公式情報の確認 | GitHub Actions **Source Check**（週1回の出典リンク確認＋手動で本文取得）。`tools/check-sources.py` |
 | Codex レビュー | PC のタスク **AI Cross Review Watcher**（`ai-dev-control`）が30分ごとに open の `claude/*` PR を自動レビュー。`CLAUDE.md` などAIへの指示ファイルを含むPRは対象外で、`-Force` の手動実行が必要 |
