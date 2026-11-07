@@ -7,7 +7,7 @@ Claude Code のクラウド環境はネットワーク設定で外部サイト�
 
 使い方:
   python3 tools/check-sources.py                 # 記事内の外部リンクをすべて取得し、HTTPステータスを一覧にする
-  python3 tools/check-sources.py --text URL ...  # 指定したページの本文テキストをログに出す（記載内容の照合用）
+  python3 tools/check-sources.py --text URL ...  # 指定したページ（HTML・PDF・Excel）の本文テキストをログに出す（記載内容の照合用）
   python3 tools/check-sources.py --domains       # 記事が参照している外部ドメインの一覧（環境の許可リスト用）
 
 終了コード: 404/410（ページが無くなった）があれば 1。それ以外の取得失敗は警告として表示するだけ
@@ -26,7 +26,8 @@ from urllib.parse import urlparse
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 OWN_HOSTS = {"kakei-hokenshitsu.com", "www.kakei-hokenshitsu.com", "schema.org"}
 UA = "kakei-hokenshitsu-source-check/1.0 (+https://kakei-hokenshitsu.com/editorial-policy/)"
-TEXT_LIMIT = 20000
+TEXT_LIMIT = 60000
+MAX_BYTES = 20_000_000
 
 
 def cited_urls():
@@ -68,16 +69,76 @@ def detect_charset(header_charset, body):
     return "utf-8"
 
 
-def fetch(url, timeout=30):
+def fetch_raw(url, timeout=30):
+    """(status, final_url, content_type, bytes, error) を返す。"""
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Language": "ja"})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as res:
-            body = res.read(5_000_000)
-            return res.status, res.geturl(), body.decode(detect_charset(res.headers.get_content_charset(), body), errors="replace")
+            body = res.read(MAX_BYTES + 1)
+            if len(body) > MAX_BYTES:
+                return res.status, res.geturl(), res.headers, b"", f"ファイルが大きすぎます（{MAX_BYTES // 1_000_000}MB超）。途中までしか読めないため、本文の取り出しを中止しました"
+            return res.status, res.geturl(), res.headers, body, ""
     except urllib.error.HTTPError as e:
-        return e.code, url, ""
+        return e.code, url, None, b"", ""
     except Exception as e:  # DNS・タイムアウト・TLS など
-        return None, url, f"{type(e).__name__}: {e}"
+        return None, url, None, b"", f"{type(e).__name__}: {e}"
+
+
+def fetch(url, timeout=30):
+    status, final, headers, body, err = fetch_raw(url, timeout)
+    if headers is None:
+        return status, final, err
+    return status, final, body.decode(detect_charset(headers.get_content_charset(), body), errors="replace")
+
+
+def kind_of(url, headers, body):
+    """本文の種類（pdf / xlsx / html）を、中身の先頭バイト・Content-Type・拡張子から判定する。"""
+    ctype = (headers.get_content_type() if headers else "") or ""
+    path = urlparse(url).path.lower()
+    disposition = (headers.get("Content-Disposition", "") if headers else "").lower()
+    if body[:5] == b"%PDF-" or ctype == "application/pdf" or path.endswith(".pdf"):
+        return "pdf"
+    if body[:2] == b"PK":
+        # e-Stat などは /file-download?… から application/octet-stream で配るため、ZIP の中身でも判定する
+        if path.endswith(".xlsx") or "spreadsheetml" in ctype or ".xlsx" in disposition or is_xlsx_zip(body):
+            return "xlsx"
+    return "html"
+
+
+def is_xlsx_zip(body):
+    import io
+    import zipfile
+    try:
+        with zipfile.ZipFile(io.BytesIO(body)) as z:
+            return "xl/workbook.xml" in z.namelist()
+    except zipfile.BadZipFile:
+        return False
+
+
+def pdf_text(body):
+    """PDF の本文を文字にする（pypdf が必要。ワークフローで入れる）。"""
+    import io
+    from pypdf import PdfReader
+    reader = PdfReader(io.BytesIO(body))
+    pages = []
+    for i, page in enumerate(reader.pages, 1):
+        pages.append(f"--- p.{i} ---\n" + (page.extract_text() or ""))
+    return "\n".join(pages)
+
+
+def xlsx_text(body):
+    """Excel（.xlsx）の各シートを、タブ区切りの行として出す（openpyxl が必要）。"""
+    import io
+    from openpyxl import load_workbook
+    wb = load_workbook(io.BytesIO(body), read_only=True, data_only=True)
+    out = []
+    for ws in wb.worksheets:
+        out.append(f"--- sheet: {ws.title} ---")
+        for row in ws.iter_rows(values_only=True):
+            cells = ["" if v is None else str(v) for v in row]
+            if any(cells):
+                out.append("\t".join(cells).rstrip())
+    return "\n".join(out)
 
 
 def page_text(raw):
@@ -104,15 +165,24 @@ def main():
             if urlparse(url).scheme not in ("http", "https"):
                 print(f"skip (not http/https): {url}")
                 continue
-            status, final, body = fetch(url)
-            print(f"===== {url}\nstatus: {status}  final_url: {final}")
-            if status and 200 <= status < 300:
-                text = page_text(body)
+            status, final, headers, body, err = fetch_raw(url)
+            kind = kind_of(final, headers, body) if headers is not None else "-"
+            print(f"===== {url}\nstatus: {status}  final_url: {final}  kind: {kind}")
+            if err:
+                print(err)
+            elif status and 200 <= status < 300:
+                try:
+                    if kind == "pdf":
+                        text = pdf_text(body)
+                    elif kind == "xlsx":
+                        text = xlsx_text(body)
+                    else:
+                        text = page_text(body.decode(detect_charset(headers.get_content_charset(), body), errors="replace"))
+                except Exception as e:  # 壊れたファイル・未対応の形式
+                    text = f"（本文を取り出せませんでした：{type(e).__name__}: {e}）"
                 print(text[:TEXT_LIMIT])
                 if len(text) > TEXT_LIMIT:
                     print(f"...（{len(text) - TEXT_LIMIT}文字省略）")
-            elif body:
-                print(body)
             print()
         return 0
 

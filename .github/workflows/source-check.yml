@@ -29,6 +29,10 @@ jobs:
       - name: Check cited sources
         if: ${{ inputs.urls == '' || inputs.urls == null }}
         run: python3 tools/check-sources.py
+      - name: Install PDF / Excel readers
+        if: ${{ inputs.urls != '' && inputs.urls != null }}
+        # 官公庁の統計・資料は PDF や Excel が多いため、本文を文字として取り出す
+        run: python3 -m pip install --quiet pypdf==5.1.0 openpyxl==3.1.5
       - name: Print page text
         if: ${{ inputs.urls != '' && inputs.urls != null }}
         env:
