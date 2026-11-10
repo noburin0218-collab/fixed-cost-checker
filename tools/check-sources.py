@@ -149,6 +149,21 @@ def page_text(raw):
     return "\n".join(l for l in lines if l)
 
 
+def grep_lines(text, pattern, head=12):
+    """正規表現に合う行と、各ブロック（PDF のページ・Excel のシート）の先頭 head 行（表題・見出し）を残す。"""
+    pat = re.compile(pattern)
+    keep, n = [], 0
+    for line in text.splitlines():
+        if line.startswith("--- "):  # シート・ページの区切りで、見出しの数え直し
+            keep.append(line)
+            n = 0
+            continue
+        if n < head or pat.search(line):
+            keep.append(line)
+        n += 1
+    return "\n".join(keep)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--text", nargs="+", metavar="URL", help="本文テキストを出すURL")
@@ -182,9 +197,7 @@ def main():
                 except Exception as e:  # 壊れたファイル・未対応の形式
                     text = f"（本文を取り出せませんでした：{type(e).__name__}: {e}）"
                 if args.grep:
-                    pat = re.compile(args.grep)
-                    keep = [l for i, l in enumerate(text.splitlines()) if pat.search(l) or l.startswith("--- ") or i < 12]
-                    text = "\n".join(keep)
+                    text = grep_lines(text, args.grep)
                 print(text[:TEXT_LIMIT])
                 if len(text) > TEXT_LIMIT:
                     print(f"...（{len(text) - TEXT_LIMIT}文字省略）")
