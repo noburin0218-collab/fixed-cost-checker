@@ -13,6 +13,10 @@ on:
         description: "本文を確認したいURL（スペース区切り）。空なら出典リンクの一括チェック"
         required: false
         default: ""
+      grep:
+        description: "本文のうち、この正規表現に合う行だけを出す（大きな表の照合用。空なら全文）"
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -37,7 +41,12 @@ jobs:
         if: ${{ inputs.urls != '' && inputs.urls != null }}
         env:
           URLS: ${{ inputs.urls }}
+          GREP: ${{ inputs.grep }}
         # URLS は環境変数で渡し、シェルに直接展開しない
         run: |
           read -r -a list <<< "$URLS"
-          python3 tools/check-sources.py --text "${list[@]}"
+          if [ -n "$GREP" ]; then
+            python3 tools/check-sources.py --grep "$GREP" --text "${list[@]}"
+          else
+            python3 tools/check-sources.py --text "${list[@]}"
+          fi

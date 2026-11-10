@@ -76,3 +76,17 @@ print(m.kind_of(url, h, zipped("xl/workbook.xml")), m.kind_of(url, h, zipped("a.
   const out = execFileSync("python3", ["-I", "-c", code, script], { encoding: "utf8" }).trim();
   assert.equal(out, "xlsx html pdf");
 });
+
+test("grep：2枚目以降のシートでも、表の見出し行が残る", () => {
+  const code = `
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("cs", sys.argv[1])
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+rows = ["data%d" % i for i in range(20)]
+text = "\\n".join(["--- sheet: A ---", "見出しA"] + rows + ["通信\\t1", "--- sheet: B ---", "見出しB"] + rows + ["通信\\t2"])
+out = m.grep_lines(text, "通信", head=2).splitlines()
+print("見出しB" in out, "通信\\t2" in out, "data19" in out)
+`;
+  const out = execFileSync("python3", ["-I", "-c", code, script], { encoding: "utf8" }).trim();
+  assert.equal(out, "True True False");
+});
