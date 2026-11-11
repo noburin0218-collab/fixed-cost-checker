@@ -970,6 +970,10 @@ function articleFor(item, ctx) {
   if (item.id === "gas" && ctx && ctx.gasType === "city") {
     return { href: "/articles/toshi-gas-minaoshi/", title: "都市ガスの料金を見直す前に確認すること", cat: "光熱費を見直す" };
   }
+  // 住宅ローン返済中の家庭には、借り換えの試算の前に数字をそろえる記事を出す
+  if (item.id === "housing" && ctx && ctx.tenure === "own_loan") {
+    return { href: "/articles/jutaku-loan-karikae/", title: "住宅ローンの借り換え、試算の前に集める数字", cat: "家計を見わたす" };
+  }
   return ARTICLE_BY_CATEGORY[item.id] || null;
 }
 
