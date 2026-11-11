@@ -35,6 +35,11 @@ ASP発行コードは `affiliates.<key>.code` に原文のまま設定します�
 | `cityGas` | 都市ガス記事専用。未定義・未提携。承認後に定義し、追跡slot `city-gas` を登録 |
 | `mortgageRefinance` | 住宅ローン借り換え記事（未提携枠） |
 
+### `affiliates` 配下ではない広告枠
+
+- `savingsAdvisor`（トップレベル設定）：診断結果の条件付き貯蓄相談枠。追跡slotは `savings` です。
+- `insuranceComparison`（トップレベル設定）：保険相談比較記事の枠。追跡slotは `hoken-garden`、`hoken-mammoth`、`hoken-minna` です。保険マンモスのコードは `affiliates.insurance.code` を参照します。
+
 > ※ 案件の有無・報酬額・提携可否はASP／時期により変わります。提携承認後にリンクを発行してください。
 > ※ 金融商品（保険）の表現は景表法・薬機法ならぬ各種ガイドラインに注意。「必ず安くなる」等の断定は避ける（本ツールも免責を明記済み）。
 

@@ -112,14 +112,12 @@ Cloudflare Pagesは過去の構成です。専用Gmailの無効化にともな�
 
 ## 収益化導線のカスタマイズ（`config.js` だけ編集すればOK）
 
-リンク・計測IDはすべて **`config.js` の1ファイルに集約**しています。公開前にここだけ編集してください。
+広告はASP発行コードを `config.js` の該当 `code` に原文のまま設定します。枠ごとの場所と注意点は [`MONETIZATION.md` §2](./MONETIZATION.md) を参照してください。
 
 - `cta.href` → 有料PDF／チェックリストの販売URL（note・Tips など）
-- `affiliates.*.href` → 各カテゴリ（スマホ／電気／ガス／保険／車）のアフィリエイトリンク
 - `gaMeasurementId` → Google Analytics 4 の測定ID
 
-`href` を設定した項目だけ、診断結果にボタンが表示されます（空欄なら非表示でレイアウトも崩れません）。
-**どのASPのどの案件に登録すればよいか・具体的な貼り方は [`MONETIZATION.md`](./MONETIZATION.md) を参照してください。**
+販売URLと計測IDは広告コードとは別の設定です。現在の広告枠・提携状況は [`MONETIZATION.md`](./MONETIZATION.md) を確認してください。
 
 ## シェア機能・画像保存
 
