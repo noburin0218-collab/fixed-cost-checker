@@ -64,45 +64,10 @@
 ---
 
 ## STEP 3｜収益の蛇口：ASP登録とリンク貼り（審査待ちあり）
-詳しい案件選びは `MONETIZATION.md`。ここでは **config.js のどこに貼るか** を示します。
 
-### 3-1. まず登録（無料）
-A8.net（必須）／もしもアフィリエイト／バリューコマース のいずれか。サイトURLは上記。
+ASP未登録の場合は、利用するASP（A8.net等）の公式サイトで、家計の保健室の公開URL `https://kakei-hokenshitsu.com/` を登録します。会員登録と案件ごとの提携承認は別です。当サイト名義で承認された案件の広告コードを取得してください。
 
-### 3-2. 提携して「広告リンク（テキストリンク）」のURLを取得
-おすすめ優先順（報酬が大きい順）：
-1. 保険の無料相談
-2. 住宅ローン 借り換え（モゲチェック等）
-3. 自動車保険 一括見積もり
-4. 格安SIM ／ 5. 電気・ガス比較
-
-### 3-3. `config.js` を編集（該当行に貼るだけ）
-`config.js` の `affiliates` 内、各行の `href: ""` の **""の中** に貼ります。
-
-```js
-// 変更前
-affiliates: {
-  housing:     { label: "住宅ローンの借り換えメリットを試算する", href: "" },
-  mobile:      { label: "格安SIMのプランを比較する",          href: "" },
-  electricity: { label: "電気・ガス料金を比較する",            href: "" },
-  gas:         { label: "ガス会社を比較・相見積もりする",      href: "" },
-  insurance:   { label: "保険の無料相談を予約する",            href: "" },
-  car:         { label: "自動車保険を一括見積もりする",        href: "" },
-},
-
-// 変更後（例：取得できたものだけ貼ればOK。空欄はボタン非表示）
-affiliates: {
-  housing:     { label: "住宅ローンの借り換えメリットを試算する", href: "https://px.a8.net/svt/ejp?a8mat=XXXX" },
-  mobile:      { label: "格安SIMのプランを比較する",          href: "" },
-  electricity: { label: "電気・ガス料金を比較する",            href: "" },
-  gas:         { label: "ガス会社を比較・相見積もりする",      href: "" },
-  insurance:   { label: "保険の無料相談を予約する",            href: "https://px.a8.net/svt/ejp?a8mat=YYYY" },
-  car:         { label: "自動車保険を一括見積もりする",        href: "" },
-},
-```
-
-> ポイント：**取得できたものから順に貼ればOK**。空欄の項目は結果画面にボタンが出ません（崩れません）。
-> 住宅ローンの借り換えボタンは「持ち家（ローン返済中）」を選んだ人にだけ表示されます。
+案件・提携条件と掲載手順は [`MONETIZATION.md`](./MONETIZATION.md) を参照してください。ASP発行コードは `config.js` の該当枠の `code` に原文のまま設定します。枠や追跡slotの対応は同ガイド§2で確認してください。
 
 ---
 
