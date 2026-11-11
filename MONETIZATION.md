@@ -33,7 +33,7 @@ ASP発行コードは `affiliates.<key>.code` に原文のまま設定します�
 | `carInsurance` | 自動車保険記事専用。未定義・未提携。承認後に定義し、追跡slot `car-insurance` を登録 |
 | `fireInsurance` | 火災保険記事専用。未定義・未提携。承認後に定義し、追跡slot `fire-insurance` を登録 |
 | `cityGas` | 都市ガス記事専用。未定義・未提携。承認後に定義し、追跡slot `city-gas` を登録 |
-| `mortgageRefinance` | 住宅ローン借り換え記事（未提携枠） |
+| `mortgageRefinance` | 住宅ローン借り換え記事（未提携枠）。追跡slotは `mortgage-refinance` |
 
 ### `affiliates` 配下ではない広告枠
 
