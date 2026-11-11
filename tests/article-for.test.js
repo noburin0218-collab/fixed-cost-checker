@@ -19,12 +19,20 @@ test("車関連費は、費用を項目ごとに分解する記事へ導く", ()
   assert.equal(articleFor({ id: "car" }, {}).href, "/articles/kuruma-hiyou-bunkai/");
 });
 
+test("住宅費は、ローン返済中なら借り換えの記事、それ以外は引っ越しの記事へ導く", () => {
+  assert.equal(articleFor({ id: "housing" }, { tenure: "own_loan" }).href, "/articles/jutaku-loan-karikae/");
+  assert.equal(articleFor({ id: "housing" }, { tenure: "rent" }).href, "/articles/hikkoshi-kotei-hi/");
+  assert.equal(articleFor({ id: "housing" }, {}).href, "/articles/hikkoshi-kotei-hi/");
+});
+
 test("対応先の記事がすべて実在する", () => {
   const ids = ["mobile", "internet", "electricity", "gas", "waterserver", "subscription", "housing", "eatingout", "insurance", "car"];
   for (const id of ids) {
     for (const gasType of ["", "city", "lpg", "none"]) {
-      const a = articleFor({ id }, { gasType });
-      if (a) assert.ok(exists(a.href), `${id}/${gasType}: ${a.href} が存在する`);
+      for (const tenure of ["", "own_loan", "own_paid", "rent"]) {
+        const a = articleFor({ id }, { gasType, tenure });
+        if (a) assert.ok(exists(a.href), `${id}/${gasType}/${tenure}: ${a.href} が存在する`);
+      }
     }
   }
 });
