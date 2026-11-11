@@ -28,7 +28,11 @@ ASP発行コードは `affiliates.<key>.code` に原文のまま設定します�
 | config キー | 用途 |
 |---|---|
 | `internetNoConstruction`, `mobileChoice`, `electricityDirect` | 対応する個別記事内の広告枠 |
-| `mobile`, `internet`, `electricity`, `gas`, `insurance`, `car`, `housing` | 診断結果の広告枠 |
+| `mobile`, `internet`, `electricity`, `gas`, `insurance`, `housing` | 診断結果の広告枠 |
+| `car` | 診断結果専用の車関連費枠（自動車保険記事には表示されない） |
+| `carInsurance` | 自動車保険記事専用。未定義・未提携。承認後に定義し、追跡slot `car-insurance` を登録 |
+| `fireInsurance` | 火災保険記事専用。未定義・未提携。承認後に定義し、追跡slot `fire-insurance` を登録 |
+| `cityGas` | 都市ガス記事専用。未定義・未提携。承認後に定義し、追跡slot `city-gas` を登録 |
 | `mortgageRefinance` | 住宅ローン借り換え記事（未提携枠） |
 
 > ※ 案件の有無・報酬額・提携可否はASP／時期により変わります。提携承認後にリンクを発行してください。
