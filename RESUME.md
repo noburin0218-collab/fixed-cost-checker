@@ -17,7 +17,7 @@
 
 | 区分 | 状態 |
 |---|---|
-| サイト | 診断ツール＋**記事32本**＋通信費シミュレーター（どちらも `articles/`）＋カテゴリまとめ |
+| サイト | 診断ツール＋**記事33本**＋通信費シミュレーター（どちらも `articles/`）＋カテゴリまとめ |
 | 市場調査 | `MARKET_RESEARCH_2026-11.md`（AI検索対策の根拠の有無、未提携の案件候補、記事テーマ） |
 | 公式情報の確認 | GitHub Actions **Source Check**（週1回の出典リンク確認＋手動で本文取得）。`tools/check-sources.py` |
 | Codex レビュー | PC のタスク **AI Cross Review Watcher**（`ai-dev-control`）が30分ごとに open の `claude/*` PR を自動レビュー。`CLAUDE.md` などAIへの指示ファイルを含むPRは対象外で、`-Force` の手動実行が必要 |
@@ -46,8 +46,8 @@ ASP発行コードは**原文のまま**保持し、`tools/audit-site.py` が原
 | `denryoku-direct` | idemitsuでんき（個別事業者） | A8 | 電力会社の切り替え |
 
 - 新しい枠を足すときは、`affiliateTracking` に同じslotを追加する（`tests/affiliate-tracking-coverage.test.js` が漏れを検知）。
-- **空の広告枠（未提携。コードが入れば表示）**：`carInsurance`（/articles/jidosha-hoken-koshin-mae/）、`fireInsurance`（/articles/kasai-hoken-minaoshi/）、`cityGas`（/articles/toshi-gas-minaoshi/）。
-- 未設置：住宅ローン借り換え（未提携・記事もまだ）。GMOとくとくBB ソフトバンク光は、広告主の告知により 2026-11-16 から一時停止のため未設置。
+- **空の広告枠（未提携。コードが入れば表示）**：`carInsurance`（/articles/jidosha-hoken-koshin-mae/）、`fireInsurance`（/articles/kasai-hoken-minaoshi/）、`cityGas`（/articles/toshi-gas-minaoshi/）、`mortgageRefinance`（/articles/jutaku-loan-karikae/。`config.js` に空の枠あり、`affiliateTracking` は `mortgage-refinance` を merchant 空で用意。提携したら両方を埋める）。
+- 住宅ローン借り換え：記事は用意済み（未提携のため広告は未設置）。GMOとくとくBB ソフトバンク光は、広告主の告知により 2026-11-16 から一時停止のため未設置。
 - 配置の判断と経緯は `AFFILIATE_PLACEMENT_AUDIT.md`、候補一覧は `AFFILIATE_BACKLOG.md`。
 
 ## 運営者側で確認・判断が必要なこと（私には代行できない）

@@ -16,7 +16,7 @@
     "has_cluster": false,
     "has_takeaway": true,
     "next_read_count": 3,
-    "body_chars": 2477
+    "body_chars": 2530
   },
   {
     "slug": "4nin-kazoku-tsushinhi",
@@ -247,6 +247,25 @@
     "body_chars": 3537
   },
   {
+    "slug": "jutaku-loan-karikae",
+    "url": "/articles/jutaku-loan-karikae/",
+    "category_id": "category-basics",
+    "category": "家計を見わたす",
+    "type": "steps",
+    "title": "住宅ローンの借り換え、試算の前に集める数字｜残債・金利・諸費用・残り年数のチェックリスト",
+    "description": "住宅ローンの借り換えを試算する前に集める数字（残債・金利・諸費用・残り年数）のチェックリスト。得になりにくい場面を先に整理し、国税庁の公開情報で印紙税・登録免許税・住宅ローン控除の扱いを確認します。",
+    "h1": "住宅ローンの借り換え、試算の前に集める数字 残債・金利・諸費用・残り年数のチェックリスト",
+    "canonical": "https://kakei-hokenshitsu.com/articles/jutaku-loan-karikae/",
+    "date_published": "2026-11-11",
+    "date_modified": "2026-11-11",
+    "has_ads": true,
+    "ad_slots": "mortgage-refinance",
+    "has_cluster": false,
+    "has_takeaway": true,
+    "next_read_count": 3,
+    "body_chars": 5185
+  },
+  {
     "slug": "kakeibo-saishougen",
     "url": "/articles/kakeibo-saishougen/",
     "category_id": "category-basics",
@@ -357,7 +376,7 @@
     "ad_slots": "",
     "has_cluster": false,
     "has_takeaway": true,
-    "next_read_count": 6,
+    "next_read_count": 7,
     "body_chars": 1412
   },
   {
