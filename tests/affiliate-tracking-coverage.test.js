@@ -32,6 +32,10 @@ const articleSlotOwner = {
   "mobile-choice": () => cfg.affiliates.mobileChoice,
   "denryoku-direct": () => cfg.affiliates.electricityDirect,
   savings: () => cfg.savingsAdvisor,
+  "car-insurance": () => cfg.affiliates.carInsurance,
+  "fire-insurance": () => cfg.affiliates.fireInsurance,
+  "city-gas": () => cfg.affiliates.cityGas,
+  "mortgage-refinance": () => cfg.affiliates.mortgageRefinance,
 };
 
 // 広告として表示され得るslotの一覧を組み立てる。

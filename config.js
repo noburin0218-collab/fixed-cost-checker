@@ -63,6 +63,14 @@ window.SITE_CONFIG = {
 <img border="0" width="1" height="1" src="https://www18.a8.net/0.gif?a8mat=4BA0X8+XXR16+5GVS+5YJRM" alt="">`,
     },
 
+    // 住宅ローン借り換えの記事（/articles/jutaku-loan-karikae/）用の枠。未提携のため空。
+    // ASP発行コードが入ったときだけ、記事内に「広告」つきで表示される。見出し・説明文も提携後に書く。
+    mortgageRefinance: {
+      heading: "",
+      body: "",
+      code: "", // 未提携
+    },
+
     housing: {
       heading: "住宅ローンは、残高が多いほど見直しの効果が大きい費目です",
       body: "借り換えの試算は無料でできます。残高・残期間・金利差の条件しだいで総返済額が変わります。",
@@ -174,4 +182,7 @@ window.SITE_CONFIG.affiliateTracking = {
   "internet-nc": { merchant: "GMOとくとくBB SoftBank Air", affiliate_program: "a8" },
   "mobile-choice": { merchant: "NUROモバイル", affiliate_program: "a8" },
   "denryoku-direct": { merchant: "idemitsuでんき", affiliate_program: "a8" },
+  // 住宅ローン借り換え（未提携・code が空の間は表示されない）。提携したら merchant と affiliate_program を埋める。
+  // 空のまま code を入れると tests/affiliate-tracking-coverage.test.js が失敗して気づける。
+  "mortgage-refinance": { merchant: "", affiliate_program: "" },
 };
