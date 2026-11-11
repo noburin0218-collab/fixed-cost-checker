@@ -274,6 +274,16 @@ for p in pages:
     path='/'+p.replace('index.html','')
     if path not in locs: fails.append(f"[sitemap] 未登録: {path}")
 
+# ---- 6) 記事の最終更新日（dateModified）と sitemap の lastmod の一致 ----
+# 検索エンジンに伝える更新日と、読者に見せる更新日がずれないようにする
+for m in re.finditer(r'<url>\s*<loc>https://kakei-hokenshitsu\.com(/articles/[^<]+/)</loc>\s*<lastmod>([0-9-]+)</lastmod>', sm):
+    path, lastmod = m.group(1), m.group(2)
+    f = path.lstrip('/') + 'index.html'
+    if not os.path.exists(f): continue
+    dm = re.search(r'"dateModified":\s*"([0-9-]+)"', open(f, encoding='utf-8').read())
+    if dm and dm.group(1) != lastmod:
+        fails.append(f"[sitemap] lastmod と dateModified が不一致: {path}（sitemap {lastmod} / 記事 {dm.group(1)}）")
+
 print("=== 検証結果 ===")
 print(f"対象ページ: {len(pages)}  内部リンク: {len(internal)}  sitemap: {len(locs)}")
 if warns: [print("WARN:",w) for w in warns]
