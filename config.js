@@ -63,6 +63,14 @@ window.SITE_CONFIG = {
 <img border="0" width="1" height="1" src="https://www18.a8.net/0.gif?a8mat=4BA0X8+XXR16+5GVS+5YJRM" alt="">`,
     },
 
+    // 都市ガスの記事（/articles/toshi-gas-minaoshi/）用の枠。A8・家計の保健室名義で承認（ガスチョイス）。
+    cityGas: {
+      heading: "ガス料金のプランを比べる窓口の一例",
+      body: "検針票の使用量（m³）をもとに、切り替え先の候補を比べる際の一例です。ほかの会社も同じ条件で比べられます。供給エリア・料金・契約期間・途中でやめる費用は、申し込み前に公式ページで確認してください。",
+      code: `<a href="https://px.a8.net/svt/ejp?a8mat=4BA0X8+169TI2+3SPO+ZQFQA" rel="nofollow">ガス料金プランを比較してガス代を今よりお安く！【ガスチョイス】</a>
+<img border="0" width="1" height="1" src="https://www14.a8.net/0.gif?a8mat=4BA0X8+169TI2+3SPO+ZQFQA" alt="">`,
+    },
+
     // 住宅ローン借り換えの記事（/articles/jutaku-loan-karikae/）用の枠。未提携のため空。
     // ASP発行コードが入ったときだけ、記事内に「広告」つきで表示される。見出し・説明文も提携後に書く。
     mortgageRefinance: {
@@ -182,6 +190,7 @@ window.SITE_CONFIG.affiliateTracking = {
   "internet-nc": { merchant: "GMOとくとくBB SoftBank Air", affiliate_program: "a8" },
   "mobile-choice": { merchant: "NUROモバイル", affiliate_program: "a8" },
   "denryoku-direct": { merchant: "idemitsuでんき", affiliate_program: "a8" },
+  "city-gas": { merchant: "ガスチョイス", affiliate_program: "a8" },
   // 住宅ローン借り換え（未提携・code が空の間は表示されない）。提携したら merchant と affiliate_program を埋める。
   // 空のまま code を入れると tests/affiliate-tracking-coverage.test.js が失敗して気づける。
   "mortgage-refinance": { merchant: "", affiliate_program: "" },
