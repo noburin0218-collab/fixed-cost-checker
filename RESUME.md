@@ -44,6 +44,7 @@ ASP発行コードは**原文のまま**保持し、`tools/audit-site.py` が原
 | `internet-nc` | GMOとくとくBB SoftBank Air | A8 | 賃貸のネット回線 |
 | `mobile-choice` | NUROモバイル | A8 | スマホの契約を選ぶ手順 |
 | `denryoku-direct` | idemitsuでんき（個別事業者） | A8 | 電力会社の切り替え |
+| `cityGas`（slot `city-gas`） | ガスチョイス | A8 | 都市ガスの見直し |
 
 - 新しい枠を足すときは、`affiliateTracking` に同じslotを追加する（`tests/affiliate-tracking-coverage.test.js` が漏れを検知）。
 - **空の広告枠（未提携。コードが入れば表示）**：`carInsurance`（/articles/jidosha-hoken-koshin-mae/）、`fireInsurance`（/articles/kasai-hoken-minaoshi/）、`cityGas`（/articles/toshi-gas-minaoshi/）、`mortgageRefinance`（/articles/jutaku-loan-karikae/。`config.js` に空の枠あり、`affiliateTracking` は `mortgage-refinance` を merchant 空で用意。提携したら両方を埋める）。

@@ -33,6 +33,7 @@ expected={
  "gmo_air":'<a href="https://px.a8.net/svt/ejp?a8mat=4BA1P8+2DQGNU+50+744OG2" rel="nofollow">GMOとくとくBB【SoftBank Air】</a>\n<img border="0" width="1" height="1" src="https://www10.a8.net/0.gif?a8mat=4BA1P8+2DQGNU+50+744OG2" alt="">',
  "nuro_mobile":'<a href="https://px.a8.net/svt/ejp?a8mat=4BA0X8+N7Y56+3MP0+5YJRM" rel="nofollow">NURO Mobile</a>\n<img border="0" width="1" height="1" src="https://www16.a8.net/0.gif?a8mat=4BA0X8+N7Y56+3MP0+5YJRM" alt="">',
  "idemitsu":'<a href="https://px.a8.net/svt/ejp?a8mat=4BA0X8+XXR16+5GVS+5YJRM" rel="nofollow">【idemitsuでんき】</a>\n<img border="0" width="1" height="1" src="https://www18.a8.net/0.gif?a8mat=4BA0X8+XXR16+5GVS+5YJRM" alt="">',
+ "gaschoice":'<a href="https://px.a8.net/svt/ejp?a8mat=4BA0X8+169TI2+3SPO+ZQFQA" rel="nofollow">ガス料金プランを比較してガス代を今よりお安く！【ガスチョイス】</a>\n<img border="0" width="1" height="1" src="https://www14.a8.net/0.gif?a8mat=4BA0X8+169TI2+3SPO+ZQFQA" alt="">',
  "hoken_minna":'<a href="https://h.accesstrade.net/sp/cc?rk=0100pfk700owy6" rel="nofollow" referrerpolicy="no-referrer-when-downgrade">みんなの生命保険アドバイザー<img src="https://h.accesstrade.net/sp/rr?rk=0100pfk700owy6" width="1" height="1" border="0" alt=""></a>',
 }
 for k,v in expected.items():
@@ -44,7 +45,8 @@ for beacon in ["www11.a8.net/0.gif?a8mat=4BA0X8+462SA+3UM0+5YRHE",
                "www17.a8.net/0.gif?a8mat=4BA0X8+UYL0A+2W92+NVHCY",
                "www10.a8.net/0.gif?a8mat=4BA1P8+2DQGNU+50+744OG2",
                "www16.a8.net/0.gif?a8mat=4BA0X8+N7Y56+3MP0+5YJRM",
-               "www18.a8.net/0.gif?a8mat=4BA0X8+XXR16+5GVS+5YJRM"]:
+               "www18.a8.net/0.gif?a8mat=4BA0X8+XXR16+5GVS+5YJRM",
+               "www14.a8.net/0.gif?a8mat=4BA0X8+169TI2+3SPO+ZQFQA"]:
     if beacon not in cfg: fails.append(f"[ASPコード] 計測用img欠落: {beacon}")
 
 # ---- 2) 家計調査の数値が記事に正しく入っているか ----
