@@ -46,7 +46,7 @@ ASP発行コードは**原文のまま**保持し、`tools/audit-site.py` が原
 | `denryoku-direct` | idemitsuでんき（個別事業者） | A8 | 電力会社の切り替え |
 
 - 新しい枠を足すときは、`affiliateTracking` に同じslotを追加する（`tests/affiliate-tracking-coverage.test.js` が漏れを検知）。
-- **空の広告枠（未提携。コードが入れば表示）**：`carInsurance`（/articles/jidosha-hoken-koshin-mae/）、`fireInsurance`（/articles/kasai-hoken-minaoshi/）、`cityGas`（/articles/toshi-gas-minaoshi/）、`mortgageRefinance`（/articles/jutaku-loan-karikae/。`config.js` に空の枠あり、`affiliateTracking` は `mortgage-refinance` を merchant 空で用意。提携したら両方を埋める）。
+- **空の広告枠（コードが入れば表示。状況は下の「提携申請の状況」）**：`carInsurance`（/articles/jidosha-hoken-koshin-mae/）、`fireInsurance`（/articles/kasai-hoken-minaoshi/）、`cityGas`（/articles/toshi-gas-minaoshi/）。この3つは記事側が読むキーだけで、`config.js` にはまだキーがない（設置時に `affiliates` へキーを、`affiliateTracking` へ slot を追加する）。ほかに `mortgageRefinance`（/articles/jutaku-loan-karikae/。`config.js` に空の枠あり、`affiliateTracking` は `mortgage-refinance` を merchant 空で用意。提携したら両方を埋める）。
 - 住宅ローン借り換え：記事は用意済み（未提携のため広告は未設置）。GMOとくとくBB ソフトバンク光は、広告主の告知により 2026-11-16 から一時停止のため未設置。
 - 配置の判断と経緯は `AFFILIATE_PLACEMENT_AUDIT.md`、候補一覧は `AFFILIATE_BACKLOG.md`。
 
@@ -64,9 +64,9 @@ ASP発行コードは**原文のまま**保持し、`tools/audit-site.py` が原
 |---|---|---|---|---|
 | 自動車保険一括見積もり | インズウェブ（SBIホールディングス）／自動車保険一括見積もり依頼サービス（ウェブクルー） | `carInsurance` | A8で2件とも申請済み・審査中 | 2026-11-12 |
 | 火災保険一括見積もり | インズウェブ火災保険／保険スクエアbang!火災保険の無料診断（ウェブクルー） | `fireInsurance` | A8で2件とも申請済み・審査中 | 2026-11-12 |
-| 都市ガス比較 | ガスチョイス | `cityGas` | A8で提携済み（2026-08-08〜）。広告コード未設置 | 2026-11-12 |
+| 都市ガス比較 | ガスチョイス | `cityGas` | A8で「提携中」表示（2026-08-08〜）。家計の保健室名義かは未確認（`AFFILIATE_BACKLOG.md` B欄）。広告コード未設置 | 2026-11-12 |
 | 住宅ローン借り換え | モゲチェック（借り換え向け、MFS） | `mortgageRefinance` | A8で申請済み・審査中 | 2026-11-12 |
-| 縛りなし光回線 | おてがる光 | 枠なし | A8で提携済み（2026-08-29〜）。広告コード未設置 | 2026-11-12 |
+| 縛りなし光回線 | おてがる光 | 枠なし | A8で「提携中」表示（2026-08-29〜）。家計の保健室名義かは未確認（`AFFILIATE_BACKLOG.md` B欄）。広告コード未設置 | 2026-11-12 |
 
 - ウェブクルーの2件は「ランキング掲載・特定の保険会社をすすめる表現」が禁止。インズウェブはアメリカンホーム保険の説明が禁止。どちらもリスティング禁止。
 - モゲチェックは金融機関名と限定金利を結びつけた記載が禁止。
