@@ -23,7 +23,7 @@ ASP、案件、報酬条件、サイトごとの提携状態は変わります�
 
 ASP発行コードは `affiliates.<key>.code` に原文のまま設定します。コードのない枠は表示されません。設定時は `affiliateTracking` の対応slot・`merchant`・`affiliate_program` も確認し、`npm test` と `python3 tools/audit-site.py` で検証してください。
 
-自動車保険・火災保険・都市ガスなどの未提携枠は、`RESUME.md` の「提携申請の状況」を参照してください。記事が読むキーと、`config.js` に定義済みのキーは同じではありません。
+自動車保険・火災保険などの未提携枠は、`RESUME.md` の「提携申請の状況」を参照してください。記事が読むキーと、`config.js` に定義済みのキーは同じではありません。
 
 | config キー | 用途 |
 |---|---|
@@ -32,7 +32,7 @@ ASP発行コードは `affiliates.<key>.code` に原文のまま設定します�
 | `car` | 診断結果専用の車関連費枠（自動車保険記事には表示されない） |
 | `carInsurance` | 自動車保険記事専用。未定義・未提携。承認後に定義し、追跡slot `car-insurance` を登録 |
 | `fireInsurance` | 火災保険記事専用。未定義・未提携。承認後に定義し、追跡slot `fire-insurance` を登録 |
-| `cityGas` | 都市ガス記事専用。未定義・未提携。承認後に定義し、追跡slot `city-gas` を登録 |
+| `cityGas` | 都市ガス記事専用。ガスチョイス（A8）を設置済み。追跡slotは `city-gas` |
 | `mortgageRefinance` | 住宅ローン借り換え記事（未提携枠）。追跡slotは `mortgage-refinance` |
 
 ### `affiliates` 配下ではない広告枠
